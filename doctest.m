@@ -19,6 +19,10 @@ function doctest(func_name, verbose)
 % Save that to 'add7.m'.  Now you can say 'doctest add7' and it will run
 % 'add7(3)' and make sure that it gets back 'ans = 10'.
 %
+% If the output of some function will change each time you call it, for
+% instance if it includes a random number, you can put *** (three
+% asterisks) where the changing element should be.  This acts as a
+% wildcard, and will match anything.
 %
 % LIMITATIONS:
 %

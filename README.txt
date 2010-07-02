@@ -1,4 +1,4 @@
-  DOCTEST
+DOCTEST
   Run examples embedded in documentation
  
   doctest func_name
@@ -19,6 +19,10 @@
   Save that to 'add7.m'.  Now you can say 'doctest add7' and it will run
   'add7(3)' and make sure that it gets back 'ans = 10'.
  
+  If the output of some function will change each time you call it, for
+  instance if it includes a random number, you can put *** (three
+  asterisks) where the changing element should be.  This acts as a
+  wildcard, and will match anything.
  
   LIMITATIONS:
  
@@ -35,4 +39,3 @@
   because I haven't found a good way to mark these subsequent lines as
   part-of-the-source-code rather than part-of-the-result.
   
-
