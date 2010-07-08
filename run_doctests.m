@@ -11,7 +11,7 @@ example_re = '(?m)(?-s)(?:^ *>> )(?<source>.*)\n(?<want>(?:(?:^ *$\n)?(?!\s*>>).
 
 [matches] = regexp(docstring, example_re, 'names', 'warnings');
 
-results = struct;
+results = [];
 
 for I = 1:length(matches)
     
