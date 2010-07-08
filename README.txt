@@ -3,6 +3,8 @@ DOCTEST
  
   doctest func_name
   doctest('func_name')
+  doctest class_name
+  doctest('class_name')
  
   Example:
   Say you have a function that adds 7 to things:
@@ -20,8 +22,8 @@ DOCTEST
   'add7(3)' and make sure that it gets back 'ans = 10'.
  
   If the output of some function will change each time you call it, for
-  instance if it includes a random number, you can put *** (three
-  asterisks) where the changing element should be.  This acts as a
+  instance if it includes a random number or a stack trace, you can put ***
+  (three asterisks) where the changing element should be.  This acts as a
   wildcard, and will match anything.
  
   LIMITATIONS:
@@ -39,3 +41,4 @@ DOCTEST
   because I haven't found a good way to mark these subsequent lines as
   part-of-the-source-code rather than part-of-the-result.
   
+

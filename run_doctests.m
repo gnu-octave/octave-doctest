@@ -24,9 +24,11 @@ for I = 1:length(matches)
     
     got_unspaced = regexprep(got, '\s+', ' ');
     
+
+    
     results(I).source = matches(I).source;
-    results(I).want = want_unspaced;
-    results(I).got = got_unspaced;
+    results(I).want = strtrim(want_unspaced);
+    results(I).got = strtrim(got_unspaced);
     results(I).pass = compare(want_unspaced, got_unspaced);
     
 end

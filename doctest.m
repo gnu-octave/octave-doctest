@@ -1,8 +1,10 @@
-function doctest(func_name, verbose)
+function doctest(func_or_class)
 % Run examples embedded in documentation
 %
 % doctest func_name
 % doctest('func_name')
+% doctest class_name
+% doctest('class_name')
 %
 % Example:
 % Say you have a function that adds 7 to things:
@@ -20,8 +22,8 @@ function doctest(func_name, verbose)
 % 'add7(3)' and make sure that it gets back 'ans = 10'.
 %
 % If the output of some function will change each time you call it, for
-% instance if it includes a random number, you can put *** (three
-% asterisks) where the changing element should be.  This acts as a
+% instance if it includes a random number or a stack trace, you can put ***
+% (three asterisks) where the changing element should be.  This acts as a
 % wildcard, and will match anything.
 %
 % LIMITATIONS:
@@ -40,16 +42,31 @@ function doctest(func_name, verbose)
 % part-of-the-source-code rather than part-of-the-result.
 % 
 
-docstring = help(func_name);
+to_test = { func_or_class };
 
-if nargin < 2
-    verbose = 0;
-else
-    verbose = 1;
+theMethods = methods(func_or_class);
+for I = 1:length(theMethods) % might be 0
+    to_test = [ to_test; ...
+        sprintf('%s.%s', func_or_class, theMethods{I}) ];
 end
 
+to_test
 
-test_anything(run_doctests(docstring), verbose);
+result = [];
+
+for I = 1:length(to_test)
+    result = [result, do_test(to_test{I})];
+end
+    
+test_anything(result, 1);
+
+
+end
+
+function result = do_test(func_name)
+docstring = help(func_name);
+
+result = run_doctests(docstring);
 
 end
 
