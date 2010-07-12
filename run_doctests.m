@@ -16,8 +16,11 @@ results = [];
 for I = 1:length(matches)
     
     % ['<<' matches(I).want '>>']
-    
-    got = evalc(matches(I).source);
+    try
+        got = evalc(matches(I).source);
+    catch exc
+        got = ['??? ' exc.message];
+    end
     % ['{{' got '}}']
     
     want_unspaced = regexprep(matches(I).want, '\s+', ' ');
