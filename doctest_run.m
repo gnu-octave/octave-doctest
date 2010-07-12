@@ -1,4 +1,4 @@
-function results = run_doctests(docstring)
+function results = doctest_run(docstring)
 %
 % 
 % >> 1 + 2
@@ -32,7 +32,7 @@ for I = 1:length(matches)
     results(I).source = matches(I).source;
     results(I).want = strtrim(want_unspaced);
     results(I).got = strtrim(got_unspaced);
-    results(I).pass = compare(want_unspaced, got_unspaced);
+    results(I).pass = doctest_compare(want_unspaced, got_unspaced);
     
 end
 

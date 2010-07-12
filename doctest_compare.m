@@ -1,4 +1,4 @@
-function match = compare(want, got)
+function match = doctest_compare(want, got)
 % Matches two strings together... they should be identical, except that the
 % first one can contain '***', which matches anything in the second string.
 %

@@ -116,7 +116,13 @@ function doctest(func_or_class)
 % The latest version from the original author, Thomas Smith, is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
 
+% This is a dumb way to be verbose or not, sorry.
 verbose = 0;
+
+
+%
+% Make a list of every method/function that we need to examine.
+%
 
 to_test = { func_or_class };
 
@@ -126,12 +132,22 @@ for I = 1:length(theMethods) % might be 0
         sprintf('%s.%s', func_or_class, theMethods{I}) ];
 end
 
-% to_test
 
+
+%
+% Examine each function/method for a docstring, and run any examples in
+% that docstring
+%
+
+% Can't predict number of results beforehand, depends of number of examples
+% in each docstring.
 result = [];
 
 for I = 1:length(to_test)
-    result = [result, do_test(to_test{I})];
+    docstring = help(to_test{I});
+
+    this_result = doctest_run(docstring);
+    result = [result, this_result];
 end
     
 test_anything(result, verbose);
@@ -139,10 +155,30 @@ test_anything(result, verbose);
 
 end
 
-function result = do_test(func_name)
-docstring = help(func_name);
 
-result = run_doctests(docstring);
+function test_anything(results, verbose)
+% Prints out test results in the Test Anything Protocol format
+%
+% See http://testanything.org/
+%
 
+out = 1; % stdout
+
+fprintf(out, 'TAP version 13\n')
+fprintf(out, '1..%d\n', numel(results));
+for I = 1:length(results)
+    if results(I).pass
+        ok = 'ok';
+    else
+        ok = 'not ok';
+    end
+    
+    fprintf(out, '%s %d - "%s"\n', ok, I, results(I).source);
+    if verbose || ~ results(I).pass
+        fprintf(out, '    expected: %s\n', results(I).want);
+        fprintf(out, '    got     : %s\n', results(I).got);
+    end
 end
 
+
+end
