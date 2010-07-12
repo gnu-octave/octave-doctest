@@ -12,7 +12,7 @@ for I = 1:length(results)
     end
     
     fprintf(out, '%s %d - "%s"\n', ok, I, results(I).source);
-    if verbose
+    if verbose || ~ results(I).pass
         fprintf(out, '    expected: %s\n', results(I).want);
         fprintf(out, '    got     : %s\n', results(I).got);
     end
