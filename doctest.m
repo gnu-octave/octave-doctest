@@ -19,7 +19,16 @@ function doctest(func_or_class)
 %     end
 % 
 % Save that to 'add7.m'.  Now you can say 'doctest add7' and it will run
-% 'add7(3)' and make sure that it gets back 'ans = 10'.
+% 'add7(3)' and make sure that it gets back 'ans = 10'.  It prints out
+% something like this:
+%
+% TAP version 13
+% 1..1
+% ok 1 - add7(3)
+%
+% This is in the Test Anything Protocol format, which I guess is mostly
+% used by Perl people, but it's good enough for now.  See <a
+% href="http://testanything.org/">testanything.org</a>.
 %
 % If the output of some function will change each time you call it, for
 % instance if it includes a random number or a stack trace, you can put ***
