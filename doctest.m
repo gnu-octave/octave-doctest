@@ -119,7 +119,7 @@ function doctest(func_or_class)
 % This is a dumb way to be verbose or not, sorry.
 verbose = 0;
 
-
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Make a list of every method/function that we need to examine, in the
 % to_test struct.
@@ -153,7 +153,7 @@ for I = 1:length(theMethods) % might be 0
 end
 
 
-
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Examine each function/method for a docstring, and run any examples in
 % that docstring
@@ -170,12 +170,20 @@ for I = 1:length(to_test)
     these_results = doctest_run(docstring);
     
  
-    for R = 1:length(these_results)
-        these_results(R).link = to_test(I).link;
+    if ~ isempty(these_results)
+        [these_results.link] = deal(to_test(I).link);
     end
+    
     result = [result, these_results];
 end
     
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Print the results
+%
+
 test_anything(result, verbose);
 
 
