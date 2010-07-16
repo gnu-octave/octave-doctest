@@ -121,15 +121,35 @@ verbose = 0;
 
 
 %
-% Make a list of every method/function that we need to examine.
+% Make a list of every method/function that we need to examine, in the
+% to_test struct.
 %
 
-to_test = { func_or_class };
+% We include a link to the function where the docstring is going to come
+% from, so that it's easier to navigate to that doctest.
+to_test = [];
+to_test.name = func_or_class;
+to_test.func_name = func_or_class;
+to_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', ...
+            which(func_or_class), func_or_class);
 
+       
+% If it's a class, add the methods to to_test.
 theMethods = methods(func_or_class);
 for I = 1:length(theMethods) % might be 0
-    to_test = [ to_test; ...
-        sprintf('%s.%s', func_or_class, theMethods{I}) ];
+    this_test = [];
+    
+    this_test.func_name = theMethods{I};
+    this_test.name = sprintf('%s.%s', func_or_class, theMethods{I});
+
+    try
+        this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', ...
+            which(func_or_class), this_test.func_name, this_test.name);
+    catch
+        this_test.link = this_test.name;
+    end
+    
+    to_test = [to_test; this_test];
 end
 
 
@@ -144,10 +164,16 @@ end
 result = [];
 
 for I = 1:length(to_test)
-    docstring = help(to_test{I});
+    docstring = help(to_test(I).name);
+    
 
-    this_result = doctest_run(docstring);
-    result = [result, this_result];
+    these_results = doctest_run(docstring);
+    
+ 
+    for R = 1:length(these_results)
+        these_results(R).link = to_test(I).link;
+    end
+    result = [result, these_results];
 end
     
 test_anything(result, verbose);
@@ -175,6 +201,7 @@ for I = 1:length(results)
     
     fprintf(out, '%s %d - "%s"\n', ok, I, results(I).source);
     if verbose || ~ results(I).pass
+        fprintf(out, '    in %s\n', results(I).link);
         fprintf(out, '    expected: %s\n', results(I).want);
         fprintf(out, '    got     : %s\n', results(I).got);
     end
