@@ -1,4 +1,4 @@
-function doctest(func_or_class)
+function doctest(func_or_class, varargin)
 % Run examples embedded in documentation
 %
 % doctest func_name
@@ -111,13 +111,17 @@ function doctest(func_or_class)
 % but this hasn't happened yet.  (See Issue #2 on the bitbucket site,
 % below)
 %
-
 %
 % The latest version from the original author, Thomas Smith, is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
 
-% This is a dumb way to be verbose or not, sorry.
-verbose = 0;
+p = inputParser;
+p.addOptional('CreateLinks', true);
+p.addOptional('Verbose', false);
+p.parse(varargin{:});
+verbose = p.Results.Verbose;
+createLinks = p.Results.CreateLinks;
+
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -184,13 +188,13 @@ end
 % Print the results
 %
 
-test_anything(result, verbose);
+test_anything(result, verbose, createLinks);
 
 
 end
 
 
-function test_anything(results, verbose)
+function test_anything(results, verbose, createLinks)
 % Prints out test results in the Test Anything Protocol format
 %
 % See http://testanything.org/
@@ -208,8 +212,11 @@ for I = 1:length(results)
     end
     
     fprintf(out, '%s %d - "%s"\n', ok, I, results(I).source);
+%     results(I).pass
     if verbose || ~ results(I).pass
-        fprintf(out, '    in %s\n', results(I).link);
+        if createLinks
+            fprintf(out, '    in %s\n', results(I).link);
+        end
         fprintf(out, '    expected: %s\n', results(I).want);
         fprintf(out, '    got     : %s\n', results(I).got);
     end
