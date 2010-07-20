@@ -97,7 +97,7 @@ Normally, the failure report would include a link to somewhere near the doctest 
 
 Each time doctest runs a test, it's running a line of code and checking that the output is what you say it should be. It knows something is an example because it's a line in help('your_function') that starts with '>>'. It knows what you think the output should be by starting on the line after >> and looking for the next >>, two blank lines, or the end of the documentation.
 
-If the output of some function will change each time you call it, for instance if it includes a random number or a stack trace, you can put ***** (three asterisks) where the changing element should be. This acts as a wildcard, and will match anything. See the example below.
+If the output of some function will change each time you call it, for instance if it includes a random number or a stack trace, you can put '***' (three asterisks) where the changing element should be. This acts as a wildcard, and will match anything. See the example below.
 
 Here are some examples of formatting, both ones that work and ones that don't.
     
@@ -178,7 +178,7 @@ Here are some examples of formatting, both ones that work and ones that don't.
         got     : ans = 5
     not ok 7 - "dicomuid       % FAILS: no wildcard on changing output"
         expected: ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343357080818013
-        got     : ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343387152070056
+        got     : ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343394619430064
     ok 8 - "dicomuid       % passes"
     
 

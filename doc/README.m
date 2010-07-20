@@ -43,9 +43,9 @@ doctest('should_fail', 'CreateLinks', 0) % the links don't work in publish()
 % the documentation.
 %
 % If the output of some function will change each time you call it, for
-% instance if it includes a random number or a stack trace, you can put ***
-% (three asterisks) where the changing element should be.  This acts as a
-% wildcard, and will match anything.  See the example below.
+% instance if it includes a random number or a stack trace, you can put
+% '***' (three asterisks) where the changing element should be.  This acts
+% as a wildcard, and will match anything.  See the example below.
 %
 % Here are some examples of formatting, both ones that work and ones that
 % don't.
@@ -78,10 +78,11 @@ doctest('errors', 'CreateLinks', 0)
 % comparison, so right now doctest can't detect a failure that's purely a
 % whitespace difference.
 %
-% It can't run lines that are longer than one line of code (so, for
+% It can't run examples that are longer than one line of code (so, for
 % example, no loops that take more than one line).  This is difficult
 % because I haven't found a good way to mark these subsequent lines as
-% part-of-the-source-code rather than part-of-the-result.
+% part-of-the-source-code rather than part-of-the-result.  However,
+% variables that you define in one line do carry over to the next.
 %
 % I haven't found a good way of isolating the variables that you define in
 % the tests from the variables used to run the test.  So, don't run CLEAR
