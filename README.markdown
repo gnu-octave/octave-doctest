@@ -1,22 +1,20 @@
+<!-- -*- markdown -*- -->
 ## Contents
 
-  * [DOCTEST - Description][1]
-  * [Failure][2]
-  * [Defining your expectations][3]
-  * [Expecting an error][4]
-  * [Limitations][5]
+  * [DOCTEST - Run examples embedded in documentation][1]
+  * [Example output][2]
+  * [Failure][3]
+  * [Defining your expectations][4]
+  * [Expecting an error][5]
+  * [Limitations][6]
 
-## DOCTEST - Description
-
-Run examples embedded in documentation
+## DOCTEST - Run examples embedded in documentation
 
 With doctest, you can put an example of using your function, right in the m-file help. Then, that same example can be used like a unit test, to make sure the function still does what the docs say it does.
 
 Here's a trivial function and its documentation:
     
     type add3
-    disp -------------
-    doctest add3
     
     
     
@@ -54,7 +52,15 @@ Here's a trivial function and its documentation:
     end
     
     sum = value + 3;
-    -------------
+    
+
+## Example output
+
+Here's the output we get from running doctest on the add3 function above:
+    
+    doctest add3
+    
+    
     TAP version 13
     1..3
     ok 1 - "add3(7)"
@@ -66,7 +72,7 @@ Here's a trivial function and its documentation:
 
 Here's an example of what happens when something changes and your test fails.
 
-By the way, output is in the Test Anything Protocol format, which I guess is mostly used by Perl people, but it's good enough for now. See [http://testanything.org/][6]
+By the way, output is in the Test Anything Protocol format, which I guess is mostly used by Perl people, but it's good enough for now. See [http://testanything.org/][7]
 
 Normally, the failure report would include a link to somewhere near the doctest that failed, but that doesn't format properly in published m-files.
     
@@ -178,7 +184,7 @@ Here are some examples of formatting, both ones that work and ones that don't.
         got     : ans = 5
     not ok 7 - "dicomuid       % FAILS: no wildcard on changing output"
         expected: ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343357080818013
-        got     : ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343394619430064
+        got     : ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343404047252066
     ok 8 - "dicomuid       % passes"
     
 
@@ -220,13 +226,13 @@ doctest can deal with errors, a little bit. You might want this to test that you
 
 All adjascent white space is collapsed into a single space before comparison, so right now doctest can't detect a failure that's purely a whitespace difference.
 
-It can't run lines that are longer than one line of code (so, for example, no loops that take more than one line). This is difficult because I haven't found a good way to mark these subsequent lines as part-of-the-source-code rather than part-of-the-result.
+It can't run examples that are longer than one line of code (so, for example, no loops that take more than one line). This is difficult because I haven't found a good way to mark these subsequent lines as part-of-the-source-code rather than part-of-the-result. However, variables that you define in one line do carry over to the next.
 
 I haven't found a good way of isolating the variables that you define in the tests from the variables used to run the test. So, don't run CLEAR in your doctest, and don't expect WHO/WHOS to work right, and don't mess with any variables that start with doctest_. :-/
 
 When you're working on writing/debugging a Matlab class, you might need to run 'clear classes' to get correct results from doctests (this is a general problem with developing classes in Matlab).
 
-The latest version from the original author, Thomas Smith, is available at [http://bitbucket.org/tgs/doctest-for-matlab/src][7]
+The latest version from the original author, Thomas Smith, is available at [http://bitbucket.org/tgs/doctest-for-matlab/src][8]
 
 The bugtracker is also there, let me know if you encounter any problems!
 
@@ -239,6 +245,7 @@ Published with MATLAB® 7.9
    [3]: #3
    [4]: #4
    [5]: #5
-   [6]: http://testanything.org/
-   [7]: http://bitbucket.org/tgs/doctest-for-matlab/src
+   [6]: #6
+   [7]: http://testanything.org/
+   [8]: http://bitbucket.org/tgs/doctest-for-matlab/src
 
