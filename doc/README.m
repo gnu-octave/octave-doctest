@@ -1,5 +1,4 @@
-%% DOCTEST - Description
-% Run examples embedded in documentation
+%% DOCTEST - Run examples embedded in documentation
 %
 % With doctest, you can put an example of using your function, right in the
 % m-file help.  Then, that same example can be used like a unit test, to
@@ -9,7 +8,12 @@
 %
 
 type add3
-disp -------------
+
+%% Example output
+%
+% Here's the output we get from running doctest on the add3 function above:
+%
+
 doctest add3
 
 

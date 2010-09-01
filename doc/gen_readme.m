@@ -11,11 +11,20 @@ opts.outputDir = '..';
 
 publish('README', opts);
 
-if ~ exist('html2text.py', 'file')
-    ! wget http://www.aaronsw.com/2002/html2text/html2text.py
-    ! chmod a+rx html2text.py
-end
+% Convert HTML to ReStructuredText
+% Using Pandoc, a document converter
+% http://johnmacfarlane.net/pandoc/
 
-! ./html2text.py ../README.html > ../README.markdown
+! pandoc -o ../README.rst ../README.html
 
+
+
+% % To convert to Markdown, do this:
+% if ~ exist('html2text.py', 'file')
+%     ! wget http://www.aaronsw.com/2002/html2text/html2text.py
+%     ! chmod a+rx html2text.py
+% end
+% 
+% ! ./html2text.py ../README.html > ../README.markdown
+% 
 
