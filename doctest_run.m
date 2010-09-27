@@ -13,12 +13,11 @@ example_re = '(?m)(?-s)(?:^ *>> )(?<source>.*)\n(?<want>(?:(?:^ *$\n)?(?!\s*>>).
 
 results = [];
 
-file_for_persisting = [ tempname() '.mat' ];
-
+all_outputs = DOCTEST__evalc({matches(:).source});
+  
 for I = 1:length(matches)
-
-    got = doctest_evalc_persist(matches(I).source, file_for_persisting);
-    
+  
+    got = all_outputs{I};
     want_unspaced = regexprep(matches(I).want, '\s+', ' ');
     
     got_unspaced = regexprep(got, '\s+', ' ');
@@ -32,35 +31,45 @@ for I = 1:length(matches)
     
 end
 
-delete(file_for_persisting);
-
 end
 
 
 
-function doctest_result = doctest_evalc_persist(doctest_example_to_run, doctest_file_to_save)
+function DOCTEST__results = DOCTEST__evalc(DOCTEST__examples_to_run)
 % I wish I had my very own namespace...
+% DOCTEST__
 
-if exist(doctest_file_to_save, 'file')
-    load(doctest_file_to_save);
+DOCTEST__results = cell(size(DOCTEST__examples_to_run));
+
+for DOCTEST__I = 1:numel(DOCTEST__examples_to_run)
+    try
+        DOCTEST__results{DOCTEST__I} = evalc(DOCTEST__examples_to_run{DOCTEST__I});
+    catch DOCTEST__exception
+        DOCTEST__results{DOCTEST__I} = DOCTEST__format_exception(DOCTEST__exception);
+    end
 end
 
-try
-    doctest_result = evalc(doctest_example_to_run);
-catch doctest_exception
-    doctest_result = doctest_format_exception(doctest_exception);
+
+
+% If we get excited, we could add this snippet
+%             % list created variables in this context
+%             %clear ans
+%             DOCTEST__vars = whos('-regexp', '^(?!DOCTEST__).*');   % java regex negative lookahead
+%             varargout{1} = { DOCTEST__vars.name };
+% 
+%             if nargout > 2
+%                 % return those variables
+%                 varargout{2} = cell(1,numel(DOCTEST__vars));
+%                 for DOCTEST__i=1:numel(DOCTEST__vars)
+%                     [~,varargout{2}{DOCTEST__i}] = evalc( DOCTEST__vars(DOCTEST__i).name );
+%                 end
+%             end
+
 end
 
-% to prevent SAVE from dying because it can't save anything
-abcdefghijklmnopqrstuvwxyz0123456789_doctest_bleah = 1;
+function formatted = DOCTEST__format_exception(ex)
 
-save(doctest_file_to_save, '-regexp', '^(?!doctest_).');
-
-end
-
-function formatted = doctest_format_exception(ex)
-
-if strcmp(ex.stack(1).name, 'doctest_evalc_persist')
+if strcmp(ex.stack(1).name, 'DOCTEST__evalc')
     % we don't want the report, we just want the message
     % otherwise it'll talk about evalc, which is not what the user got on
     % the command line.
