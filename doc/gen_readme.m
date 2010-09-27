@@ -8,6 +8,7 @@
 opts = [];
 opts.format = 'html';
 opts.outputDir = '..';
+opts.showCode = false;
 
 publish('README', opts);
 

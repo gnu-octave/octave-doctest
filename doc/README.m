@@ -11,7 +11,11 @@ type add3
 
 %% Example output
 %
-% Here's the output we get from running doctest on the add3 function above:
+% Now we'll run
+%
+% doctest add3
+%
+% Here's the output we get:
 %
 
 doctest add3
@@ -91,7 +95,7 @@ doctest('errors', 'CreateLinks', 0)
 % I haven't found a good way of isolating the variables that you define in
 % the tests from the variables used to run the test.  So, don't run CLEAR
 % in your doctest, and don't expect WHO/WHOS to work right, and don't mess
-% with any variables that start with doctest_.  :-/
+% with any variables that start with DOCTEST__.  :-/
 % 
 % When you're working on writing/debugging a Matlab class, you might need
 % to run 'clear classes' to get correct results from doctests (this is a

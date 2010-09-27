@@ -22,10 +22,6 @@ Here's a trivial function and its documentation:
 
 ::
 
-    type add3
-
-::
-
     function sum = add3(value)
     % adds 3 to a number
     %
@@ -64,12 +60,11 @@ Here's a trivial function and its documentation:
 Example output
 --------------
 
-Here's the output we get from running doctest on the add3 function
-above:
+Now we'll run
 
-::
+doctest add3
 
-    doctest add3
+Here's the output we get:
 
 ::
 
@@ -92,12 +87,6 @@ See `http://testanything.org/ <http://testanything.org/>`_
 Normally, the failure report would include a link to somewhere near
 the doctest that failed, but that doesn't format properly in
 published m-files.
-
-::
-
-    type should_fail
-    disp -------------
-    doctest('should_fail', 'CreateLinks', 0) % the links don't work in publish()
 
 ::
 
@@ -136,12 +125,6 @@ the example below.
 
 Here are some examples of formatting, both ones that work and ones
 that don't.
-
-::
-
-    type formatting
-    disp -------------
-    doctest('formatting', 'CreateLinks', 0)
 
 ::
 
@@ -216,7 +199,7 @@ that don't.
         got     : ans = 5
     not ok 7 - "dicomuid       % FAILS: no wildcard on changing output"
         expected: ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343357080818013
-        got     : ans = 1.3.6.1.4.1.9590.100.1.2.138027182622631308123079093120036407030
+        got     : ans = 1.3.6.1.4.1.9590.100.1.2.380240475631532521024539401934020846388
     ok 8 - "dicomuid       % passes"
 
 Expecting an error
@@ -228,12 +211,6 @@ invalid parameters. But if your example will emit other output
 BEFORE the error message, the current version can't deal with that.
 For more info see Issue #4 on the bitbucket site (below). Warnings
 are different from errors, and they work fine.
-
-::
-
-    type errors
-    disp -------------
-    doctest('errors', 'CreateLinks', 0)
 
 ::
 
@@ -277,8 +254,8 @@ do carry over to the next.
 I haven't found a good way of isolating the variables that you
 define in the tests from the variables used to run the test. So,
 don't run CLEAR in your doctest, and don't expect WHO/WHOS to work
-right, and don't mess with any variables that start with doctest\_.
-:-/
+right, and don't mess with any variables that start with
+DOCTEST\_\_. :-/
 
 When you're working on writing/debugging a Matlab class, you might
 need to run 'clear classes' to get correct results from doctests
