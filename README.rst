@@ -3,12 +3,12 @@ Contents
 --------
 
 
--  `DOCTEST - Run examples embedded in documentation <#1>`_
--  `Example output <#2>`_
--  `Failure <#3>`_
--  `Defining your expectations <#4>`_
--  `Expecting an error <#5>`_
--  `Limitations <#6>`_
+-  `DOCTEST - Run examples embedded in documentation <#id1>`_
+-  `Example output <#id2>`_
+-  `Failure <#id3>`_
+-  `Defining your expectations <#id4>`_
+-  `Expecting an error <#id5>`_
+-  `Limitations <#id6>`_
 
 DOCTEST - Run examples embedded in documentation
 ------------------------------------------------
@@ -199,7 +199,7 @@ that don't.
         got     : ans = 5
     not ok 7 - "dicomuid       % FAILS: no wildcard on changing output"
         expected: ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343357080818013
-        got     : ans = 1.3.6.1.4.1.9590.100.1.2.380240475631532521024539401934020846388
+        got     : ans = 1.3.6.1.4.1.9590.100.1.2.282084865731251048027101806490961582150
     ok 8 - "dicomuid       % passes"
 
 Expecting an error

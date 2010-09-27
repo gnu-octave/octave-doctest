@@ -16,8 +16,9 @@ publish('README', opts);
 % Using Pandoc, a document converter
 % http://johnmacfarlane.net/pandoc/
 
-! pandoc -o ../README.rst ../README.html
-
+! pandoc -o ../README.almost.rst ../README.html
+! sed -e 's/<#\(.\+\)>/<#id\1>/' ../README.almost.rst > ../README.rst
+! rm ../README.almost.rst
 
 
 % % To convert to Markdown, do this:
