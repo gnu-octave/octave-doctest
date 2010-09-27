@@ -1,30 +1,39 @@
 function results = doctest_run(docstring)
+%DOCTEST_RUN - used internally by doctest
 %
-% 
-% >> 1 + 2
-% ans =
-%      3
+% Usage:
+%   doctest_run(docstring)
+%       Runs all the examples in the given docstring and returns a
+%       structure with the results from running.
+%
+% The return value is a structure with the following fields:
+%
+% results.source:   the source code that was run
+% results.want:     the desired output
+% results.got:      the output that was recieved
+% results.pass:     whether .want and .got match each other according to
+%       doctest_compare.
 %
 
 % loosely based on Python 2.6 doctest.py, line 510
 example_re = '(?m)(?-s)(?:^ *>> )(?<source>.*)\n(?<want>(?:(?:^ *$\n)?(?!\s*>>).*\w.*\n)*)';
 
-[matches] = regexp(docstring, example_re, 'names', 'warnings');
+[examples] = regexp(docstring, example_re, 'names', 'warnings');
 
 results = [];
 
-all_outputs = DOCTEST__evalc({matches(:).source});
+all_outputs = DOCTEST__evalc({examples(:).source});
   
-for I = 1:length(matches)
+for I = 1:length(examples)
   
     got = all_outputs{I};
-    want_unspaced = regexprep(matches(I).want, '\s+', ' ');
+    want_unspaced = regexprep(examples(I).want, '\s+', ' ');
     
     got_unspaced = regexprep(got, '\s+', ' ');
     
 
     
-    results(I).source = matches(I).source;
+    results(I).source = examples(I).source;
     results(I).want = strtrim(want_unspaced);
     results(I).got = strtrim(got_unspaced);
     results(I).pass = doctest_compare(want_unspaced, got_unspaced);
@@ -37,7 +46,9 @@ end
 
 function DOCTEST__results = DOCTEST__evalc(DOCTEST__examples_to_run)
 % I wish I had my very own namespace...
-% DOCTEST__
+% Structure adapted from a StackOverflow answer by user Amro:
+% http://stackoverflow.com/questions/3283586
+% http://stackoverflow.com/users/97160/amro
 
 DOCTEST__results = cell(size(DOCTEST__examples_to_run));
 
@@ -51,7 +62,7 @@ end
 
 
 
-% If we get excited, we could add this snippet
+% If we get excited, we could add this snippet by Amro
 %             % list created variables in this context
 %             %clear ans
 %             DOCTEST__vars = whos('-regexp', '^(?!DOCTEST__).*');   % java regex negative lookahead
