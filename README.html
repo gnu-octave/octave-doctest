@@ -4,9 +4,9 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <!--
-This HTML is auto-generated from an M-file.
-To make changes, update the M-file and republish this document.
-      --><title>README</title><meta name="generator" content="MATLAB 7.10"><meta name="date" content="2010-09-27"><meta name="m-file" content="README"><style type="text/css">
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>README</title><meta name="generator" content="MATLAB 7.11"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-03-25"><meta name="DC.source" content="README.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -97,12 +97,8 @@ if ~ isnumeric(value)
 end
 
 sum = value + 3;
-</pre><h2>Example output<a name="2"></a></h2><p>Now we'll run</p><p>doctest add3</p><p>Here's the output we get:</p><pre class="codeoutput">TAP version 13
-1..3
-ok 1 - "add3(7)"
-ok 2 - "add3([2 4])"
-ok 3 - "add3('hi')"
-</pre><h2>Failure<a name="3"></a></h2><p>Here's an example of what happens when something changes and your test fails.</p><p>By the way, output is in the Test Anything Protocol format, which I guess is mostly used by Perl people, but it's good enough for now.  See <a href="http://testanything.org/">http://testanything.org/</a></p><p>Normally, the failure report would include a link to somewhere near the doctest that failed, but that doesn't format properly in published m-files.</p><pre class="codeoutput">
+</pre><h2>Example output<a name="2"></a></h2><p>Now we'll run</p><p>doctest add3</p><p>Here's the output we get:</p><pre class="codeoutput">add3: OK
+</pre><h2>Failure<a name="3"></a></h2><p>Here's an example of what happens when something changes and your test fails.</p><p>Normally, the failure report would include a link to somewhere near the doctest that failed, but that doesn't format properly in published m-files.</p><pre class="codeoutput">
 % Has a doctest that should fail.
 %
 % &gt;&gt; 3 + 3
@@ -113,11 +109,10 @@ ok 3 - "add3('hi')"
 %
 
 -------------
-TAP version 13
-1..1
-not ok 1 - "3 + 3"
-    expected: ans = 5
-    got     : ans = 6
+should_fail: 1 ERRORS
+  &gt;&gt; 3 + 3
+     expected: ans = 5
+     got     : ans = 6
 </pre><h2>Defining your expectations<a name="4"></a></h2><p>Each time doctest runs a test, it's running a line of code and checking that the output is what you say it should be.  It knows something is an example because it's a line in help('your_function') that starts with '&gt;&gt;'.  It knows what you think the output should be by starting on the line after &gt;&gt; and looking for the next &gt;&gt;, two blank lines, or the end of the documentation.</p><p>If the output of some function will change each time you call it, for instance if it includes a random number or a stack trace, you can put '***' (three asterisks) where the changing element should be.  This acts as a wildcard, and will match anything.  See the example below.</p><p>Here are some examples of formatting, both ones that work and ones that don't.</p><pre class="codeoutput">
 % formatting examples
 %
@@ -131,16 +126,16 @@ not ok 1 - "3 + 3"
 % ans = 2
 % 
 % &gt;&gt; 1 + 1;         % expects no output, since &gt;&gt; is on the next line
-% &gt;&gt; for I = 1:3    % FAILS: code to run can only be one line long
-% disp(I)
-% end
+% &gt;&gt; for I = 1:3    % when code spans multiple lines, prefix every subsequent line with '..'
+% ..   disp(I)
+% .. end
 %      1
 % 
 %      2
 % 
 %      3
 % 
-% &gt;&gt; for I = 1:3; disp(I); end      % but this works
+% &gt;&gt; for I = 1:3; disp(I); end      % this also works
 %      1
 % 
 %      2
@@ -176,22 +171,13 @@ not ok 1 - "3 + 3"
 
 
 -------------
-TAP version 13
-1..8
-ok 1 - "1 + 1          % should work fine"
-ok 2 - "1 + 1          % comparisons collapse all whitespace, so this passes"
-ok 3 - "1 + 1;         % expects no output, since &gt;&gt; is on the next line"
-not ok 4 - "for I = 1:3    % FAILS: code to run can only be one line long"
-    expected: disp(I) end 1 2 3
-    got     : ??? Error: At least one END is missing: the statement may begin here.
-ok 5 - "for I = 1:3; disp(I); end      % but this works"
-not ok 6 - "1 + 4          % FAILS: there aren't 2 blank lines before the prose"
-    expected: ans = 5 Blah blah blah oops! This prose started too soon!
-    got     : ans = 5
-not ok 7 - "dicomuid       % FAILS: no wildcard on changing output"
-    expected: ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343357080818013
-    got     : ans = 1.3.6.1.4.1.9590.100.1.2.282084865731251048027101806490961582150
-ok 8 - "dicomuid       % passes"
+formatting: 2 ERRORS
+  &gt;&gt; 1 + 4          % FAILS: there aren't 2 blank lines before the prose
+     expected: ans = 5 Blah blah blah oops! This prose started too soon!
+     got     : ans = 5
+  &gt;&gt; dicomuid       % FAILS: no wildcard on changing output
+     expected: ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343357080818013
+     got     : ans = 1.3.6.1.4.1.9590.100.1.2.127512981121022604124941919250705271702
 </pre><h2>Expecting an error<a name="5"></a></h2><p>doctest can deal with errors, a little bit.  You might want this to test that your function correctly detects that it is being given invalid parameters.  But if your example will emit other output BEFORE the error message, the current version can't deal with that.  For more info see Issue #4 on the bitbucket site (below).  Warnings are different from errors, and they work fine.</p><pre class="codeoutput">
 % Errors and doctest - demonstrates a current limitation of doctest
 %
@@ -209,14 +195,12 @@ ok 8 - "dicomuid       % passes"
 % ??? nevermind
 
 -------------
-TAP version 13
-1..2
-ok 1 - "not_a_real_function(42)"
-not ok 2 - "disp('if at first you don''t succeed...'); error('nevermind')"
-    expected: if at first you don't succeed... ??? nevermind
-    got     : ??? nevermind
-</pre><h2>Limitations<a name="6"></a></h2><p>All adjascent white space is collapsed into a single space before comparison, so right now doctest can't detect a failure that's purely a whitespace difference.</p><p>It can't run examples that are longer than one line of code (so, for example, no loops that take more than one line).  This is difficult because I haven't found a good way to mark these subsequent lines as part-of-the-source-code rather than part-of-the-result.  However, variables that you define in one line do carry over to the next.</p><p>I haven't found a good way of isolating the variables that you define in the tests from the variables used to run the test.  So, don't run CLEAR in your doctest, and don't expect WHO/WHOS to work right, and don't mess with any variables that start with DOCTEST__.  :-/</p><p>When you're working on writing/debugging a Matlab class, you might need to run 'clear classes' to get correct results from doctests (this is a general problem with developing classes in Matlab).</p><p>The latest version from the original author, Thomas Smith, is available at <a href="http://bitbucket.org/tgs/doctest-for-matlab/src">http://bitbucket.org/tgs/doctest-for-matlab/src</a></p><p>The bugtracker is also there, let me know if you encounter any problems!</p><p class="footer"><br>
-      Published with MATLAB&reg; 7.10<br></p></div><!--
+errors: 1 ERRORS
+  &gt;&gt; disp('if at first you don''t succeed...'); error('nevermind')
+     expected: if at first you don't succeed... ??? nevermind
+     got     : ??? nevermind
+</pre><h2>Limitations<a name="6"></a></h2><p>All adjascent white space is collapsed into a single space before comparison, so right now doctest can't detect a failure that's purely a whitespace difference.</p><p>I haven't found a good way of isolating the variables that you define in the tests from the variables used to run the test.  So, don't run CLEAR in your doctest, and don't expect WHO/WHOS to work right, and don't mess with any variables that start with DOCTEST__.  :-/</p><p>When you're working on writing/debugging a Matlab class, you might need to run 'clear classes' to get correct results from doctests (this is a general problem with developing classes in Matlab).</p><p>The latest version from the original author, Thomas Smith, is available at <a href="http://bitbucket.org/tgs/doctest-for-matlab/src">http://bitbucket.org/tgs/doctest-for-matlab/src</a></p><p>The bugtracker is also there, let me know if you encounter any problems!</p><p>This version, patched by Michael Walter for multiline support, is available at <a href="http://github.com/catch22/doctest-for-matlab">http://github.com/catch22/doctest-for-matlab</a></p><p class="footer"><br>
+      Published with MATLAB&reg; 7.11<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% DOCTEST - Run examples embedded in documentation
 %
@@ -245,10 +229,6 @@ doctest add3
 %% Failure
 % Here's an example of what happens when something changes and your test
 % fails.
-%
-% By the way, output is in the Test Anything Protocol format, which I guess
-% is mostly used by Perl people, but it's good enough for now.  See 
-% http://testanything.org/
 %
 % Normally, the failure report would include a link to somewhere near the
 % doctest that failed, but that doesn't format properly in published
@@ -306,12 +286,6 @@ doctest('errors', 'CreateLinks', 0)
 % comparison, so right now doctest can't detect a failure that's purely a
 % whitespace difference.
 %
-% It can't run examples that are longer than one line of code (so, for
-% example, no loops that take more than one line).  This is difficult
-% because I haven't found a good way to mark these subsequent lines as
-% part-of-the-source-code rather than part-of-the-result.  However,
-% variables that you define in one line do carry over to the next.
-%
 % I haven't found a good way of isolating the variables that you define in
 % the tests from the variables used to run the test.  So, don't run CLEAR
 % in your doctest, and don't expect WHO/WHOS to work right, and don't mess
@@ -326,7 +300,8 @@ doctest('errors', 'CreateLinks', 0)
 %
 % The bugtracker is also there, let me know if you encounter any problems!
 %
-%
+% This version, patched by Michael Walter for multiline support, is available
+% at http://github.com/catch22/doctest-for-matlab
 
 ##### SOURCE END #####
 --></body></html>
