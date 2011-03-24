@@ -86,12 +86,6 @@ doctest('errors', 'CreateLinks', 0)
 % comparison, so right now doctest can't detect a failure that's purely a
 % whitespace difference.
 %
-% It can't run examples that are longer than one line of code (so, for
-% example, no loops that take more than one line).  This is difficult
-% because I haven't found a good way to mark these subsequent lines as
-% part-of-the-source-code rather than part-of-the-result.  However,
-% variables that you define in one line do carry over to the next.
-%
 % I haven't found a good way of isolating the variables that you define in
 % the tests from the variables used to run the test.  So, don't run CLEAR
 % in your doctest, and don't expect WHO/WHOS to work right, and don't mess
@@ -106,4 +100,5 @@ doctest('errors', 'CreateLinks', 0)
 %
 % The bugtracker is also there, let me know if you encounter any problems!
 %
-%
+% This version, patched by Michael Walter for multiline support, is available
+% at http://github.com/catch22/doctest-for-matlab

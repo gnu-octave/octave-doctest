@@ -10,16 +10,16 @@
 % ans = 2
 % 
 % >> 1 + 1;         % expects no output, since >> is on the next line
-% >> for I = 1:3    % FAILS: code to run can only be one line long
-% disp(I)
-% end
+% >> for I = 1:3    % when code spans multiple lines, prefix every subsequent line with '..'
+% ..   disp(I)
+% .. end
 %      1
 % 
 %      2
 % 
 %      3
 % 
-% >> for I = 1:3; disp(I); end      % but this works
+% >> for I = 1:3; disp(I); end      % this also works
 %      1
 % 
 %      2

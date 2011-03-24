@@ -86,6 +86,19 @@ function doctest(func_or_class, varargin)
 % 1.3.6.1.4.1.***
 %
 %
+% Multiple lines of code:
+% Code spanning multiple lines of code can be entered by prefixing all
+% subsequent lines with '..',  e.g.
+%
+% >> for i = 1:3
+% ..   i
+% .. end
+%
+% i = 1
+% i = 2
+% i = 3
+%
+%
 % LIMITATIONS:
 %
 % The examples MUST END with either the END OF THE DOCUMENTATION or TWO
@@ -96,11 +109,6 @@ function doctest(func_or_class, varargin)
 % comparison, so right now it can't detect anything that's purely a
 % whitespace difference.
 %
-% It can't run lines that are longer than one line of code (so, for
-% example, no loops that take more than one line).  This is difficult
-% because I haven't found a good way to mark these subsequent lines as
-% part-of-the-source-code rather than part-of-the-result.
-% 
 % When you're working on writing/debugging a Matlab class, you might need
 % to run 'clear classes' to get correct results from doctests (this is a
 % general problem with developing classes in Matlab).
@@ -114,6 +122,9 @@ function doctest(func_or_class, varargin)
 %
 % The latest version from the original author, Thomas Smith, is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
+%
+% This version, patched by Michael Walter for multiline support, is available
+% at https://github.com/catch22/doctest-for-matlab
 
 p = inputParser;
 p.addOptional('CreateLinks', true);

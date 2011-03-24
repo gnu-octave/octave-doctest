@@ -16,9 +16,22 @@ function results = doctest_run(docstring)
 %
 
 % loosely based on Python 2.6 doctest.py, line 510
-example_re = '(?m)(?-s)(?:^ *>> )(?<source>.*)\n(?<want>(?:(?:^ *$\n)?(?!\s*>>).*\w.*\n)*)';
+example_re = '(?m)(?-s)(?:^ *>> )(?<source>.*(\n *\.\. .*)*)\n(?<want>(?:(?:^ *$\n)?(?!\s*>>).*\w.*\n)*)';
 
 [examples] = regexp(docstring, example_re, 'names', 'warnings');
+
+for I = 1:length(examples)
+  lines = textscan(examples(I).source, '%s', 'delimiter', sprintf('\n'));
+  lines = lines{1};
+
+  first_line = lines(1);
+  examples(I).source = first_line{1};
+
+  for j = 2:length(lines)
+    line = lines(j);
+    examples(I).source = sprintf('%s\n     %s', examples(I).source, line{1}(4:end));
+  end
+end
 
 results = [];
 
