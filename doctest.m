@@ -22,13 +22,7 @@ function doctest(func_or_class, varargin)
 % 'add7(3)' and make sure that it gets back 'ans = 10'.  It prints out
 % something like this:
 %
-% TAP version 13
-% 1..1
-% ok 1 - add7(3)
-%
-% This is in the Test Anything Protocol format, which I guess is mostly
-% used by Perl people, but it's good enough for now.  See <a
-% href="http://testanything.org/">testanything.org</a>.
+%  add7: OK
 %
 % If the output of some function will change each time you call it, for
 % instance if it includes a random number or a stack trace, you can put ***
@@ -199,38 +193,49 @@ end
 % Print the results
 %
 
-test_anything(result, verbose, createLinks);
+test_anything(to_test, result, verbose, createLinks);
 
 
 end
 
 
-function test_anything(results, verbose, createLinks)
+function test_anything(to_test, results, verbose, createLinks)
 % Prints out test results in the Test Anything Protocol format
 %
 % See http://testanything.org/
 %
 
 out = 1; % stdout
+err = 2;
 
-fprintf(out, 'TAP version 13\n')
-fprintf(out, '1..%d\n', numel(results));
+total = 0; errors = 0;
+for i = 1:length(results)
+  total = total + 1;
+  if ~results(i).pass
+    errors = errors + 1;
+  end
+end
+
+if total == 0
+  fprintf(err, '%s: NO TESTS\n', to_test.name);
+elseif errors == 0
+  fprintf(out, '%s: OK\n', to_test.name);
+else
+  fprintf(err, '%s: %d ERRORS\n', to_test.name, errors);
+end
 for I = 1:length(results)
-    if results(I).pass
-        ok = 'ok';
-    else
-        ok = 'not ok';
-    end
+  if ~results(I).pass
     
-    fprintf(out, '%s %d - "%s"\n', ok, I, results(I).source);
-%     results(I).pass
+    fprintf(out, '  >> %s\n', results(I).source);
+    %     results(I).pass
     if verbose || ~ results(I).pass
-        if createLinks
-            fprintf(out, '    in %s\n', results(I).link);
-        end
-        fprintf(out, '    expected: %s\n', results(I).want);
-        fprintf(out, '    got     : %s\n', results(I).got);
+      if createLinks
+        fprintf(out, '     in %s\n', results(I).link);
+      end
+      fprintf(out, '     expected: %s\n', results(I).want);
+      fprintf(out, '     got     : %s\n', results(I).got);
     end
+  end
 end
 
 

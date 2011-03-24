@@ -26,10 +26,6 @@ doctest add3
 % Here's an example of what happens when something changes and your test
 % fails.
 %
-% By the way, output is in the Test Anything Protocol format, which I guess
-% is mostly used by Perl people, but it's good enough for now.  See 
-% http://testanything.org/
-%
 % Normally, the failure report would include a link to somewhere near the
 % doctest that failed, but that doesn't format properly in published
 % m-files.
