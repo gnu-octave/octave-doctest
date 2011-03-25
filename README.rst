@@ -1,4 +1,3 @@
-README
 Contents
 --------
 
@@ -68,21 +67,13 @@ Here's the output we get:
 
 ::
 
-    TAP version 13
-    1..3
-    ok 1 - "add3(7)"
-    ok 2 - "add3([2 4])"
-    ok 3 - "add3('hi')"
+    add3: OK
 
 Failure
 -------
 
 Here's an example of what happens when something changes and your
 test fails.
-
-By the way, output is in the Test Anything Protocol format, which I
-guess is mostly used by Perl people, but it's good enough for now.
-See `http://testanything.org/ <http://testanything.org/>`_
 
 Normally, the failure report would include a link to somewhere near
 the doctest that failed, but that doesn't format properly in
@@ -100,11 +91,10 @@ published m-files.
     %
     
     -------------
-    TAP version 13
-    1..1
-    not ok 1 - "3 + 3"
-        expected: ans = 5
-        got     : ans = 6
+    should_fail: 1 ERRORS
+      >> 3 + 3
+         expected: ans = 5
+         got     : ans = 6
 
 Defining your expectations
 --------------------------
@@ -140,16 +130,16 @@ that don't.
     % ans = 2
     % 
     % >> 1 + 1;         % expects no output, since >> is on the next line
-    % >> for I = 1:3    % FAILS: code to run can only be one line long
-    % disp(I)
-    % end
+    % >> for I = 1:3    % when code spans multiple lines, prefix every subsequent line with '..'
+    % ..   disp(I)
+    % .. end
     %      1
     % 
     %      2
     % 
     %      3
     % 
-    % >> for I = 1:3; disp(I); end      % but this works
+    % >> for I = 1:3; disp(I); end      % this also works
     %      1
     % 
     %      2
@@ -185,22 +175,13 @@ that don't.
     
     
     -------------
-    TAP version 13
-    1..8
-    ok 1 - "1 + 1          % should work fine"
-    ok 2 - "1 + 1          % comparisons collapse all whitespace, so this passes"
-    ok 3 - "1 + 1;         % expects no output, since >> is on the next line"
-    not ok 4 - "for I = 1:3    % FAILS: code to run can only be one line long"
-        expected: disp(I) end 1 2 3
-        got     : ??? Error: At least one END is missing: the statement may begin here.
-    ok 5 - "for I = 1:3; disp(I); end      % but this works"
-    not ok 6 - "1 + 4          % FAILS: there aren't 2 blank lines before the prose"
-        expected: ans = 5 Blah blah blah oops! This prose started too soon!
-        got     : ans = 5
-    not ok 7 - "dicomuid       % FAILS: no wildcard on changing output"
-        expected: ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343357080818013
-        got     : ans = 1.3.6.1.4.1.9590.100.1.2.282084865731251048027101806490961582150
-    ok 8 - "dicomuid       % passes"
+    formatting: 2 ERRORS
+      >> 1 + 4          % FAILS: there aren't 2 blank lines before the prose
+         expected: ans = 5 Blah blah blah oops! This prose started too soon!
+         got     : ans = 5
+      >> dicomuid       % FAILS: no wildcard on changing output
+         expected: ans = 1.3.6.1.4.1.9590.100.1.1.944807727511025110.343357080818013
+         got     : ans = 1.3.6.1.4.1.9590.100.1.2.127512981121022604124941919250705271702
 
 Expecting an error
 ------------------
@@ -230,12 +211,10 @@ are different from errors, and they work fine.
     % ??? nevermind
     
     -------------
-    TAP version 13
-    1..2
-    ok 1 - "not_a_real_function(42)"
-    not ok 2 - "disp('if at first you don''t succeed...'); error('nevermind')"
-        expected: if at first you don't succeed... ??? nevermind
-        got     : ??? nevermind
+    errors: 1 ERRORS
+      >> disp('if at first you don''t succeed...'); error('nevermind')
+         expected: if at first you don't succeed... ??? nevermind
+         got     : ??? nevermind
 
 Limitations
 -----------
@@ -243,13 +222,6 @@ Limitations
 All adjascent white space is collapsed into a single space before
 comparison, so right now doctest can't detect a failure that's
 purely a whitespace difference.
-
-It can't run examples that are longer than one line of code (so,
-for example, no loops that take more than one line). This is
-difficult because I haven't found a good way to mark these
-subsequent lines as part-of-the-source-code rather than
-part-of-the-result. However, variables that you define in one line
-do carry over to the next.
 
 I haven't found a good way of isolating the variables that you
 define in the tests from the variables used to run the test. So,
@@ -268,6 +240,8 @@ available at
 The bugtracker is also there, let me know if you encounter any
 problems!
 
-Published with MATLAB® 7.10
+This version, patched by Michael Walter for multiline support, is
+available at
+`http://github.com/catch22/doctest-for-matlab <http://github.com/catch22/doctest-for-matlab>`_
 
-
+Published with MATLAB® 7.11
