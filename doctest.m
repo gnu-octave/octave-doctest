@@ -200,10 +200,6 @@ end
 
 
 function test_anything(to_test, results, verbose, createLinks)
-% Prints out test results in the Test Anything Protocol format
-%
-% See http://testanything.org/
-%
 
 out = 1; % stdout
 err = 2;
