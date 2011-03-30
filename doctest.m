@@ -120,14 +120,6 @@ function doctest(func_or_class, varargin)
 % This version, patched by Michael Walter for multiline support, is available
 % at https://github.com/catch22/doctest-for-matlab
 
-p = inputParser;
-p.addOptional('CreateLinks', true);
-p.addOptional('Verbose', false);
-p.parse(varargin{:});
-verbose = p.Results.Verbose;
-createLinks = p.Results.CreateLinks;
-
-
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Make a list of every method/function that we need to examine, in the
@@ -193,13 +185,13 @@ end
 % Print the results
 %
 
-test_anything(to_test, result, verbose, createLinks);
+test_anything(to_test, result);
 
 
 end
 
 
-function test_anything(to_test, results, verbose, createLinks)
+function test_anything(to_test, results)
 
 out = 1; % stdout
 err = 2;
@@ -213,24 +205,17 @@ for i = 1:length(results)
 end
 
 if total == 0
-  fprintf(err, '%s: NO TESTS\n', to_test.name);
+  fprintf(err, '%s: NO TESTS\n', to_test.link);
 elseif errors == 0
-  fprintf(out, '%s: OK\n', to_test.name);
+  fprintf(out, '%s: OK\n', to_test.link);
 else
-  fprintf(err, '%s: %d ERRORS\n', to_test.name, errors);
+  fprintf(err, '%s: %d ERRORS\n', to_test.link, errors);
 end
 for I = 1:length(results)
   if ~results(I).pass
-    
-    fprintf(out, '  >> %s\n', results(I).source);
-    %     results(I).pass
-    if verbose || ~ results(I).pass
-      if createLinks
-        fprintf(out, '     in %s\n', results(I).link);
-      end
-      fprintf(out, '     expected: %s\n', results(I).want);
-      fprintf(out, '     got     : %s\n', results(I).got);
-    end
+    fprintf(out, '  >> %s\n\n', results(I).source);
+    fprintf(out, '     expected: %s\n', results(I).want);
+    fprintf(out, '     got     : %s\n', results(I).got);
   end
 end
 

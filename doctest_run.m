@@ -18,7 +18,7 @@ function results = doctest_run(docstring)
 % loosely based on Python 2.6 doctest.py, line 510
 example_re = '(?m)(?-s)(?:^ *>> )(?<source>.*(\n *\.\. .*)*)\n(?<want>(?:(?:^ *$\n)?(?!\s*>>).*\w.*\n)*)';
 
-[examples] = regexp(docstring, example_re, 'names', 'warnings');
+[examples] = regexp(docstring, example_re, 'names');
 
 for I = 1:length(examples)
   lines = textscan(examples(I).source, '%s', 'delimiter', sprintf('\n'));
