@@ -117,8 +117,9 @@ function doctest(func_or_class, varargin)
 % The latest version from the original author, Thomas Smith, is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
 %
-% This version, patched by Michael Walter for multiline support, is available
-% at https://github.com/catch22/doctest-for-matlab
+% This version, created by Michael Walter for multiline and Octave
+% support (among other things), is available at
+% https://github.com/catch22/doctest-for-matlab
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

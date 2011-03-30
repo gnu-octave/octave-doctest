@@ -240,8 +240,8 @@ available at
 The bugtracker is also there, let me know if you encounter any
 problems!
 
-This version, patched by Michael Walter for multiline support, is
-available at
+This version, created by Michael Walter for multiline and Octave
+support (among other things), is available at
 `http://github.com/catch22/doctest-for-matlab <http://github.com/catch22/doctest-for-matlab>`_
 
 Published with MATLAB® 7.11

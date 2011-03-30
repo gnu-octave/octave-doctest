@@ -96,5 +96,6 @@ doctest('errors', 'CreateLinks', 0)
 %
 % The bugtracker is also there, let me know if you encounter any problems!
 %
-% This version, patched by Michael Walter for multiline support, is available
-% at http://github.com/catch22/doctest-for-matlab
+% This version, created by Michael Walter for multiline and Octave
+% support (among other things), is available at
+% http://github.com/catch22/doctest-for-matlab
