@@ -127,6 +127,14 @@ function doctest(func_or_class, varargin)
 % to_test struct.
 %
 
+% determine whether we are running octave or matlab
+try
+  OCTAVE_VERSION;
+  running_octave = 1;
+catch
+  running_octave = 0;
+end
+
 % We include a link to the function where the docstring is going to come
 % from, so that it's easier to navigate to that doctest.
 to_test = [];
@@ -166,7 +174,11 @@ end
 result = [];
 
 for I = 1:length(to_test)
-    docstring = help(to_test(I).name);
+    if running_octave
+      docstring = get_help_text(to_test(I).name);
+    else
+      docstring = help(to_test(I).name);
+    end
     
 
     these_results = doctest_run(docstring);
