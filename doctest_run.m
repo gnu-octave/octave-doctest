@@ -16,80 +16,53 @@ function results = doctest_run(docstring)
 %
 
 % loosely based on Python 2.6 doctest.py, line 510
-example_re = '(?m)(?-s)(?:^ *>> )(?<source>.*(\n *\.\. .*)*)\n(?<want>(?:(?:^ *$\n)?(?!\s*>>).*\w.*\n)*)';
+example_re = '(?m)(?-s)(?:^ *>> )(.*(\n *\.\. .*)*)\n((?:(?:^ *$\n)?(?!\s*>>).*\w.*\n)*)';
+[ans,ans,ans,ans,examples] = regexp(docstring, example_re);
 
-[examples] = regexp(docstring, example_re, 'names');
-
-for I = 1:length(examples)
-  lines = textscan(examples(I).source, '%s', 'delimiter', sprintf('\n'));
+for i = 1:length(examples)
+  % split into lines
+  lines = textscan(examples{i}{1}, '%s', 'delimiter', sprintf('\n'));
   lines = lines{1};
 
-  first_line = lines(1);
-  examples(I).source = first_line{1};
-
-  for j = 2:length(lines)
-    line = lines(j);
-    examples(I).source = sprintf('%s\n     %s', examples(I).source, line{1}(4:end));
+  % replace initial '..' by '  ' in subsequent lines
+  examples{i}{1} = lines{1,1};
+  for j=2:length(lines)
+    examples{i}{1} = sprintf('%s\n     %s', examples{i}{1}, lines{j,1}(4:end));
   end
 end
 
+% run tests and store results
+all_outputs = DOCTEST__evalc(examples);
 results = [];
-
-all_outputs = DOCTEST__evalc({examples(:).source});
-  
-for I = 1:length(examples)
-  
-    got = all_outputs{I};
-    want_unspaced = regexprep(examples(I).want, '\s+', ' ');
-    
-    got_unspaced = regexprep(got, '\s+', ' ');
-    
-
-    
-    results(I).source = examples(I).source;
-    results(I).want = strtrim(want_unspaced);
-    results(I).got = strtrim(got_unspaced);
-    results(I).pass = doctest_compare(want_unspaced, got_unspaced);
-    
+for i = 1:length(examples)
+  want_unspaced = regexprep(examples{i}{2}, '\s+', ' ');
+  got_unspaced = regexprep(all_outputs{i}, '\s+', ' ');
+  results(i).source = examples{i}{1};
+  results(i).want = strtrim(want_unspaced);
+  results(i).got = strtrim(got_unspaced);
+  results(i).pass = doctest_compare(want_unspaced, got_unspaced);
 end
 
 end
 
 
-
+% the following function is used to evaluate all lines of code in same
+% namespace (the one of this invocation of DOCTEST__evalc)
 function DOCTEST__results = DOCTEST__evalc(DOCTEST__examples_to_run)
-% I wish I had my very own namespace...
-% Structure adapted from a StackOverflow answer by user Amro:
-% http://stackoverflow.com/questions/3283586
+% structure adapted from a StackOverflow answer by user Amro, see
+% http://stackoverflow.com/questions/3283586 and
 % http://stackoverflow.com/users/97160/amro
-
 DOCTEST__results = cell(size(DOCTEST__examples_to_run));
-
-for DOCTEST__I = 1:numel(DOCTEST__examples_to_run)
-    try
-        DOCTEST__results{DOCTEST__I} = evalc(DOCTEST__examples_to_run{DOCTEST__I});
-    catch DOCTEST__exception
-        DOCTEST__results{DOCTEST__I} = DOCTEST__format_exception(DOCTEST__exception);
-    end
+for DOCTEST__i = 1:numel(DOCTEST__examples_to_run)
+  try
+    DOCTEST__results{DOCTEST__i} = evalc(DOCTEST__examples_to_run{DOCTEST__i}{1});
+  catch DOCTEST__exception
+    DOCTEST__results{DOCTEST__i} = DOCTEST__format_exception(DOCTEST__exception);
+  end
 end
 
-
-
-% If we get excited, we could add this snippet by Amro
-%             % list created variables in this context
-%             %clear ans
-%             DOCTEST__vars = whos('-regexp', '^(?!DOCTEST__).*');   % java regex negative lookahead
-%             varargout{1} = { DOCTEST__vars.name };
-% 
-%             if nargout > 2
-%                 % return those variables
-%                 varargout{2} = cell(1,numel(DOCTEST__vars));
-%                 for DOCTEST__i=1:numel(DOCTEST__vars)
-%                     [~,varargout{2}{DOCTEST__i}] = evalc( DOCTEST__vars(DOCTEST__i).name );
-%                 end
-%             end
-
 end
+
 
 function formatted = DOCTEST__format_exception(ex)
 
@@ -102,9 +75,4 @@ else
     formatted = ['??? ' ex.getReport('basic')];
 end
 
-
-
 end
-
-
-
