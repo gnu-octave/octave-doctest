@@ -180,7 +180,6 @@ for I = 1:length(to_test)
       docstring = help(to_test(I).name);
     end
     
-
     these_results = doctest_run(docstring);
     
  
@@ -220,7 +219,7 @@ end
 if total == 0
   fprintf(err, '%s: NO TESTS\n', to_test.link);
 elseif errors == 0
-  fprintf(out, '%s: OK\n', to_test.link);
+  fprintf(out, '%s: OK (%d tests)\n', to_test.link, length(results));
 else
   fprintf(err, '%s: %d ERRORS\n', to_test.link, errors);
 end
