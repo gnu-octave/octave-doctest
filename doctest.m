@@ -17,7 +17,7 @@ function doctest(func_or_class, varargin)
 %         %
 %         res = num + 7;
 %     end
-% 
+%
 % Save that to 'add7.m'.  Now you can say 'doctest add7' and it will run
 % 'add7(3)' and make sure that it gets back 'ans = 10'.  It prints out
 % something like this:
@@ -35,9 +35,9 @@ function doctest(func_or_class, varargin)
 % results.
 %
 % >> 1 + 3
-% 
+%
 % ans =
-% 
+%
 %      4
 %
 %
@@ -143,12 +143,12 @@ to_test.func_name = func_or_class;
 to_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', ...
             which(func_or_class), func_or_class);
 
-       
+
 % If it's a class, add the methods to to_test.
 theMethods = methods(func_or_class);
 for I = 1:length(theMethods) % might be 0
     this_test = [];
-    
+
     this_test.func_name = theMethods{I};
     this_test.name = sprintf('%s.%s', func_or_class, theMethods{I});
 
@@ -158,7 +158,7 @@ for I = 1:length(theMethods) % might be 0
     catch
         this_test.link = this_test.name;
     end
-    
+
     to_test = [to_test; this_test];
 end
 
@@ -179,17 +179,17 @@ for I = 1:length(to_test)
     else
       docstring = help(to_test(I).name);
     end
-    
+
     these_results = doctest_run(docstring);
-    
- 
+
+
     if ~ isempty(these_results)
         [these_results.link] = deal(to_test(I).link);
     end
-    
+
     result = [result, these_results];
 end
-    
+
 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -217,11 +217,11 @@ for i = 1:length(results)
 end
 
 if total == 0
-  fprintf(err, '%s: NO TESTS\n', to_test.link);
+  fprintf(err, '%s: NO TESTS\n', to_test.name);
 elseif errors == 0
-  fprintf(out, '%s: OK (%d tests)\n', to_test.link, length(results));
+  fprintf(out, '%s: OK (%d tests)\n', to_test.name, length(results));
 else
-  fprintf(err, '%s: %d ERRORS\n', to_test.link, errors);
+  fprintf(err, '%s: %d ERRORS\n', to_test.name, errors);
 end
 for I = 1:length(results)
   if ~results(I).pass
