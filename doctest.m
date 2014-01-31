@@ -62,8 +62,7 @@ function doctest(func_or_class, varargin)
 % handled correctly:
 %
 % >> not_a_real_function(42)
-% ??? Undefined function or method 'not_a_real_function' for input
-% arguments of type 'double'.
+% ??? Undefined function
 %
 %
 % But if the line of code will emit other output BEFORE the error message,
