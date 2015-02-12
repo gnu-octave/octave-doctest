@@ -144,7 +144,17 @@ to_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1
 
 
 % If it's a class, add the methods to to_test.
-theMethods = methods(func_or_class);
+if (~running_octave)
+  theMethods = methods(func_or_class);
+else
+  % Octave unhappy on methods(<non-class>)
+  if (exist(func_or_class, 'file'))
+    theMethods = [];
+  else
+    theMethods = methods(func_or_class);
+  end
+end
+
 for I = 1:length(theMethods) % might be 0
     this_test = [];
 
