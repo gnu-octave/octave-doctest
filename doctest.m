@@ -144,12 +144,26 @@ to_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1
 
 
 % If it's a class, add the methods to to_test.
-theMethods = methods(func_or_class);
+if (~running_octave)
+  theMethods = methods(func_or_class);
+else
+  % Octave unhappy on methods(<non-class>)
+  if (exist(func_or_class, 'file'))
+    theMethods = [];
+  else
+    theMethods = methods(func_or_class);
+  end
+end
+
 for I = 1:length(theMethods) % might be 0
     this_test = [];
 
     this_test.func_name = theMethods{I};
-    this_test.name = sprintf('%s.%s', func_or_class, theMethods{I});
+    if (running_octave)
+      this_test.name = sprintf('@%s/%s', func_or_class, theMethods{I});
+    else
+      this_test.name = sprintf('%s.%s', func_or_class, theMethods{I});
+    end
 
     try
         this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', ...
@@ -174,7 +188,11 @@ result = [];
 
 for I = 1:length(to_test)
     if running_octave
-      docstring = get_help_text(to_test(I).name);
+      [docstring, form] = get_help_text(to_test(I).name);
+      if (strcmp(form, 'texinfo'))
+        % Matlab parser unhappy with underscore, hide inside an eval
+        docstring = eval('__makeinfo__(docstring, "plain text")');
+      end
     else
       docstring = help(to_test(I).name);
     end
