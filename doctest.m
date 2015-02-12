@@ -159,7 +159,11 @@ for I = 1:length(theMethods) % might be 0
     this_test = [];
 
     this_test.func_name = theMethods{I};
-    this_test.name = sprintf('%s.%s', func_or_class, theMethods{I});
+    if (running_octave)
+      this_test.name = sprintf('@%s/%s', func_or_class, theMethods{I});
+    else
+      this_test.name = sprintf('%s.%s', func_or_class, theMethods{I});
+    end
 
     try
         this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', ...
