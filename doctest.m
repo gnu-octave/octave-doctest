@@ -188,7 +188,11 @@ result = [];
 
 for I = 1:length(to_test)
     if running_octave
-      docstring = get_help_text(to_test(I).name);
+      [docstring, form] = get_help_text(to_test(I).name);
+      if (strcmp(form, 'texinfo'))
+        % Matlab parser unhappy with underscore, hide inside an eval
+        docstring = eval('__makeinfo__(docstring, "plain text")');
+      end
     else
       docstring = help(to_test(I).name);
     end
