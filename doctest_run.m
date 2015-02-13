@@ -105,9 +105,10 @@ function s = doctest_fake_evalc(cmd)
 %   file.  Octave has no evalc command (as of 2015-02).
 %   FIXME: this spams stdout as well as capturing.
 
-  cmd = sprintf(cmd);
   tf = tmpnam();
   diary(tf)
+  % could have escaped newlines?  No, eval doesn't like them.
+  %cmd = strrep(cmd, '\n', sprintf('\n'))
   evalin('caller', cmd);
   diary off
   s = fileread(tf);
