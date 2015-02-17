@@ -55,22 +55,28 @@ end
 % the following function is used to evaluate all lines of code in same
 % namespace (the one of this invocation of DOCTEST__evalc)
 function DOCTEST__results = DOCTEST__evalc(DOCTEST__examples_to_run)
+
 % Octave has [no evalc command](https://savannah.gnu.org/patch/?8033).
-% Matlab parser unhappy seeing evalc replaced with fcn_handle;
-% instead, create "myevalc".
+have_evalc = true;
 try
   evalc('');
-  myevalc = @(s) evalc;
 catch
-  myevalc = @(s) doctest_fake_evalc(s);
+  have_evalc = false;
 end
+
 % structure adapted from a StackOverflow answer by user Amro, see
 % http://stackoverflow.com/questions/3283586 and
 % http://stackoverflow.com/users/97160/amro
 DOCTEST__results = cell(size(DOCTEST__examples_to_run));
 for DOCTEST__i = 1:numel(DOCTEST__examples_to_run)
   try
-    DOCTEST__results{DOCTEST__i} = myevalc(DOCTEST__examples_to_run{DOCTEST__i}{1});
+    if (have_evalc)
+      DOCTEST__results{DOCTEST__i} = evalc( ...
+          DOCTEST__examples_to_run{DOCTEST__i}{1});
+    else
+      DOCTEST__results{DOCTEST__i} = doctest_fake_evalc( ...
+          DOCTEST__examples_to_run{DOCTEST__i}{1});
+    end
   catch DOCTEST__exception
     DOCTEST__results{DOCTEST__i} = DOCTEST__format_exception(DOCTEST__exception);
   end
@@ -99,9 +105,10 @@ function s = doctest_fake_evalc(cmd)
 %   file.  Octave has no evalc command (as of 2015-02).
 %   FIXME: this spams stdout as well as capturing.
 
-  cmd = sprintf(cmd);
   tf = tmpnam();
   diary(tf)
+  % could have escaped newlines?  No, eval doesn't like them.
+  %cmd = strrep(cmd, '\n', sprintf('\n'))
   evalin('caller', cmd);
   diary off
   s = fileread(tf);
