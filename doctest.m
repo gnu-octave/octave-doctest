@@ -190,8 +190,18 @@ for I = 1:length(to_test)
     if running_octave
       [docstring, form] = get_help_text(to_test(I).name);
       if (strcmp(form, 'texinfo'))
-        % Matlab parser unhappy with underscore, hide inside an eval
-        docstring = eval('__makeinfo__(docstring, "plain text")');
+        %% Just convert to plain text
+        % Matlab parser unhappy with underscore, hide inside eval
+        %docstring = eval('__makeinfo__(docstring, "plain text")');
+
+        %% Find @example blocks
+        % strip @group and @result{}
+        docstring = strrep(docstring, '@group', '');
+        docstring = strrep(docstring, '@end group', '');
+        docstring = strrep(docstring, '@result{}', '');
+        T = regexp(docstring, '@example(.*?)@end example', 'tokens');
+        T = strcat(T{:});
+        docstring = T{1};
       end
     else
       docstring = help(to_test(I).name);
