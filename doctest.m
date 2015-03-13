@@ -215,17 +215,10 @@ for I = 1:length(to_test)
     end
 
     result = [result, these_results];
+
+    % Print the results after each file
+    test_anything(to_test(I), these_results);
 end
-
-
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Print the results
-%
-
-test_anything(to_test, result);
-
 
 end
 
@@ -235,9 +228,9 @@ function test_anything(to_test, results)
 out = 1; % stdout
 err = 2;
 
-total = 0; errors = 0;
-for i = 1:length(results)
-  total = total + 1;
+total = length(results);
+errors = 0;
+for i = 1:total
   if ~results(i).pass
     errors = errors + 1;
   end
