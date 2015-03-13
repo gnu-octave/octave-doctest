@@ -196,12 +196,19 @@ for I = 1:length(to_test)
 
         %% Find @example blocks
         % strip @group and @result{}
+        docstring = strrep(docstring, '@result{}', '');
+        % FIXME: pass through __makeinfo__ instead?
         docstring = strrep(docstring, '@group', '');
         docstring = strrep(docstring, '@end group', '');
-        docstring = strrep(docstring, '@result{}', '');
+        docstring = strrep(docstring, '@{', '{');
+        docstring = strrep(docstring, '@}', '}');
         T = regexp(docstring, '@example(.*?)@end example', 'tokens');
-        T = strcat(T{:});
-        docstring = T{1};
+        if (isempty(T))
+          docstring = '';
+        else
+          T = strcat(T{:});
+          docstring = T{1};
+        end
       end
     else
       docstring = help(to_test(I).name);
