@@ -320,8 +320,8 @@ function [docstring, err, msg] = octave_extract_doctests(name)
     II = ~cellfun('isempty', S);
     if (nnz(II) == 0)
       err = -2;  msg = 'has @example blocks but neither ">>" nor "@result{}"';
-      %docstring = '';
-      break
+      docstring = '';
+      return
     end
     if II(1)
       err = -4;  msg = 'no command: @result on first line?';
