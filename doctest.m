@@ -182,6 +182,8 @@ end
 % that docstring
 %
 
+[red, yellow, reset] = terminal_escapes();
+
 all_results = cell(1, length(to_test));
 all_extract_err = cell(1, length(to_test));
 all_extract_msgs = cell(1, length(to_test));
@@ -237,16 +239,17 @@ for i = 1:total
   end
 end
 
+[red, yellow, reset] = terminal_escapes();
 
 if total == 0 && extract_err < 0
-  fprintf(err, '%s: Warning: could not extract tests\n', to_test.name);
+  fprintf(err, ['%s: ' yellow  'Warning: could not extract tests' reset '\n'], to_test.name);
   fprintf(err, '  %s\n', extract_msg);
 elseif total == 0
   fprintf(err, '%s: NO TESTS\n', to_test.name);
 elseif errors == 0
   fprintf(out, '%s: OK (%d tests)\n', to_test.name, length(results));
 else
-  fprintf(err, '%s: %d ERRORS\n', to_test.name, errors);
+  fprintf(err, ['%s: ' red '%d ERRORS' reset '\n'], to_test.name, errors);
 end
 for I = 1:length(results)
   if ~results(I).pass
@@ -339,4 +342,26 @@ function [docstring, err, msg] = octave_extract_doctests(name)
   end
   % strip the @result{} bits
   docstring = regexprep(docstring, '@result\s*{}', '');
+end
+
+
+function [red, yellow, reset] = terminal_escapes()
+
+  try
+    OCTAVE_VERSION;
+    running_octave = 1;
+  catch
+    running_octave = 0;
+  end
+
+  if (running_octave)
+    % terminal escapes for Octave colour, hide from Matlab inside eval
+    red = eval('"\033[1;40;31m"');
+    yellow = eval('"\033[1;40;33m"');
+    reset = eval('"\033[m"');
+  else
+    red = '';
+    yellow = '';
+    reset = '';
+  end
 end
