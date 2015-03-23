@@ -182,35 +182,21 @@ end
 % that docstring
 %
 
-% Can't predict number of results beforehand, depends of number of examples
-% in each docstring.
-result = [];
+all_results = cell(1, length(to_test));
+all_extract_err = cell(1, length(to_test));
+all_extract_msgs = cell(1, length(to_test));
+
+if running_octave
+  disp('===========================================================================')
+  disp('Might see temporary output (github.com/catch22/doctest-for-matlab/issues/6)');
+  disp('===========================================================================')
+end
 
 for I = 1:length(to_test)
     if running_octave
-      [docstring, form] = get_help_text(to_test(I).name);
-      if (strcmp(form, 'texinfo'))
-        %% Just convert to plain text
-        % Matlab parser unhappy with underscore, hide inside eval
-        %docstring = eval('__makeinfo__(docstring, "plain text")');
-
-        %% Find @example blocks
-        % strip @group and @result{}
-        docstring = strrep(docstring, '@result{}', '');
-        % FIXME: pass through __makeinfo__ instead?
-        docstring = strrep(docstring, '@group', '');
-        docstring = strrep(docstring, '@end group', '');
-        docstring = strrep(docstring, '@{', '{');
-        docstring = strrep(docstring, '@}', '}');
-        T = regexp(docstring, '@example(.*?)@end example', 'tokens');
-        if (isempty(T))
-          docstring = '';
-        else
-          T = strcat(T{:});
-          docstring = T{1};
-        end
-      end
+      [docstring, err, msg] = octave_extract_doctests(to_test(I).name);
     else
+      err = 0; msg = '';
       docstring = help(to_test(I).name);
     end
 
@@ -221,16 +207,24 @@ for I = 1:length(to_test)
         [these_results.link] = deal(to_test(I).link);
     end
 
-    result = [result, these_results];
-
+    all_extract_err{I} = err;
+    all_extract_msgs{I} = msg;
+    all_results{I} = these_results;
     % Print the results after each file
-    test_anything(to_test(I), these_results);
+    %print_test_results(to_test(I), these_results, err, msg);
+end
+
+disp('')
+disp('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
+disp('')
+for I=1:length(all_results);
+  print_test_results(to_test(I), all_results{I}, all_extract_err{I}, all_extract_msgs{I});
 end
 
 end
 
 
-function test_anything(to_test, results)
+function print_test_results(to_test, results, extract_err, extract_msg)
 
 out = 1; % stdout
 err = 2;
@@ -243,7 +237,11 @@ for i = 1:total
   end
 end
 
-if total == 0
+
+if total == 0 && extract_err < 0
+  fprintf(err, '%s: Warning: could not extract tests\n', to_test.name);
+  fprintf(err, '  %s\n', extract_msg);
+elseif total == 0
   fprintf(err, '%s: NO TESTS\n', to_test.name);
 elseif errors == 0
   fprintf(out, '%s: OK (%d tests)\n', to_test.name, length(results));
@@ -259,4 +257,86 @@ for I = 1:length(results)
 end
 
 
+end
+
+
+
+function [docstring, err, msg] = octave_extract_doctests(name)
+%OCTAVE_EXTRACT_DOCTESTS
+
+  err = 1; msg = '';
+
+  [docstring, form] = get_help_text(name);
+
+  if (~strcmp(form, 'texinfo'))
+    err = 1;  msg = 'not texinfo';
+    return
+  end
+
+  %% Just convert to plain text
+  % Matlab parser unhappy with underscore, hide inside eval
+  %docstring = eval('__makeinfo__(docstring, "plain text")');
+
+  % strip @group, and escape sequences
+  docstring = strrep(docstring, '@group', '');
+  docstring = strrep(docstring, '@end group', '');
+  docstring = strrep(docstring, '@{', '{');
+  docstring = strrep(docstring, '@}', '}');
+  docstring = strrep(docstring, '@@', '@');
+
+  % no example block, bail out
+  if (isempty(strfind(docstring, '@example')))
+    err = 0;  msg = 'no @example blocks';
+    docstring = '';
+    return
+  end
+  T = regexp(docstring, '@example(.*?)@end example', 'tokens');
+  if (isempty(T))
+    err = -1;  msg('malformed @example blocks');
+    docstring = '';
+    return
+  else
+    T = strcat(T{:});
+    docstring = T{1};
+  end
+
+  if (isempty(docstring))
+    err = -1;  msg = 'empty @example blocks';
+    docstring = '';
+    return
+  elseif (~isempty(strfind(docstring, '>>')))
+    %% Has '>>' indicators
+    err = 1;  msg = 'used >>';
+  else
+    %% No '>>', split on @result
+    err = 2;  msg = 'used @result splitting';
+    L = strsplit (docstring, '\n');
+    % err lines have a @result in them?
+    [S, ~, ~, ~, ~, ~, SP] = regexp(L, '@result\s*{}');
+    % lines with @result in them
+    II = ~cellfun('isempty', S);
+    if (nnz(II) == 0)
+      err = -2;  msg = 'has @example blocks but neither ">>" nor "@result{}"';
+      %docstring = '';
+      break
+    end
+    if II(1)
+      err = -4;  msg = 'no command: @result on first line?';
+      return
+    end
+    for i=1:length(L)
+      if (length(S{i}) > 1)
+        err = -3;  msg = 'more than one @result on one line';
+        return
+      end
+      if II(i)
+        % This line has an @result so mark previous line with '>>'
+        L{i-1} = ['>>' L{i-1}];
+      end
+    end
+    % FIXME: could also use @example locations to add >>
+    docstring = strjoin(L, '\n');
+  end
+  % strip the @result{} bits
+  docstring = regexprep(docstring, '@result\s*{}', '');
 end
