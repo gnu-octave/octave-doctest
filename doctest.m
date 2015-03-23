@@ -98,7 +98,7 @@ function doctest(func_or_class, varargin)
 % BLANK LINES (or anyway, lines with just the comment marker % and nothing
 % else).
 %
-% All adjascent white space is collapsed into a single space before
+% All adjacent white space is collapsed into a single space before
 % comparison, so right now it can't detect anything that's purely a
 % whitespace difference.
 %
