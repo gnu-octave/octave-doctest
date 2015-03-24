@@ -281,8 +281,8 @@ function [docstring, err, msg] = octave_extract_doctests(name)
   %docstring = eval('__makeinfo__(docstring, "plain text")');
 
   % strip @group, and escape sequences
-  docstring = strrep(docstring, '@group', '');
-  docstring = strrep(docstring, '@end group', '');
+  docstring = strrep(docstring, sprintf('@group\n'), '');
+  docstring = strrep(docstring, sprintf('@end group\n'), '');
   docstring = strrep(docstring, '@{', '{');
   docstring = strrep(docstring, '@}', '}');
   docstring = strrep(docstring, '@@', '@');
@@ -293,14 +293,19 @@ function [docstring, err, msg] = octave_extract_doctests(name)
     docstring = '';
     return
   end
-  T = regexp(docstring, '@example(.*?)@end example', 'tokens');
+  % Leave the @example lines in, may need them later
+  T = regexp(docstring, '(@example.*?@end example)', 'tokens');
   if (isempty(T))
     err = -1;  msg('malformed @example blocks');
     docstring = '';
     return
   else
-    T = strcat(T{:});
-    docstring = T{1};
+    % flatten
+    for i=1:length(T)
+      assert(length(T{i}) == 1)
+      T{i} = T{i}{1};
+    end
+    docstring = strjoin(T, '\n');
   end
 
   if (isempty(docstring))
@@ -314,33 +319,60 @@ function [docstring, err, msg] = octave_extract_doctests(name)
     %% No '>>', split on @result
     err = 2;  msg = 'used @result splitting';
     L = strsplit (docstring, '\n');
-    % err lines have a @result in them?
-    [S, ~, ~, ~, ~, ~, SP] = regexp(L, '@result\s*{}');
-    % lines with @result in them
-    II = ~cellfun('isempty', S);
-    if (nnz(II) == 0)
+
+    % mask for lines with @result in them
+    [S, ~, ~, ~, ~, ~, ~] = regexp(L, '@result\s*{}');
+    Ires = ~cellfun(@isempty, S);
+    if (nnz(Ires) == 0)
       err = -2;  msg = 'has @example blocks but neither ">>" nor "@result{}"';
       docstring = '';
       return
     end
-    if II(1)
+    if Ires(1)
       err = -4;  msg = 'no command: @result on first line?';
       return
     end
     for i=1:length(L)
       if (length(S{i}) > 1)
         err = -3;  msg = 'more than one @result on one line';
+        docstring = '';
         return
       end
-      if II(i)
-        % This line has an @result so mark previous line with '>>'
-        L{i-1} = ['>>' L{i-1}];
+    end
+
+    % mask for lines with @example in them
+    Iex_start = ~cellfun(@isempty, regexp(L, '@example'));
+    Iex_end = ~cellfun(@isempty, regexp(L, '@end example'));
+
+    % build a new mask for lines which we think are commands
+    I = zeros(size(Ires), 'logical');
+    start_of_block = false;
+    for i=1:length(L)-1
+      if Iex_start(i)
+        start_of_block = true;
+      end
+      if (start_of_block)
+        I(i) = true;
+      end
+      if Ires(i+1)
+        % Next line has an @result so mark this line with '>>'
+        I(i) = true;
+        start_of_block = false;
       end
     end
-    % FIXME: could also use @example locations to add >>
+    % remove @example/@end lines from commands
+    I(Iex_start) = false;
+    I(Iex_end) = false;
+
+    for i=1:length(L)
+      if (I(i) && ~isempty(L{i}) && isempty(regexp(L{i}, '^\s+$', 'match')))
+        L{i} = ['>>' L{i}];
+      end
+    end
     docstring = strjoin(L, '\n');
   end
-  % strip the @result{} bits
+  docstring = strrep(docstring, '@example', '');
+  docstring = strrep(docstring, '@end example', '');
   docstring = regexprep(docstring, '@result\s*{}', '');
 end
 
