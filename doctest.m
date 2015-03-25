@@ -281,8 +281,8 @@ function [docstring, err, msg] = octave_extract_doctests(name)
   %docstring = eval('__makeinfo__(docstring, "plain text")');
 
   % strip @group, and escape sequences
-  docstring = strrep(docstring, sprintf('@group\n'), '');
-  docstring = strrep(docstring, sprintf('@end group\n'), '');
+  docstring = regexprep(docstring, '^\s*@group\n', '\n', 'lineanchors');
+  docstring = regexprep(docstring, '@end group\n', '');
   docstring = strrep(docstring, '@{', '{');
   docstring = strrep(docstring, '@}', '}');
   docstring = strrep(docstring, '@@', '@');
@@ -371,8 +371,8 @@ function [docstring, err, msg] = octave_extract_doctests(name)
     end
     docstring = strjoin(L, '\n');
   end
-  docstring = strrep(docstring, '@example', '');
-  docstring = strrep(docstring, '@end example', '');
+  docstring = regexprep(docstring, '^\s*@example\n', '', 'lineanchors');
+  docstring = regexprep(docstring, '^\s*@end example\n', '\n\n', 'lineanchors');
   docstring = regexprep(docstring, '@result\s*{}', '');
 end
 
