@@ -113,6 +113,29 @@ function doctest(func_or_class, varargin)
 % below)
 %
 %
+% OCTAVE-SPECIFIC NOTES:
+%
+% Octave m-files are commonly documented using Texinfo.  If you are running
+% Octave and your m-file contains texinfo markup, then the rules noted above
+% are slightly different.  First, text outside of "@example" ... "@end
+% example" blocks is discarded.  As only examples are expected in those
+% blocks, the two-blank-lines convention is not required.  A minor amount of
+% reformatting is done (e.g., stripping the pagination hints "@group").
+%
+% Conventionally, Octave documentation indicates results with "@result{}"
+% (which renders to an arrow).  If the text contains no ">>" prompts, we try
+% to guess where they should be based on splitting around the "@result{}"
+% indicators.  Additionally, all lines from the start of the "@example"
+% block to the first "@result{}" are assumed to be commands.  These
+% heuristics work for simple documentation but for more complicated
+% examples, adding ">>" to the documentation may be necessary.
+% FIXME: Instead of the current pre-parsing to add ">>" prompts, one could
+% presumably refactor the testing code so that input lines are tried
+% one-at-a-time checking the output after each.
+%
+%
+% VERSIONS:
+%
 % The latest version from the original author, Thomas Smith, is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
 %
