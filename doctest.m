@@ -189,9 +189,9 @@ all_extract_err = cell(1, length(to_test));
 all_extract_msgs = cell(1, length(to_test));
 
 if running_octave
-  disp('===========================================================================')
-  disp('Might see temporary output (github.com/catch22/doctest-for-matlab/issues/6)');
-  disp('===========================================================================')
+  disp('==========================================================================')
+  disp('Start of temporary output (github.com/catch22/doctest-for-matlab/issues/6)');
+  disp('==========================================================================')
 end
 
 for I = 1:length(to_test)
@@ -216,9 +216,12 @@ for I = 1:length(to_test)
     %print_test_results(to_test(I), these_results, err, msg);
 end
 
-disp('')
-disp('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
-disp('')
+if running_octave
+  disp('========================================================================')
+  disp('End of temporary output (github.com/catch22/doctest-for-matlab/issues/6)');
+  disp('========================================================================')
+end
+
 for I=1:length(all_results);
   print_test_results(to_test(I), all_results{I}, all_extract_err{I}, all_extract_msgs{I});
 end
