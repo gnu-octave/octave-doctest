@@ -308,11 +308,13 @@ function [docstring, err, msg] = octave_extract_doctests(name)
     docstring = strjoin(T, '\n');
   end
 
-  if (isempty(docstring))
+  if (isempty(docstring) || ~isempty(regexp(docstring, '^\s*$')))
     err = -1;  msg = 'empty @example blocks';
     docstring = '';
     return
-  elseif (~isempty(strfind(docstring, '>>')))
+  end
+
+  if (~isempty(strfind(docstring, '>>')))
     %% Has '>>' indicators
     err = 1;  msg = 'used >>';
   else
