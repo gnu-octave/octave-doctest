@@ -171,7 +171,7 @@ if (~running_octave)
   theMethods = methods(func_or_class);
 else
   % Octave unhappy on methods(<non-class>)
-  if (exist(func_or_class, 'file'))
+  if (exist(func_or_class, 'file') || exist(func_or_class, 'builtin'))
     theMethods = [];
   else
     theMethods = methods(func_or_class);
