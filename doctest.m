@@ -1,10 +1,11 @@
-function doctest(func_or_class, varargin)
+function doctest(varargin)
 % Run examples embedded in documentation
 %
 % doctest func_name
 % doctest('func_name')
 % doctest class_name
 % doctest('class_name')
+% doctest class_name1 func_name2 class_name2 ...
 %
 % Example:
 % Say you have a function that adds 7 to things:
@@ -160,25 +161,31 @@ end
 % We include a link to the function where the docstring is going to come
 % from, so that it's easier to navigate to that doctest.
 to_test = [];
-to_test.name = func_or_class;
-to_test.func_name = func_or_class;
-to_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', ...
-            which(func_or_class), func_or_class);
+for i = 1:nargin
+  func_or_class = varargin{i};
 
-
-% If it's a class, add the methods to to_test.
-if (~running_octave)
-  theMethods = methods(func_or_class);
-else
-  % Octave unhappy on methods(<non-class>)
-  if (exist(func_or_class, 'file') || exist(func_or_class, 'builtin'))
-    theMethods = [];
-  else
+  % If it's a class, add the methods to to_test.
+  if (~running_octave)
     theMethods = methods(func_or_class);
+  else
+    % Octave unhappy on methods(<non-class>)
+    if (exist(func_or_class, 'file') || exist(func_or_class, 'builtin'))
+      theMethods = [];
+    else
+      theMethods = methods(func_or_class);
+    end
   end
-end
 
-for I = 1:length(theMethods) % might be 0
+  if (isempty(theMethods))
+    this_test = [];
+    this_test.name = func_or_class;
+    this_test.func_name = func_or_class;
+    this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', ...
+            which(func_or_class), func_or_class);
+    to_test = [to_test; this_test];
+  end
+
+  for I = 1:length(theMethods) % might be 0
     this_test = [];
 
     this_test.func_name = theMethods{I};
@@ -196,8 +203,8 @@ for I = 1:length(theMethods) % might be 0
     end
 
     to_test = [to_test; this_test];
+  end
 end
-
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -352,6 +359,7 @@ function [docstring, err, msg] = octave_extract_doctests(name)
     [S, ~, ~, ~, ~, ~, ~] = regexp(L, '@result\s*{}');
     Ires = ~cellfun(@isempty, S);
     if (nnz(Ires) == 0)
+      docstring
       err = -2;  msg = 'has @example blocks but neither ">>" nor "@result{}"';
       docstring = '';
       return
