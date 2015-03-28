@@ -424,9 +424,10 @@ function [docstring, err, msg] = octave_extract_doctests(name)
       end
     end
     docstring = strjoin(L, '\n');
+    docstring = [docstring sprintf('\n')];
   end
   docstring = regexprep(docstring, '^\s*@example\n', '', 'lineanchors');
-  docstring = regexprep(docstring, '^\s*@end example\n', '\n\n', 'lineanchors');
+  docstring = regexprep(docstring, '^\s*@end example\n', '', 'lineanchors');
   docstring = regexprep(docstring, '@result\s*{}', '');
 end
 
