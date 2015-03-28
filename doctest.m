@@ -420,7 +420,7 @@ function [docstring, err, msg] = octave_extract_doctests(name)
 
     for i=1:length(L)
       if (I(i) && ~isempty(L{i}) && isempty(regexp(L{i}, '^\s+$', 'match')))
-        L{i} = ['>>' L{i}];
+        L{i} = ['>> ' L{i}];
       end
     end
     docstring = strjoin(L, '\n');
