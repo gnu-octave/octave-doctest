@@ -5,7 +5,7 @@ function doctest(varargin)
 % doctest('func_name')
 % doctest class_name
 % doctest('class_name')
-% doctest class_name1 func_name2 class_name2 ...
+% doctest class_name1 func_name2 class_name3 ...
 %
 % Example:
 % Say you have a function that adds 7 to things:
