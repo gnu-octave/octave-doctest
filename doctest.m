@@ -269,10 +269,12 @@ for I=1:length(all_results);
   total_fail = total_fail + numfail;
 end
 
+num_extract_err = nnz(all_extract_err < 0);
+
 fprintf(1, 'doctest: ran %d tests: %d failed.  %d extraction errors\n', ...
-        total_test, total_fail, sum(all_extract_err));
+        total_test, total_fail, num_extract_err);
 if (nargout > 0)
-  varargout = {total_test, total_fail, sum(all_extract_err)};
+  varargout = {total_test, total_fail, num_extract_err};
 end
 end
 
