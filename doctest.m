@@ -1,10 +1,11 @@
-function doctest(func_or_class, varargin)
+function doctest(varargin)
 % Run examples embedded in documentation
 %
 % doctest func_name
 % doctest('func_name')
 % doctest class_name
 % doctest('class_name')
+% doctest class_name1 func_name2 class_name3 ...
 %
 % Example:
 % Say you have a function that adds 7 to things:
@@ -98,7 +99,7 @@ function doctest(func_or_class, varargin)
 % BLANK LINES (or anyway, lines with just the comment marker % and nothing
 % else).
 %
-% All adjascent white space is collapsed into a single space before
+% All adjacent white space is collapsed into a single space before
 % comparison, so right now it can't detect anything that's purely a
 % whitespace difference.
 %
@@ -112,6 +113,29 @@ function doctest(func_or_class, varargin)
 % but this hasn't happened yet.  (See Issue #2 on the bitbucket site,
 % below)
 %
+%
+% OCTAVE-SPECIFIC NOTES:
+%
+% Octave m-files are commonly documented using Texinfo.  If you are running
+% Octave and your m-file contains texinfo markup, then the rules noted above
+% are slightly different.  First, text outside of "@example" ... "@end
+% example" blocks is discarded.  As only examples are expected in those
+% blocks, the two-blank-lines convention is not required.  A minor amount of
+% reformatting is done (e.g., stripping the pagination hints "@group").
+%
+% Conventionally, Octave documentation indicates results with "@result{}"
+% (which renders to an arrow).  If the text contains no ">>" prompts, we try
+% to guess where they should be based on splitting around the "@result{}"
+% indicators.  Additionally, all lines from the start of the "@example"
+% block to the first "@result{}" are assumed to be commands.  These
+% heuristics work for simple documentation but for more complicated
+% examples, adding ">>" to the documentation may be necessary.
+% FIXME: Instead of the current pre-parsing to add ">>" prompts, one could
+% presumably refactor the testing code so that input lines are tried
+% one-at-a-time checking the output after each.
+%
+%
+% VERSIONS:
 %
 % The latest version from the original author, Thomas Smith, is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
@@ -137,25 +161,31 @@ end
 % We include a link to the function where the docstring is going to come
 % from, so that it's easier to navigate to that doctest.
 to_test = [];
-to_test.name = func_or_class;
-to_test.func_name = func_or_class;
-to_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', ...
-            which(func_or_class), func_or_class);
+for i = 1:nargin
+  func_or_class = varargin{i};
 
-
-% If it's a class, add the methods to to_test.
-if (~running_octave)
-  theMethods = methods(func_or_class);
-else
-  % Octave unhappy on methods(<non-class>)
-  if (exist(func_or_class, 'file'))
-    theMethods = [];
-  else
+  % If it's a class, add the methods to to_test.
+  if (~running_octave)
     theMethods = methods(func_or_class);
+  else
+    % Octave unhappy on methods(<non-class>)
+    if (exist(func_or_class, 'file') || exist(func_or_class, 'builtin'))
+      theMethods = [];
+    else
+      theMethods = methods(func_or_class);
+    end
   end
-end
 
-for I = 1:length(theMethods) % might be 0
+  if (isempty(theMethods))
+    this_test = [];
+    this_test.name = func_or_class;
+    this_test.func_name = func_or_class;
+    this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', ...
+            which(func_or_class), func_or_class);
+    to_test = [to_test; this_test];
+  end
+
+  for I = 1:length(theMethods) % might be 0
     this_test = [];
 
     this_test.func_name = theMethods{I};
@@ -173,8 +203,8 @@ for I = 1:length(theMethods) % might be 0
     end
 
     to_test = [to_test; this_test];
+  end
 end
-
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -182,35 +212,23 @@ end
 % that docstring
 %
 
-% Can't predict number of results beforehand, depends of number of examples
-% in each docstring.
-result = [];
+[red, yellow, reset] = terminal_escapes();
+
+all_results = cell(1, length(to_test));
+all_extract_err = cell(1, length(to_test));
+all_extract_msgs = cell(1, length(to_test));
+
+if running_octave
+  disp('==========================================================================')
+  disp('Start of temporary output (github.com/catch22/doctest-for-matlab/issues/6)');
+  disp('==========================================================================')
+end
 
 for I = 1:length(to_test)
     if running_octave
-      [docstring, form] = get_help_text(to_test(I).name);
-      if (strcmp(form, 'texinfo'))
-        %% Just convert to plain text
-        % Matlab parser unhappy with underscore, hide inside eval
-        %docstring = eval('__makeinfo__(docstring, "plain text")');
-
-        %% Find @example blocks
-        % strip @group and @result{}
-        docstring = strrep(docstring, '@result{}', '');
-        % FIXME: pass through __makeinfo__ instead?
-        docstring = strrep(docstring, '@group', '');
-        docstring = strrep(docstring, '@end group', '');
-        docstring = strrep(docstring, '@{', '{');
-        docstring = strrep(docstring, '@}', '}');
-        T = regexp(docstring, '@example(.*?)@end example', 'tokens');
-        if (isempty(T))
-          docstring = '';
-        else
-          T = strcat(T{:});
-          docstring = T{1};
-        end
-      end
+      [docstring, err, msg] = octave_extract_doctests(to_test(I).name);
     else
+      err = 0; msg = '';
       docstring = help(to_test(I).name);
     end
 
@@ -221,16 +239,27 @@ for I = 1:length(to_test)
         [these_results.link] = deal(to_test(I).link);
     end
 
-    result = [result, these_results];
-
+    all_extract_err{I} = err;
+    all_extract_msgs{I} = msg;
+    all_results{I} = these_results;
     % Print the results after each file
-    test_anything(to_test(I), these_results);
+    %print_test_results(to_test(I), these_results, err, msg);
+end
+
+if running_octave
+  disp('========================================================================')
+  disp('End of temporary output (github.com/catch22/doctest-for-matlab/issues/6)');
+  disp('========================================================================')
+end
+
+for I=1:length(all_results);
+  print_test_results(to_test(I), all_results{I}, all_extract_err{I}, all_extract_msgs{I});
 end
 
 end
 
 
-function test_anything(to_test, results)
+function print_test_results(to_test, results, extract_err, extract_msg)
 
 out = 1; % stdout
 err = 2;
@@ -243,12 +272,17 @@ for i = 1:total
   end
 end
 
-if total == 0
+[red, yellow, reset] = terminal_escapes();
+
+if total == 0 && extract_err < 0
+  fprintf(err, ['%s: ' yellow  'Warning: could not extract tests' reset '\n'], to_test.name);
+  fprintf(err, '  %s\n', extract_msg);
+elseif total == 0
   fprintf(err, '%s: NO TESTS\n', to_test.name);
 elseif errors == 0
   fprintf(out, '%s: OK (%d tests)\n', to_test.name, length(results));
 else
-  fprintf(err, '%s: %d ERRORS\n', to_test.name, errors);
+  fprintf(err, ['%s: ' red '%d ERRORS' reset '\n'], to_test.name, errors);
 end
 for I = 1:length(results)
   if ~results(I).pass
@@ -259,4 +293,143 @@ for I = 1:length(results)
 end
 
 
+end
+
+
+
+function [docstring, err, msg] = octave_extract_doctests(name)
+%OCTAVE_EXTRACT_DOCTESTS
+
+  err = 1; msg = '';
+
+  [docstring, form] = get_help_text(name);
+
+  if (~strcmp(form, 'texinfo'))
+    err = 1;  msg = 'not texinfo';
+    return
+  end
+
+  %% Just convert to plain text
+  % Matlab parser unhappy with underscore, hide inside eval
+  %docstring = eval('__makeinfo__(docstring, "plain text")');
+
+  % strip @group, and escape sequences
+  docstring = regexprep(docstring, '^\s*@group\n', '\n', 'lineanchors');
+  docstring = regexprep(docstring, '@end group\n', '');
+  docstring = strrep(docstring, '@{', '{');
+  docstring = strrep(docstring, '@}', '}');
+  docstring = strrep(docstring, '@@', '@');
+
+  % no example block, bail out
+  if (isempty(strfind(docstring, '@example')))
+    err = 0;  msg = 'no @example blocks';
+    docstring = '';
+    return
+  end
+  % Leave the @example lines in, may need them later
+  T = regexp(docstring, '(@example.*?@end example)', 'tokens');
+  if (isempty(T))
+    err = -1;  msg('malformed @example blocks');
+    docstring = '';
+    return
+  else
+    % flatten
+    for i=1:length(T)
+      assert(length(T{i}) == 1)
+      T{i} = T{i}{1};
+    end
+    docstring = strjoin(T, '\n');
+  end
+
+  if (isempty(docstring) || ~isempty(regexp(docstring, '^\s*$')))
+    err = -1;  msg = 'empty @example blocks';
+    docstring = '';
+    return
+  end
+
+  if (~isempty(strfind(docstring, '>>')))
+    %% Has '>>' indicators
+    err = 1;  msg = 'used >>';
+  else
+    %% No '>>', split on @result
+    err = 2;  msg = 'used @result splitting';
+    L = strsplit (docstring, '\n');
+
+    % mask for lines with @result in them
+    [S, ~, ~, ~, ~, ~, ~] = regexp(L, '@result\s*{}');
+    Ires = ~cellfun(@isempty, S);
+    if (nnz(Ires) == 0)
+      docstring
+      err = -2;  msg = 'has @example blocks but neither ">>" nor "@result{}"';
+      docstring = '';
+      return
+    end
+    if Ires(1)
+      err = -4;  msg = 'no command: @result on first line?';
+      return
+    end
+    for i=1:length(L)
+      if (length(S{i}) > 1)
+        err = -3;  msg = 'more than one @result on one line';
+        docstring = '';
+        return
+      end
+    end
+
+    % mask for lines with @example in them
+    Iex_start = ~cellfun(@isempty, regexp(L, '@example'));
+    Iex_end = ~cellfun(@isempty, regexp(L, '@end example'));
+
+    % build a new mask for lines which we think are commands
+    I = zeros(size(Ires), 'logical');
+    start_of_block = false;
+    for i=1:length(L)-1
+      if Iex_start(i)
+        start_of_block = true;
+      end
+      if (start_of_block)
+        I(i) = true;
+      end
+      if Ires(i+1)
+        % Next line has an @result so mark this line with '>>'
+        I(i) = true;
+        start_of_block = false;
+      end
+    end
+    % remove @example/@end lines from commands
+    I(Iex_start) = false;
+    I(Iex_end) = false;
+
+    for i=1:length(L)
+      if (I(i) && ~isempty(L{i}) && isempty(regexp(L{i}, '^\s+$', 'match')))
+        L{i} = ['>>' L{i}];
+      end
+    end
+    docstring = strjoin(L, '\n');
+  end
+  docstring = regexprep(docstring, '^\s*@example\n', '', 'lineanchors');
+  docstring = regexprep(docstring, '^\s*@end example\n', '\n\n', 'lineanchors');
+  docstring = regexprep(docstring, '@result\s*{}', '');
+end
+
+
+function [red, yellow, reset] = terminal_escapes()
+
+  try
+    OCTAVE_VERSION;
+    running_octave = 1;
+  catch
+    running_octave = 0;
+  end
+
+  if (running_octave)
+    % terminal escapes for Octave colour, hide from Matlab inside eval
+    red = eval('"\033[1;40;31m"');
+    yellow = eval('"\033[1;40;33m"');
+    reset = eval('"\033[m"');
+  else
+    red = '';
+    yellow = '';
+    reset = '';
+  end
 end

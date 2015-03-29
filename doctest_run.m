@@ -87,10 +87,19 @@ end
 
 function formatted = DOCTEST__format_exception(ex)
 
-if ~ isfield(ex, 'stack')
-    % FIXME: do octave exceptions have stack?  not parse error anyway
-    formatted = ['??? ' ex.message];
-elseif strcmp(ex.stack(1).name, 'DOCTEST__evalc')
+  try
+    OCTAVE_VERSION;
+    running_octave = 1;
+  catch
+    running_octave = 0;
+  end
+
+  if running_octave
+      formatted = ['??? ' ex.message];
+      return
+  end
+
+if strcmp(ex.stack(1).name, 'DOCTEST__evalc')
     % we don't want the report, we just want the message
     % otherwise it'll talk about evalc, which is not what the user got on
     % the command line.
