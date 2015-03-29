@@ -22,7 +22,7 @@ if length(matches) > 0
 end
 
 % loosely based on Python 2.6 doctest.py, line 510
-example_re = '(?m)(?-s)(?:^ *>> )(.*(\n *\.\. .*)*)\n((?:(?:^ *$\n)?(?!\s*>>).*\w.*\n)*)';
+example_re = '(?m)(?-s)(?:^ *>> )(.*(\n *\.\. .*)*)\n((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)';
 [~,~,~,~,examples] = regexp(docstring, example_re);
 
 for i = 1:length(examples)
