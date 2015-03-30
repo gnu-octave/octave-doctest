@@ -40,7 +40,7 @@ end
 
 want_escaped = regexptranslate('escape', want);
 want_re = regexprep(want_escaped, '(\\\*){3}', '.*');
-
+want_re = ['^' want_re '$'];
 
 
 result = regexp(got, want_re, 'once');
