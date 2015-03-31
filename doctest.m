@@ -224,7 +224,7 @@ end
 [red, yellow, reset] = terminal_escapes();
 
 all_results = cell(1, length(to_test));
-all_extract_err = zeros(1, length(to_test), 'logical');
+all_extract_err = zeros(1, length(to_test));
 all_extract_msgs = cell(1, length(to_test));
 
 if running_octave
