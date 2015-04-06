@@ -1,4 +1,4 @@
-function doctest(varargin)
+function varargout = doctest(varargin)
 % Run examples embedded in documentation
 %
 % doctest func_name
@@ -135,6 +135,15 @@ function doctest(varargin)
 % one-at-a-time checking the output after each.
 %
 %
+% RETURN VALUES:
+%
+% [n, f, e] = doctest('class_name1', 'func_name1')
+%
+% Here 'n' is the number of test, 'f' is the number of failures and 'e' is
+% the number of extract errors (probably only relevant when using Texinfo
+% docs on Octave where it indicates malformed @example blocks).
+%
+%
 % VERSIONS:
 %
 % The latest version from the original author, Thomas Smith, is available
@@ -215,7 +224,7 @@ end
 [red, yellow, reset] = terminal_escapes();
 
 all_results = cell(1, length(to_test));
-all_extract_err = cell(1, length(to_test));
+all_extract_err = zeros(1, length(to_test));
 all_extract_msgs = cell(1, length(to_test));
 
 if running_octave
@@ -239,7 +248,7 @@ for I = 1:length(to_test)
         [these_results.link] = deal(to_test(I).link);
     end
 
-    all_extract_err{I} = err;
+    all_extract_err(I) = err;
     all_extract_msgs{I} = msg;
     all_results{I} = these_results;
     % Print the results after each file
@@ -252,14 +261,25 @@ if running_octave
   disp('========================================================================')
 end
 
+total_test = 0;
+total_fail = 0;
 for I=1:length(all_results);
-  print_test_results(to_test(I), all_results{I}, all_extract_err{I}, all_extract_msgs{I});
+  [count, numfail] = print_test_results(to_test(I), all_results{I}, all_extract_err(I), all_extract_msgs{I});
+  total_test = total_test + count;
+  total_fail = total_fail + numfail;
 end
 
+num_extract_err = nnz(all_extract_err < 0);
+
+fprintf(1, 'doctest: ran %d tests: %d failed.  %d extraction errors\n', ...
+        total_test, total_fail, num_extract_err);
+if (nargout > 0)
+  varargout = {total_test, total_fail, num_extract_err};
+end
 end
 
 
-function print_test_results(to_test, results, extract_err, extract_msg)
+function [total, errors] = print_test_results(to_test, results, extract_err, extract_msg)
 
 out = 1; % stdout
 err = 2;
@@ -402,13 +422,14 @@ function [docstring, err, msg] = octave_extract_doctests(name)
 
     for i=1:length(L)
       if (I(i) && ~isempty(L{i}) && isempty(regexp(L{i}, '^\s+$', 'match')))
-        L{i} = ['>>' L{i}];
+        L{i} = ['>> ' L{i}];
       end
     end
     docstring = strjoin(L, '\n');
+    docstring = [docstring sprintf('\n')];
   end
   docstring = regexprep(docstring, '^\s*@example\n', '', 'lineanchors');
-  docstring = regexprep(docstring, '^\s*@end example\n', '\n\n', 'lineanchors');
+  docstring = regexprep(docstring, '^\s*@end example\n', '', 'lineanchors');
   docstring = regexprep(docstring, '@result\s*{}', '');
 end
 
