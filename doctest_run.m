@@ -41,12 +41,22 @@ end
 all_outputs = DOCTEST__evalc(examples);
 results = [];
 for i = 1:length(examples)
+  % collapse all space (FIXME: could try something more sophisticated)
   want_unspaced = regexprep(examples{i}{2}, '\s+', ' ');
   got_unspaced = regexprep(all_outputs{i}, '\s+', ' ');
+  want_unspaced = strtrim(want_unspaced);
+  got_unspaced = strtrim(got_unspaced);
   results(i).source = examples{i}{1};
   results(i).want = strtrim(want_unspaced);
   results(i).got = strtrim(got_unspaced);
-  results(i).pass = doctest_compare(want_unspaced, got_unspaced);
+  pass = doctest_compare(want_unspaced, got_unspaced);
+  % a list of acceptably-missing prefixes (allow customizing?)
+  prefix = {'', 'ans = '};
+  for ii = 1:length(prefix)
+    pass = doctest_compare([prefix{ii} want_unspaced], got_unspaced);
+    if pass break end
+  end
+  results(i).pass = pass;
 end
 
 end
