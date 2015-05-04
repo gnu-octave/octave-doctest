@@ -322,11 +322,17 @@ function [docstring, err, msg] = octave_extract_doctests(name)
 
   err = 1; msg = '';
 
-  [docstring, form] = get_help_text(name);
+  [tempdir, tempname, ext] = fileparts(name);
+  if (strcmpi(ext, '.texi'))
+    docstring = fileread(name);
+  else
+    % assume .m file, or something else where "help" works
+    [docstring, form] = get_help_text(name);
 
-  if (~strcmp(form, 'texinfo'))
-    err = 1;  msg = 'not texinfo';
-    return
+    if (~strcmp(form, 'texinfo'))
+      err = 1;  msg = 'not texinfo';
+      return
+    end
   end
 
   %% Just convert to plain text
