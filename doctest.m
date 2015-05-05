@@ -130,6 +130,9 @@ function varargout = doctest(varargin)
 % block to the first "@result{}" are assumed to be commands.  These
 % heuristics work for simple documentation but for more complicated
 % examples, adding ">>" to the documentation may be necessary.
+%
+% Standalone Texinfo files can be tested using "doctest myfile.texinfo".
+%
 % FIXME: Instead of the current pre-parsing to add ">>" prompts, one could
 % presumably refactor the testing code so that input lines are tried
 % one-at-a-time checking the output after each.
@@ -323,7 +326,7 @@ function [docstring, err, msg] = octave_extract_doctests(name)
   err = 1; msg = '';
 
   [tempdir, tempname, ext] = fileparts(name);
-  if (strcmpi(ext, '.texi'))
+  if (any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'})))
     docstring = fileread(name);
   else
     % assume .m file, or something else where "help" works
