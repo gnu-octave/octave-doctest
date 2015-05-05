@@ -25,11 +25,14 @@ end
 example_re = [
     '(?m)(?-s)'                          ... % options
     '(?:^ *>> )'                         ... % ">> "
-    '(.*(\n *\.\. .*)*)\n'               ... % rest of line + ".. " lines
+    '(.*(?:\n *\.\. .*)*)\n'             ... % rest of line + ".. " lines
     '((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)'];  % the output
 [~,~,~,~,examples] = regexp(docstring, example_re);
 
 for i = 1:length(examples)
+  % each block should be split into input/output by the regex
+  assert (length(examples{i}) == 2)
+
   % split into lines
   lines = textscan(examples{i}{1}, '%s', 'delimiter', sprintf('\n'));
   lines = lines{1};
