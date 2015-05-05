@@ -426,9 +426,14 @@ function [docstring, err, msg] = octave_extract_doctests(name)
     I(Iex_start) = false;
     I(Iex_end) = false;
 
+    starts = [0 diff(I)] == 1;
     for i=1:length(L)
       if (I(i) && ~isempty(L{i}) && isempty(regexp(L{i}, '^\s+$', 'match')))
-        L{i} = ['>> ' L{i}];
+        if (starts(i))
+          L{i} = ['>> ' L{i}];
+        else
+          L{i} = ['.. ' L{i}];
+        end
       end
     end
     docstring = strjoin(L, '\n');
