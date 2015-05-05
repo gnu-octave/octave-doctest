@@ -54,7 +54,7 @@ for i = 1:length(examples)
   prefix = {'', 'ans = '};
   for ii = 1:length(prefix)
     pass = doctest_compare([prefix{ii} want_unspaced], got_unspaced);
-    if pass break end
+    if pass, break, end
   end
   results(i).pass = pass;
 end
