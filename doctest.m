@@ -143,8 +143,8 @@ function varargout = doctest(varargin)
 % [n, f, e] = doctest('class_name1', 'func_name1')
 %
 % Here 'n' is the number of test, 'f' is the number of failures and 'e' is
-% the number of extract errors (probably only relevant when using Texinfo
-% docs on Octave where it indicates malformed @example blocks).
+% the number of extraction errors.  The latter is probably only relevant
+% when using Texinfo on Octave where it indicates malformed @example blocks.
 %
 %
 % VERSIONS:
