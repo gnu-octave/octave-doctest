@@ -1,0 +1,19 @@
+doctest 0.3.0-dev
+=================
+
+  * Multiline input now works (e.g., a matrix split across lines).
+
+  * Allow "ans = " to be omitted.
+
+  * pure texinfo files can be tested: "doctest myfile.texinfo".
+
+  * Other bug fixes.
+
+
+
+doctest 0.2.0 (2015-04-06)
+==========================
+
+  * Octave support, including examples in Texinfo blocks.
+
+  * Return the number of tests and number failed.

@@ -1,0 +1,13 @@
+Name: doctest
+Version: 0.2.0
+Date: 2015-04-06
+Author: various authors
+Maintainer: Colin B. Macdonald <cbm@m.fsf.org>
+Title: Documentation tests
+Description: The Octave-Forge Doctest package finds specially-formatted
+ blocks of example code within documentation files.  It then executes
+ the code and confirms the output is correct.  This can be useful as part of
+ a testing framework or simply to ensure that documentation stays up-to-date
+ during software development.
+Categories: testing
+Url: http://octave.sf.net/
