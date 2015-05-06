@@ -22,10 +22,17 @@ if length(matches) > 0
 end
 
 % loosely based on Python 2.6 doctest.py, line 510
-example_re = '(?m)(?-s)(?:^ *>> )(.*(\n *\.\. .*)*)\n((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)';
+example_re = [
+    '(?m)(?-s)'                          ... % options
+    '(?:^ *>> )'                         ... % ">> "
+    '(.*(?:\n *\.\. .*)*)\n'             ... % rest of line + ".. " lines
+    '((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)'];  % the output
 [~,~,~,~,examples] = regexp(docstring, example_re);
 
 for i = 1:length(examples)
+  % each block should be split into input/output by the regex
+  assert (length(examples{i}) == 2)
+
   % split into lines
   lines = textscan(examples{i}{1}, '%s', 'delimiter', sprintf('\n'));
   lines = lines{1};
