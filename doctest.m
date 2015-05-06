@@ -95,7 +95,9 @@ function varargout = doctest(varargin)
 %
 % Shortcuts:
 % You can optionally omit "ans = " when the output is unassigned.  But
-% actual variable names (such as "x = " above) must be included.
+% actual variable names (such as "x = " above) must be included.  Leading
+% and trailing whitespace on each line of output will be discarded which
+% gives some freedom to, e.g., indent the code output as you wish.
 %
 %
 % LIMITATIONS:
