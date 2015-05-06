@@ -93,6 +93,11 @@ function varargout = doctest(varargin)
 % i = 3
 %
 %
+% Shortcuts:
+% You can optionally omit "ans = " when the output is unassigned.  But
+% actual variable names (such as "x = " above) must be included.
+%
+%
 % LIMITATIONS:
 %
 % The examples MUST END with either the END OF THE DOCUMENTATION or TWO
