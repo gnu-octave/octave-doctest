@@ -224,7 +224,7 @@ end
 % that docstring
 %
 
-[red, yellow, reset] = terminal_escapes();
+[green, red, yellow, reset] = terminal_escapes();
 
 all_results = cell(1, length(to_test));
 all_extract_err = zeros(1, length(to_test));
@@ -295,7 +295,7 @@ for i = 1:total
   end
 end
 
-[red, yellow, reset] = terminal_escapes();
+[green, red, yellow, reset] = terminal_escapes();
 
 if total == 0 && extract_err < 0
   fprintf(err, ['%s: ' yellow  'Warning: could not extract tests' reset '\n'], to_test.name);
@@ -448,7 +448,7 @@ function [docstring, err, msg] = octave_extract_doctests(name)
 end
 
 
-function [red, yellow, reset] = terminal_escapes()
+function [green, red, yellow, reset] = terminal_escapes()
 
   try
     OCTAVE_VERSION;
@@ -459,10 +459,12 @@ function [red, yellow, reset] = terminal_escapes()
 
   if (running_octave)
     % terminal escapes for Octave colour, hide from Matlab inside eval
+    green = eval('"\033[1;40;32m"');
     red = eval('"\033[1;40;31m"');
     yellow = eval('"\033[1;40;33m"');
     reset = eval('"\033[m"');
   else
+    green = '';
     red = '';
     yellow = '';
     reset = '';
