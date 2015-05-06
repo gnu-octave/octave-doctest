@@ -19,7 +19,7 @@ does.
 
 Here's a trivial function and its documentation:
 
-::
+.. code:: matlab
 
     function sum = add3(value)
     % adds 3 to a number
@@ -59,10 +59,7 @@ Here's a trivial function and its documentation:
 Example output
 --------------
 
-Now we'll run
-
-doctest add3
-
+Now we'll run 'doctest add3'.
 Here's the output we get:
 
 ::
@@ -79,7 +76,7 @@ Normally, the failure report would include a link to somewhere near
 the doctest that failed, but that doesn't format properly in
 published m-files.
 
-::
+.. code:: matlab
 
     % Has a doctest that should fail.
     %
@@ -89,7 +86,9 @@ published m-files.
     %
     %      5
     %
-    
+
+::
+
     -------------
     should_fail: 1 ERRORS
       >> 3 + 3
@@ -116,7 +115,7 @@ the example below.
 Here are some examples of formatting, both ones that work and ones
 that don't.
 
-::
+.. code:: matlab
 
     % formatting examples
     %
@@ -173,7 +172,8 @@ that don't.
     %
     % I guess that's it!
     
-    
+::
+
     -------------
     formatting: 2 ERRORS
       >> 1 + 4          % FAILS: there aren't 2 blank lines before the prose
@@ -193,7 +193,7 @@ BEFORE the error message, the current version can't deal with that.
 For more info see Issue #4 on the bitbucket site (below). Warnings
 are different from errors, and they work fine.
 
-::
+.. code:: matlab
 
     % Errors and doctest - demonstrates a current limitation of doctest
     %
@@ -209,7 +209,9 @@ are different from errors, and they work fine.
     % >> disp('if at first you don''t succeed...'); error('nevermind')
     % if at first you don't succeed...
     % ??? nevermind
-    
+
+::
+
     -------------
     errors: 1 ERRORS
       >> disp('if at first you don''t succeed...'); error('nevermind')
