@@ -224,7 +224,7 @@ end
 % that docstring
 %
 
-[red, yellow, reset] = terminal_escapes();
+[green, red, yellow, reset] = terminal_escapes();
 
 all_results = cell(1, length(to_test));
 all_extract_err = zeros(1, length(to_test));
@@ -266,16 +266,43 @@ end
 
 total_test = 0;
 total_fail = 0;
+total_notests = 0;
+total_extract_errs = 0;
 for I=1:length(all_results);
   [count, numfail] = print_test_results(to_test(I), all_results{I}, all_extract_err(I), all_extract_msgs{I});
   total_test = total_test + count;
   total_fail = total_fail + numfail;
+  if (length(all_results{I}) == 0)
+    total_notests = total_notests + 1;
+  end
+  if (all_extract_err(I) < 0)
+    total_extract_errs = total_extract_errs + 1;
+  end
 end
 
 num_extract_err = nnz(all_extract_err < 0);
 
-fprintf(1, 'doctest: ran %d tests: %d failed.  %d extraction errors\n', ...
-        total_test, total_fail, num_extract_err);
+fprintf('\nDoctest Summary:\n\n');
+fprintf('  Searched %d targets: found %d tests total, %d targets without tests.\n', ...
+        length(all_results), total_test, total_notests);
+
+if (total_extract_errs == 0)
+  fprintf('  Extraction errors: 0\n');
+else
+  fprintf(['  ' yellow 'Extraction errors: %d targets appear to ' ...
+           'have unusable tests.' reset '\n'], total_extract_errs);
+end
+if (total_fail == 0)
+  hilitepass = green;
+  hilitefail = '';
+else
+  hilitepass = '';
+  hilitefail = red;
+end
+fprintf(['  ' hilitepass 'Tests passed: %d/%d' reset '\n'], ...
+        total_test - total_fail, total_test);
+fprintf(['  ' hilitefail 'Tests failed: %d' reset '\n\n'], total_fail);
+
 if (nargout > 0)
   varargout = {total_test, total_fail, num_extract_err};
 end
@@ -295,7 +322,7 @@ for i = 1:total
   end
 end
 
-[red, yellow, reset] = terminal_escapes();
+[green, red, yellow, reset] = terminal_escapes();
 
 if total == 0 && extract_err < 0
   fprintf(err, ['%s: ' yellow  'Warning: could not extract tests' reset '\n'], to_test.name);
@@ -448,7 +475,7 @@ function [docstring, err, msg] = octave_extract_doctests(name)
 end
 
 
-function [red, yellow, reset] = terminal_escapes()
+function [green, red, yellow, reset] = terminal_escapes()
 
   try
     OCTAVE_VERSION;
@@ -459,10 +486,12 @@ function [red, yellow, reset] = terminal_escapes()
 
   if (running_octave)
     % terminal escapes for Octave colour, hide from Matlab inside eval
+    green = eval('"\033[1;40;32m"');
     red = eval('"\033[1;40;31m"');
     yellow = eval('"\033[1;40;33m"');
     reset = eval('"\033[m"');
   else
+    green = '';
     red = '';
     yellow = '';
     reset = '';
