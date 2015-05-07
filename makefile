@@ -1,4 +1,4 @@
 .PHONY: test
 
 test:
-	octave --eval "[_, total_fail, total_extract_err] = doctest('doctest'); exit(total_fail + total_extract_err > 0);"
+	octave --eval "[~, total_fail, total_extract_err] = doctest('doctest'); exit(total_fail + total_extract_err > 0);"
