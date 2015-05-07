@@ -289,8 +289,6 @@ for I=1:length(all_results);
   end
 end
 
-num_extract_err = nnz(all_extract_err < 0);
-
 fprintf('\nDoctest Summary:\n\n');
 fprintf('  Searched %d targets: found %d tests total, %d targets without tests.\n', ...
         length(all_results), total_test, total_notests);
@@ -302,19 +300,17 @@ else
            'have unusable tests.' reset '\n'], total_extract_errs);
 end
 if (total_fail == 0)
-  hilitepass = green;
-  hilitefail = '';
+  hilitecolor = green;
 else
-  hilitepass = '';
-  hilitefail = red;
+  hilitecolor = red;
 end
-fprintf(['  ' hilitepass 'Tests passed: %d/%d' reset '\n'], ...
+fprintf(['  ' hilitecolor 'Tests passed: %d/%d' reset '\n'], ...
         total_test - total_fail, total_test);
-fprintf(['  ' hilitefail 'Tests failed: %d' reset '\n\n'], total_fail);
 
 if (nargout > 0)
-  varargout = {total_test, total_fail, num_extract_err};
+  varargout = {total_test, total_fail, total_extract_errs};
 end
+
 end
 
 
@@ -346,8 +342,8 @@ end
 for I = 1:length(results)
   if ~results(I).pass
     fprintf(out, '  >> %s\n\n', results(I).source);
-    fprintf(out, '     expected: %s\n', results(I).want);
-    fprintf(out, '     got     : %s\n', results(I).got);
+    fprintf(out, [ '     expected: ' '%s' reset '\n' ], results(I).want);
+    fprintf(out, [ '     got     : ' red '%s' reset '\n' ], results(I).got);
   end
 end
 
