@@ -156,6 +156,7 @@ function varargout = doctest(varargin)
 % It is available at https://github.com/catch22/doctest-for-matlab
 % See https://github.com/catch22/doctest-for-matlab/CONTRIBUTORS for a list of contributors.
 
+disp('Doctest v0.3.0-dev: this is Free Software without warranty, see source.');
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
