@@ -490,11 +490,14 @@ function [green, red, yellow, reset] = terminal_escapes()
   end
 
   if (running_octave)
-    % terminal escapes for Octave colour, hide from Matlab inside eval
-    green = eval('"\033[1;40;32m"');
-    red = eval('"\033[1;40;31m"');
-    yellow = eval('"\033[1;40;33m"');
-    reset = eval('"\033[m"');
+    have_colorterm = index(getenv('TERM'), 'color') > 0;
+    if have_colorterm
+      % terminal escapes for Octave colour, hide from Matlab inside eval
+      green = eval('"\033[1;32m"');
+      red = eval('"\033[1;31m"');
+      yellow = eval('"\033[1;33m"');
+      reset = eval('"\033[m"');
+    end
   else
     green = '';
     red = '';
