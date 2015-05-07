@@ -31,7 +31,7 @@ example_re = [
 
 for i = 1:length(examples)
   % each block should be split into input/output by the regex
-  assert (length(examples{i}) == 2)
+  assert (length(examples{i}) == 2);
 
   % split into lines
   lines = textscan(examples{i}{1}, '%s', 'delimiter', sprintf('\n'));
@@ -135,11 +135,11 @@ function s = doctest_fake_evalc(cmd)
 %   FIXME: this spams stdout as well as capturing.
 
   tf = tmpnam();
-  diary(tf)
+  diary(tf);
   % could have escaped newlines?  No, eval doesn't like them.
   %cmd = strrep(cmd, '\n', sprintf('\n'))
   evalin('caller', cmd);
-  diary off
+  diary off;
   s = fileread(tf);
   unlink(tf);
 end
