@@ -169,6 +169,7 @@ function varargout = doctest(varargin)
 % list of all contributors.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+disp('Doctest v0.3.0-dev: this is Free Software without warranty, see source.');
 
 % Make a list of every method/function that we need to examine, in the
 % to_test struct.%
@@ -235,7 +236,7 @@ end
 % that docstring
 %
 
-[green, red, yellow, reset] = terminal_escapes();
+[color_ok, color_err, color_warn, reset] = terminal_escapes();
 
 all_results = cell(1, length(to_test));
 all_extract_err = zeros(1, length(to_test));
@@ -295,18 +296,19 @@ fprintf('\nDoctest Summary:\n\n');
 fprintf('  Searched %d targets: found %d tests total, %d targets without tests.\n', ...
         length(all_results), total_test, total_notests);
 
+fprintf('  Extraction errors: ');
 if (total_extract_errs == 0)
-  fprintf('  Extraction errors: 0\n');
+  fprintf('0\n');
 else
-  fprintf(['  ' yellow 'Extraction errors: %d targets appear to ' ...
-           'have unusable tests.' reset '\n'], total_extract_errs);
+  fprintf([color_warn '%d targets appear to have unusable tests.' reset '\n'], ...
+          total_extract_errs);
 end
 if (total_fail == 0)
-  hilitecolor = green;
+  hilite = color_ok;
 else
-  hilitecolor = red;
+  hilite = color_err;
 end
-fprintf(['  ' hilitecolor 'Tests passed: %d/%d' reset '\n'], ...
+fprintf(['  ' hilite 'Tests passed: %d/%d' reset '\n\n'], ...
         total_test - total_fail, total_test);
 
 if (nargout > 0)
@@ -329,23 +331,23 @@ for i = 1:total
   end
 end
 
-[green, red, yellow, reset] = terminal_escapes();
+[color_ok, color_err, color_warn, reset] = terminal_escapes();
 
 if total == 0 && extract_err < 0
-  fprintf(err, ['%s: ' yellow  'Warning: could not extract tests' reset '\n'], to_test.name);
+  fprintf(err, ['%s: ' color_warn  'Warning: could not extract tests' reset '\n'], to_test.name);
   fprintf(err, '  %s\n', extract_msg);
 elseif total == 0
   fprintf(err, '%s: NO TESTS\n', to_test.name);
 elseif errors == 0
   fprintf(out, '%s: OK (%d tests)\n', to_test.name, length(results));
 else
-  fprintf(err, ['%s: ' red '%d ERRORS' reset '\n'], to_test.name, errors);
+  fprintf(err, ['%s: ' color_err '%d ERRORS' reset '\n'], to_test.name, errors);
 end
 for I = 1:length(results)
   if ~results(I).pass
     fprintf(out, '  >> %s\n\n', results(I).source);
     fprintf(out, [ '     expected: ' '%s' reset '\n' ], results(I).want);
-    fprintf(out, [ '     got     : ' red '%s' reset '\n' ], results(I).got);
+    fprintf(out, [ '     got     : ' color_err '%s' reset '\n' ], results(I).got);
   end
 end
 
@@ -483,7 +485,7 @@ function [docstring, err, msg] = octave_extract_doctests(name)
 end
 
 
-function [green, red, yellow, reset] = terminal_escapes()
+function [color_ok, color_err, color_warn, reset] = terminal_escapes()
 
   try
     OCTAVE_VERSION;
@@ -495,16 +497,16 @@ function [green, red, yellow, reset] = terminal_escapes()
   if (running_octave)
     have_colorterm = index(getenv('TERM'), 'color') > 0;
     if have_colorterm
-      % terminal escapes for Octave colour, hide from Matlab inside eval
-      green = eval('"\033[1;32m"');
-      red = eval('"\033[1;31m"');
-      yellow = eval('"\033[1;33m"');
+      % terminal escapes for Octave color, hide from Matlab inside eval
+      color_ok = eval('"\033[1;32m"');    % green
+      color_err = eval('"\033[1;31m"');   % red
+      color_warn = eval('"\033[1;35m"');  % purple
       reset = eval('"\033[m"');
     end
   else
-    green = '';
-    red = '';
-    yellow = '';
+    color_ok = '';
+    color_err = '';
+    color_warn = '';
     reset = '';
   end
 end
