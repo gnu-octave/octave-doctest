@@ -160,13 +160,12 @@ function varargout = doctest(varargin)
 % History
 % =======
 %
-% The latest version from the original author, Thomas Smith, is available
+% The original version was written by Thomas Smith and is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
 %
 % This modified version adds multiline and Octave support, among other things.
 % It is available at https://github.com/catch22/doctest-for-matlab
-% See https://github.com/catch22/doctest-for-matlab/CONTRIBUTORS for the
-% list of all contributors.
+% See the CONTRIBUTORS file for a list of authors and contributors.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 disp('Doctest v0.3.0-dev: this is Free Software without warranty, see source.');
