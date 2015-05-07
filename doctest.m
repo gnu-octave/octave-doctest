@@ -286,11 +286,12 @@ fprintf('\nDoctest Summary:\n\n');
 fprintf('  Searched %d targets: found %d tests total, %d targets without tests.\n', ...
         length(all_results), total_test, total_notests);
 
+fprintf('  Extraction errors: ');
 if (total_extract_errs == 0)
-  fprintf('  Extraction errors: 0\n');
+  fprintf('0\n');
 else
-  fprintf(['  ' color_warn 'Extraction errors: %d targets appear to ' ...
-           'have unusable tests.' reset '\n'], total_extract_errs);
+  fprintf([color_warn '%d targets appear to have unusable tests.' reset '\n'], ...
+          total_extract_errs);
 end
 if (total_fail == 0)
   hilite = color_ok;
