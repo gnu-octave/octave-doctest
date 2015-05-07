@@ -1,3 +1,9 @@
+DOCTEST
+=======
+.. image:: https://travis-ci.org/catch22/doctest-for-matlab.svg?branch=master
+  :target: https://travis-ci.org/catch22/doctest-for-matlab
+
+
 Contents
 --------
 
