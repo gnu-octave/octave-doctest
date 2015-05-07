@@ -305,10 +305,12 @@ else
 end
 if (total_fail == 0)
   hilite = '';
+  hiliteoff = '';
 else
   hilite = color_err;
+  hilite_off = reset;
 end
-fprintf(['  ' hilite 'Tests passed: %d/%d' reset '\n\n'], ...
+fprintf(['  ' hilite 'Tests passed: %d/%d' hilite_off '\n\n'], ...
         total_test - total_fail, total_test);
 
 if (nargout > 0)
