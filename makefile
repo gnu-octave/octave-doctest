@@ -3,7 +3,7 @@
 OCTAVEFORGE_PKG_DIR=octaveforge_pkg
 
 test:
-	octave --eval "[~, total_fail, total_extract_err] = doctest('doctest'); exit(total_fail + total_extract_err > 0);"
+	octave --eval "[~, total_fail, total_extract_err] = doctest('doctest', 'doctest_run', 'doctest_compare'); exit(total_fail + total_extract_err > 0);"
 
 octaveforge_pkg:
 	mkdir -p ${OCTAVEFORGE_PKG_DIR}/inst/private
