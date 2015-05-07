@@ -63,8 +63,10 @@ function varargout = doctest(varargin)
 % handled correctly:
 %
 % >> not_a_real_function(42)
-% ??? Undefined function
+% ??? ***ndefined ***
 %
+%
+% (MATLAB spells this 'Undefined', while Octave uses 'undefined')
 %
 % But if the line of code will emit other output BEFORE the error message,
 % the current version can't deal with that.  For more info see Issue #4 on
@@ -76,8 +78,8 @@ function varargout = doctest(varargin)
 % in a stack trace, or something with random numbers, you can use a
 % wildcard to match that part.
 %
-% >> dicomuid
-% 1.3.6.1.4.1.***
+% >> datestr(now, 'yyyy-mm-dd')
+% 2***
 %
 %
 % Multiple lines of code:
