@@ -1,12 +1,14 @@
 function varargout = doctest(varargin)
 % Run examples embedded in documentation
 %
-% USAGE:
+% Usage
+% =====
 %
 % doctest class_name1 func_name2 class_name3 ...
 %
 %
-% DESCRIPTION:
+% Description
+% ===========
 %
 % Each time doctest runs a test, it's running a line of code and checking
 % that the output is what you say it should be.  It knows something is an
@@ -16,7 +18,8 @@ function varargout = doctest(varargin)
 % the documentation.
 %
 %
-% EXAMPLES:
+% Examples
+% ========
 %
 % Running 'doctest doctest' will execute these examples and test the
 % results.
@@ -44,7 +47,8 @@ function varargout = doctest(varargin)
 %    7
 %
 %
-% Expecting an error:
+% Expecting an error
+% ------------------
 %
 % doctest can deal with errors, a little bit.  For instance, this case is
 % handled correctly:
@@ -61,7 +65,8 @@ function varargout = doctest(varargin)
 % work fine.
 %
 %
-% Wildcards:
+% Wildcards
+% ---------
 %
 % If you have something that has changing output, for instance line numbers
 % in a stack trace, or something with random numbers, you can use a
@@ -71,7 +76,8 @@ function varargout = doctest(varargin)
 % 2***
 %
 %
-% Multiple lines of code:
+% Multiple lines of code
+% ----------------------
 %
 % Code spanning multiple lines of code can be entered by prefixing all
 % subsequent lines with '..',  e.g.
@@ -85,7 +91,8 @@ function varargout = doctest(varargin)
 % i = 3
 %
 %
-% Shortcuts:
+% Shortcuts
+% ---------
 %
 % You can optionally omit "ans = " when the output is unassigned.  But
 % actual variable names (such as "x = " above) must be included.  Leading
@@ -93,7 +100,8 @@ function varargout = doctest(varargin)
 % gives some freedom to, e.g., indent the code output as you wish.
 %
 %
-% LIMITATIONS:
+% Limitations
+% ===========
 %
 % The examples MUST END with either the END OF THE DOCUMENTATION or TWO
 % BLANK LINES (or anyway, lines with just the comment marker % and nothing
@@ -114,7 +122,8 @@ function varargout = doctest(varargin)
 % below)
 %
 %
-% OCTAVE-SPECIFIC NOTES:
+% Octave-specific notes
+% =====================
 %
 % Octave m-files are commonly documented using Texinfo.  If you are running
 % Octave and your m-file contains texinfo markup, then the rules noted above
@@ -138,7 +147,8 @@ function varargout = doctest(varargin)
 % one-at-a-time checking the output after each.
 %
 %
-% RETURN VALUES:
+% Return values
+% =============
 %
 % [n, f, e] = doctest('class_name1', 'func_name1')
 %
@@ -147,21 +157,21 @@ function varargout = doctest(varargin)
 % when using Texinfo on Octave where it indicates malformed @example blocks.
 %
 %
-% VERSIONS:
+% History
+% =======
 %
 % The latest version from the original author, Thomas Smith, is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
 %
 % This modified version adds multiline and Octave support, among other things.
 % It is available at https://github.com/catch22/doctest-for-matlab
-% See https://github.com/catch22/doctest-for-matlab/CONTRIBUTORS for a list of contributors.
+% See https://github.com/catch22/doctest-for-matlab/CONTRIBUTORS for the
+% list of all contributors.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
 % Make a list of every method/function that we need to examine, in the
-% to_test struct.
-%
+% to_test struct.%
 
 % determine whether we are running octave or matlab
 try
