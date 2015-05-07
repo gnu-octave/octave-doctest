@@ -304,7 +304,7 @@ else
           total_extract_errs);
 end
 if (total_fail == 0)
-  hilite = color_ok;
+  hilite = '';
 else
   hilite = color_err;
 end
