@@ -1,34 +1,20 @@
 function varargout = doctest(varargin)
 % Run examples embedded in documentation
 %
-% doctest func_name
-% doctest('func_name')
-% doctest class_name
-% doctest('class_name')
+% USAGE:
+%
 % doctest class_name1 func_name2 class_name3 ...
 %
-% Example:
-% Say you have a function that adds 7 to things:
-%     function res = add7(num)
-%         % >> add7(3)
-%         %
-%         % ans =
-%         %
-%         %      10
-%         %
-%         res = num + 7;
-%     end
 %
-% Save that to 'add7.m'.  Now you can say 'doctest add7' and it will run
-% 'add7(3)' and make sure that it gets back 'ans = 10'.  It prints out
-% something like this:
+% DESCRIPTION:
 %
-%  add7: OK
+% Each time doctest runs a test, it's running a line of code and checking
+% that the output is what you say it should be.  It knows something is an
+% example because it's a line in help('your_function') that starts with
+% '>>'.  It knows what you think the output should be by starting on the
+% line after >> and looking for the next >>, two blank lines, or the end of
+% the documentation.
 %
-% If the output of some function will change each time you call it, for
-% instance if it includes a random number or a stack trace, you can put ***
-% (three asterisks) where the changing element should be.  This acts as a
-% wildcard, and will match anything.  See the example below.
 %
 % EXAMPLES:
 %
@@ -58,7 +44,8 @@ function varargout = doctest(varargin)
 %    7
 %
 %
-% Exceptions:
+% Expecting an error:
+%
 % doctest can deal with errors, a little bit.  For instance, this case is
 % handled correctly:
 %
@@ -73,7 +60,9 @@ function varargout = doctest(varargin)
 % the bitbucket site (below).  Warnings are different from errors, and they
 % work fine.
 %
+%
 % Wildcards:
+%
 % If you have something that has changing output, for instance line numbers
 % in a stack trace, or something with random numbers, you can use a
 % wildcard to match that part.
@@ -83,6 +72,7 @@ function varargout = doctest(varargin)
 %
 %
 % Multiple lines of code:
+%
 % Code spanning multiple lines of code can be entered by prefixing all
 % subsequent lines with '..',  e.g.
 %
@@ -96,6 +86,7 @@ function varargout = doctest(varargin)
 %
 %
 % Shortcuts:
+%
 % You can optionally omit "ans = " when the output is unassigned.  But
 % actual variable names (such as "x = " above) must be included.  Leading
 % and trailing whitespace on each line of output will be discarded which
@@ -161,9 +152,10 @@ function varargout = doctest(varargin)
 % The latest version from the original author, Thomas Smith, is available
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
 %
-% This version, created by Michael Walter for multiline and Octave
-% support (among other things), is available at
-% https://github.com/catch22/doctest-for-matlab
+% This modified version adds multiline and Octave support, among other things.
+% It is available at https://github.com/catch22/doctest-for-matlab
+% See https://github.com/catch22/doctest-for-matlab/CONTRIBUTORS for a list of contributors.
+
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
