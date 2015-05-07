@@ -9,6 +9,8 @@ doctest 0.3.0-dev
 
   * Other bug fixes.
 
+  * Support for becoming an Octave-Forge package.
+
 
 
 doctest 0.2.0 (2015-04-06)

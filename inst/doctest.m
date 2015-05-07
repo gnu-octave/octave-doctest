@@ -348,7 +348,7 @@ end
 for I = 1:length(results)
   if ~results(I).pass
     fprintf(out, '  >> %s\n\n', results(I).source);
-    fprintf(out, [ '     expected: ' '%s' reset '\n' ], results(I).want);
+    fprintf(out, [ '     expected: ' '%s' '\n' ], results(I).want);
     fprintf(out, [ '     got     : ' color_err '%s' reset '\n' ], results(I).got);
   end
 end
