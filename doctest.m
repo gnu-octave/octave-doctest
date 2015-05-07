@@ -354,6 +354,7 @@ end
 
 function [docstring, err, msg] = octave_extract_doctests(name)
 %OCTAVE_EXTRACT_DOCTESTS
+% XXX: What is err > 0 vs err < 0?
 
   err = 1; msg = '';
 
