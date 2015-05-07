@@ -93,6 +93,13 @@ function varargout = doctest(varargin)
 % i = 3
 %
 %
+% Shortcuts:
+% You can optionally omit "ans = " when the output is unassigned.  But
+% actual variable names (such as "x = " above) must be included.  Leading
+% and trailing whitespace on each line of output will be discarded which
+% gives some freedom to, e.g., indent the code output as you wish.
+%
+%
 % LIMITATIONS:
 %
 % The examples MUST END with either the END OF THE DOCUMENTATION or TWO
@@ -143,8 +150,8 @@ function varargout = doctest(varargin)
 % [n, f, e] = doctest('class_name1', 'func_name1')
 %
 % Here 'n' is the number of test, 'f' is the number of failures and 'e' is
-% the number of extract errors (probably only relevant when using Texinfo
-% docs on Octave where it indicates malformed @example blocks).
+% the number of extraction errors.  The latter is probably only relevant
+% when using Texinfo on Octave where it indicates malformed @example blocks.
 %
 %
 % VERSIONS:
