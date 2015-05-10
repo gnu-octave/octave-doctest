@@ -164,7 +164,7 @@ function varargout = doctest(varargin)
 % at http://bitbucket.org/tgs/doctest-for-matlab/src
 %
 % This modified version adds multiline and Octave support, among other things.
-% It is available at https://github.com/catch22/doctest-for-matlab
+% It is available at https://github.com/catch22/octave-doctest
 % See the CONTRIBUTORS file for a list of authors and contributors.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -243,7 +243,7 @@ all_extract_msgs = cell(1, length(to_test));
 
 if running_octave
   disp('==========================================================================')
-  disp('Start of temporary output (github.com/catch22/doctest-for-matlab/issues/6)');
+  disp('Start of temporary output (github.com/catch22/octave-doctest/issues/6)');
   disp('==========================================================================')
 end
 
@@ -271,7 +271,7 @@ end
 
 if running_octave
   disp('========================================================================')
-  disp('End of temporary output (github.com/catch22/doctest-for-matlab/issues/6)');
+  disp('End of temporary output (github.com/catch22/octave-doctest/issues/6)');
   disp('========================================================================')
 end
 
