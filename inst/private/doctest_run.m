@@ -132,7 +132,12 @@ function s = doctest_fake_evalc(cmd)
 %DOCTEST_FAKE_EVALC
 %   A helper routine to (poorly) emulate evalc using diary and a temp
 %   file.  Octave has no evalc command (as of 2015-02).
-%   FIXME: this spams stdout as well as capturing.
+
+  % redirect stdout to /dev/null for the duration of this function
+  fflush(stdout);
+  PAGER('cat > /dev/null', 'local');
+  page_screen_output(1, 'local');
+  page_output_immediately(1, 'local');
 
   tf = tmpnam();
   diary(tf);
