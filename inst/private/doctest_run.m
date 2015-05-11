@@ -128,10 +128,11 @@ function s = doctest_fake_evalc(cmd)
 %   file.  Octave has no evalc command (as of 2015-02).
 
   % redirect stdout to /dev/null for the duration of this function
-  fflush(stdout);
-  PAGER('cat > /dev/null', 'local');
-  page_screen_output(1, 'local');
-  page_output_immediately(1, 'local');
+  % XXX: seems to introduce problems on @cbm755's machine (issue #39)
+  % fflush(stdout);
+  % PAGER('cat > /dev/null', 'local');
+  % page_screen_output(1, 'local');
+  % page_output_immediately(1, 'local');
 
   tf = tmpnam();
   diary(tf);
