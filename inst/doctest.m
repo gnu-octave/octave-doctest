@@ -186,47 +186,7 @@ end
 to_test = [];
 for i = 1:nargin
   func_or_class = varargin{i};
-
-  % If it's a class, add the methods to to_test.
-  if (~running_octave)
-    theMethods = methods(func_or_class);
-  else
-    % Octave unhappy on methods(<non-class>)
-    if (exist(func_or_class, 'file') || exist(func_or_class, 'builtin'))
-      theMethods = [];
-    else
-      theMethods = methods(func_or_class);
-    end
-  end
-
-  if (isempty(theMethods))
-    this_test = [];
-    this_test.name = func_or_class;
-    this_test.func_name = func_or_class;
-    this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', ...
-            which(func_or_class), func_or_class);
-    to_test = [to_test; this_test];
-  end
-
-  for I = 1:length(theMethods) % might be 0
-    this_test = [];
-
-    this_test.func_name = theMethods{I};
-    if (running_octave)
-      this_test.name = sprintf('@%s/%s', func_or_class, theMethods{I});
-    else
-      this_test.name = sprintf('%s.%s', func_or_class, theMethods{I});
-    end
-
-    try
-        this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', ...
-            which(func_or_class), this_test.func_name, this_test.name);
-    catch
-        this_test.link = this_test.name;
-    end
-
-    to_test = [to_test; this_test];
-  end
+  to_test = [to_test; doctest_collect(func_or_class)];
 end
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,8 +198,6 @@ end
 [color_ok, color_err, color_warn, reset] = doctest_colors();
 
 all_results = cell(1, length(to_test));
-all_extract_err = zeros(1, length(to_test));
-all_extract_msgs = cell(1, length(to_test));
 
 if running_octave
   disp('==========================================================================')
@@ -248,22 +206,13 @@ if running_octave
 end
 
 for I = 1:length(to_test)
-    if running_octave
-      [docstring, err, msg] = octave_extract_doctests(to_test(I).name);
-    else
-      err = 0; msg = '';
-      docstring = help(to_test(I).name);
-    end
-
-    these_results = doctest_run(docstring);
+    these_results = doctest_run(to_test(I).docstring);
 
 
     if ~ isempty(these_results)
         [these_results.link] = deal(to_test(I).link);
     end
 
-    all_extract_err(I) = err;
-    all_extract_msgs{I} = msg;
     all_results{I} = these_results;
     % Print the results after each file
     %print_test_results(to_test(I), these_results, err, msg);
@@ -280,13 +229,14 @@ total_fail = 0;
 total_notests = 0;
 total_extract_errs = 0;
 for I=1:length(all_results);
-  [count, numfail] = print_test_results(to_test(I), all_results{I}, all_extract_err(I), all_extract_msgs{I});
+  extract_error = to_test(I).error;
+  [count, numfail] = print_test_results(to_test(I), all_results{I}, extract_error);
   total_test = total_test + count;
   total_fail = total_fail + numfail;
   if (length(all_results{I}) == 0)
     total_notests = total_notests + 1;
   end
-  if (all_extract_err(I) < 0)
+  if (extract_error)
     total_extract_errs = total_extract_errs + 1;
   end
 end
@@ -317,7 +267,7 @@ end
 end
 
 
-function [total, errors] = print_test_results(to_test, results, extract_err, extract_msg)
+function [total, errors] = print_test_results(to_test, results, extract_err)
 
 out = 1; % stdout
 err = 2;
@@ -332,9 +282,9 @@ end
 
 [color_ok, color_err, color_warn, reset] = doctest_colors();
 
-if total == 0 && extract_err < 0
+if total == 0 && extract_err
   fprintf(err, ['%s: ' color_warn  'Warning: could not extract tests' reset '\n'], to_test.name);
-  fprintf(err, '  %s\n', extract_msg);
+  fprintf(err, '  %s\n', extract_err);
 elseif total == 0
   fprintf(err, '%s: NO TESTS\n', to_test.name);
 elseif errors == 0
@@ -350,134 +300,4 @@ for I = 1:length(results)
   end
 end
 
-
-end
-
-
-
-function [docstring, err, msg] = octave_extract_doctests(name)
-%OCTAVE_EXTRACT_DOCTESTS
-% XXX: What is err > 0 vs err < 0?
-
-  err = 1; msg = '';
-
-  [tempdir, tempname, ext] = fileparts(name);
-  if (any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'})))
-    docstring = fileread(name);
-  else
-    % assume .m file, or something else where "help" works
-    [docstring, form] = get_help_text(name);
-
-    if (~strcmp(form, 'texinfo'))
-      err = 1;  msg = 'not texinfo';
-      return
-    end
-  end
-
-  %% Just convert to plain text
-  % Matlab parser unhappy with underscore, hide inside eval
-  %docstring = eval('__makeinfo__(docstring, "plain text")');
-
-  % strip @group, and escape sequences
-  docstring = regexprep(docstring, '^\s*@group\n', '\n', 'lineanchors');
-  docstring = regexprep(docstring, '@end group\n', '');
-  docstring = strrep(docstring, '@{', '{');
-  docstring = strrep(docstring, '@}', '}');
-  docstring = strrep(docstring, '@@', '@');
-
-  % no example block, bail out
-  if (isempty(strfind(docstring, '@example')))
-    err = 0;  msg = 'no @example blocks';
-    docstring = '';
-    return
-  end
-  % Leave the @example lines in, may need them later
-  T = regexp(docstring, '(@example.*?@end example)', 'tokens');
-  if (isempty(T))
-    err = -1;  msg('malformed @example blocks');
-    docstring = '';
-    return
-  else
-    % flatten
-    for i=1:length(T)
-      assert(length(T{i}) == 1)
-      T{i} = T{i}{1};
-    end
-    docstring = strjoin(T, '\n');
-  end
-
-  if (isempty(docstring) || ~isempty(regexp(docstring, '^\s*$')))
-    err = -1;  msg = 'empty @example blocks';
-    docstring = '';
-    return
-  end
-
-  if (~isempty(strfind(docstring, '>>')))
-    %% Has '>>' indicators
-    err = 1;  msg = 'used >>';
-  else
-    %% No '>>', split on @result
-    err = 2;  msg = 'used @result splitting';
-    L = strsplit (docstring, '\n');
-
-    % mask for lines with @result in them
-    [S, ~, ~, ~, ~, ~, ~] = regexp(L, '@result\s*{}');
-    Ires = ~cellfun(@isempty, S);
-    if (nnz(Ires) == 0)
-      err = -2;  msg = 'has @example blocks but neither ">>" nor "@result{}"';
-      docstring = '';
-      return
-    end
-    if Ires(1)
-      err = -4;  msg = 'no command: @result on first line?';
-      return
-    end
-    for i=1:length(L)
-      if (length(S{i}) > 1)
-        err = -3;  msg = 'more than one @result on one line';
-        docstring = '';
-        return
-      end
-    end
-
-    % mask for lines with @example in them
-    Iex_start = ~cellfun(@isempty, regexp(L, '@example'));
-    Iex_end = ~cellfun(@isempty, regexp(L, '@end example'));
-
-    % build a new mask for lines which we think are commands
-    I = zeros(size(Ires), 'logical');
-    start_of_block = false;
-    for i=1:length(L)-1
-      if Iex_start(i)
-        start_of_block = true;
-      end
-      if (start_of_block)
-        I(i) = true;
-      end
-      if Ires(i+1)
-        % Next line has an @result so mark this line with '>>'
-        I(i) = true;
-        start_of_block = false;
-      end
-    end
-    % remove @example/@end lines from commands
-    I(Iex_start) = false;
-    I(Iex_end) = false;
-
-    starts = [0 diff(I)] == 1;
-    for i=1:length(L)
-      if (I(i) && ~isempty(L{i}) && isempty(regexp(L{i}, '^\s+$', 'match')))
-        if (starts(i))
-          L{i} = ['>> ' L{i}];
-        else
-          L{i} = ['.. ' L{i}];
-        end
-      end
-    end
-    docstring = strjoin(L, '\n');
-    docstring = [docstring sprintf('\n')];
-  end
-  docstring = regexprep(docstring, '^\s*@example\n', '', 'lineanchors');
-  docstring = regexprep(docstring, '^\s*@end example\n', '', 'lineanchors');
-  docstring = regexprep(docstring, '@result\s*{}', '');
 end
