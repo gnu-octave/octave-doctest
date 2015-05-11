@@ -229,6 +229,14 @@ end
 % get terminal color codes
 [color_ok, color_err, color_warn, reset] = doctest_colors();
 
+% determine if runing with octave
+try
+  OCTAVE_VERSION;
+  running_octave = 1;
+catch
+  running_octave = 0;
+end
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Collect all targets to be tested.
@@ -247,16 +255,30 @@ summary.num_targets = length(targets);
 summary.num_targets_passed = summary.num_targets_without_tests = summary.num_targets_with_extraction_errors = 0;
 summary.num_tests = summary.num_tests_passed = 0;
 
+% if running with octave and printing to stdout: buffer all output to work around issue #6
+run_buffered = running_octave && fid == stdout;
+if run_buffered
+  progress_buffer = '';
+end
+
+% print warning banner to stdout when running octave
+if running_octave
+  fprintf('==========================================================================\n');
+  fprintf('Start of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
+  fprintf('==========================================================================\n');
+end
+
+% run all tests
 for i=1:numel(targets)
   % run doctests for target and update statistics
   target = targets(i);
-  fprintf(fid, '%s %s ', target.name, repmat('.', 1, 55 - numel(target.name)));
+  progress_printf('%s %s ', target.name, repmat('.', 1, 55 - numel(target.name)));
 
   % extraction error?
   if target.error
     summary.num_targets_with_extraction_errors = summary.num_targets_with_extraction_errors + 1;
-    fprintf(fid, [color_err  'EXTRACTION ERROR' reset '\n\n']);
-    fprintf(fid, '    %s\n\n', target.error);
+    progress_printf([color_err  'EXTRACTION ERROR' reset '\n\n']);
+    progress_printf('    %s\n\n', target.error);
     continue;
   end
 
@@ -284,20 +306,32 @@ for i=1:numel(targets)
 
   % pretty print outcome
   if num_tests == 0
-    fprintf(fid, 'NO TESTS\n');
+    progress_printf('NO TESTS\n');
   elseif num_tests_passed == num_tests
-    fprintf(fid, [color_ok 'PASS %4d/%-4d' reset '\n'], num_tests_passed, num_tests);
+    progress_printf([color_ok 'PASS %4d/%-4d' reset '\n'], num_tests_passed, num_tests);
   else
-    fprintf(fid, [color_err 'FAIL %4d/%-4d' reset '\n\n'], num_tests - num_tests_passed, num_tests);
+    progress_printf([color_err 'FAIL %4d/%-4d' reset '\n\n'], num_tests - num_tests_passed, num_tests);
     for j = 1:num_tests
       if ~results(j).passed
-        fprintf(fid, '   >> %s\n\n', results(j).source);
-        fprintf(fid, [ '      expected: ' '%s' '\n' ], results(j).want);
-        fprintf(fid, [ '      got     : ' color_err '%s' reset '\n' ], results(j).got);
-        fprintf(fid, '\n');
+        progress_printf('   >> %s\n\n', results(j).source);
+        progress_printf([ '      expected: ' '%s' '\n' ], results(j).want);
+        progress_printf([ '      got     : ' color_err '%s' reset '\n' ], results(j).got);
+        progress_printf('\n');
       end
     end
   end
+end
+
+% print warning banner to stdout when running octave
+if running_octave
+  fprintf('==========================================================================\n');
+  fprintf('End of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
+  fprintf('==========================================================================\n\n');
+end
+
+% if running with octave, flush output buffer
+if run_buffered
+  fprintf(fid, '%s', progress_buffer);
 end
 
 
@@ -321,6 +355,17 @@ if nargout == 1
   varargout = {summary.num_targets_passed == summary.num_targets};
 elseif nargout > 1
   varargout = {summary.num_tests_passed, summary.num_tests, summary};
+end
+
+
+function progress_printf(template, varargin)
+  str = sprintf(template, varargin{:});
+  if run_buffered
+    progress_buffer = strcat({progress_buffer}, {str});
+    progress_buffer = progress_buffer{1};
+  else
+    fprintf(fid, str);
+  end
 end
 
 end
