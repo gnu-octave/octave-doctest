@@ -38,8 +38,9 @@ function varargout = doctest(what, mode, fid)
 %   SUMMARY.num_tests
 %   SUMMARY.num_tests_passed
 %
-% The latter is probably only relevant when using Texinfo on Octave, where
-% it indicates malformed @example blocks.
+% The field 'num_targets_with_extraction_errors' is probably only relevant
+% when using Texinfo documentation on Octave, where it typically indicates
+% malformed @example blocks.
 %
 %
 % Description
