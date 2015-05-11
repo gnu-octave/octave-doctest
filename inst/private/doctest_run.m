@@ -15,12 +15,6 @@ function results = doctest_run(docstring)
 %       doctest_compare.
 %
 
-% start with Examples: ..., end before "\nSee also ..." (if any)
-[~,~,~,~,matches] = regexp(docstring, 'Examples:\s*\n(.*)\n\s*See also ');
-if length(matches) > 0
-  docstring = matches{1}{1};
-end
-
 % loosely based on Python 2.6 doctest.py, line 510
 example_re = [
     '(?m)(?-s)'                          ... % options
