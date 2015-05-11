@@ -424,7 +424,6 @@ function [docstring, err, msg] = octave_extract_doctests(name)
     [S, ~, ~, ~, ~, ~, ~] = regexp(L, '@result\s*{}');
     Ires = ~cellfun(@isempty, S);
     if (nnz(Ires) == 0)
-      docstring
       err = -2;  msg = 'has @example blocks but neither ">>" nor "@result{}"';
       docstring = '';
       return
