@@ -235,7 +235,7 @@ end
 % that docstring
 %
 
-[color_ok, color_err, color_warn, reset] = terminal_escapes();
+[color_ok, color_err, color_warn, reset] = doctest_colors();
 
 all_results = cell(1, length(to_test));
 all_extract_err = zeros(1, length(to_test));
@@ -330,7 +330,7 @@ for i = 1:total
   end
 end
 
-[color_ok, color_err, color_warn, reset] = terminal_escapes();
+[color_ok, color_err, color_warn, reset] = doctest_colors();
 
 if total == 0 && extract_err < 0
   fprintf(err, ['%s: ' color_warn  'Warning: could not extract tests' reset '\n'], to_test.name);
@@ -480,31 +480,4 @@ function [docstring, err, msg] = octave_extract_doctests(name)
   docstring = regexprep(docstring, '^\s*@example\n', '', 'lineanchors');
   docstring = regexprep(docstring, '^\s*@end example\n', '', 'lineanchors');
   docstring = regexprep(docstring, '@result\s*{}', '');
-end
-
-
-function [color_ok, color_err, color_warn, reset] = terminal_escapes()
-
-  try
-    OCTAVE_VERSION;
-    running_octave = 1;
-  catch
-    running_octave = 0;
-  end
-
-  if (running_octave)
-    have_colorterm = index(getenv('TERM'), 'color') > 0;
-    if have_colorterm
-      % terminal escapes for Octave color, hide from Matlab inside eval
-      color_ok = eval('"\033[1;32m"');    % green
-      color_err = eval('"\033[1;31m"');   % red
-      color_warn = eval('"\033[1;35m"');  % purple
-      reset = eval('"\033[m"');
-    end
-  else
-    color_ok = '';
-    color_err = '';
-    color_warn = '';
-    reset = '';
-  end
 end
