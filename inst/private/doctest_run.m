@@ -11,7 +11,7 @@ function results = doctest_run(docstring)
 % results.source:   the source code that was run
 % results.want:     the desired output
 % results.got:      the output that was recieved
-% results.pass:     whether .want and .got match each other according to
+% results.passed:   whether .want and .got match each other according to
 %       doctest_compare.
 %
 
@@ -50,14 +50,14 @@ for i = 1:length(examples)
   results(i).source = examples{i}{1};
   results(i).want = strtrim(want_unspaced);
   results(i).got = strtrim(got_unspaced);
-  pass = doctest_compare(want_unspaced, got_unspaced);
+  passed = doctest_compare(want_unspaced, got_unspaced);
   % a list of acceptably-missing prefixes (allow customizing?)
   prefix = {'', 'ans = '};
   for ii = 1:length(prefix)
-    pass = doctest_compare([prefix{ii} want_unspaced], got_unspaced);
-    if pass, break, end
+    passed = doctest_compare([prefix{ii} want_unspaced], got_unspaced);
+    if passed, break, end
   end
-  results(i).pass = pass;
+  results(i).passed = passed;
 end
 
 end

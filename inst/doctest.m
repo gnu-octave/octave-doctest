@@ -1,10 +1,45 @@
-function varargout = doctest(varargin)
+function varargout = doctest(what, mode, fid)
 % Run examples embedded in documentation
 %
 % Usage
 % =====
 %
-% doctest class_name1 func_name2 class_name3 ...
+% doctest WHAT
+% doctest WHAT normal
+% doctest(WHAT, MODE, FID)
+%
+% SUCCESS = doctest ...
+% [NUM_TESTS_PASSED, NUM_TESTS, SUMMARY] = doctest ...
+%
+%
+% The parameter WHAT contains the name of the function or class for
+% which to run the doctests. When running with Octave, WHAT can be the
+% filename of a Texinfo file, in which case all @example blocks are processed.
+% The parameter WHAT can also be a cell array of such items.
+%
+% The optional parameter MODE is always 'normal'. It exists for compatibility
+% with Octave's test API.
+%
+% The optional parameter FID can be used to redirect all output to a file id
+% other than stdout.
+%
+%
+% When called with a single return value, return whether all tests have
+% succeeded (SUCCESS).
+%
+% When called with two or more return values, return the number of tests
+% passed (NUM_TESTS_PASSED), the total number of tests (NUM_TESTS) and a
+% structure with the following fields:
+%
+%   SUMMARY.num_targets
+%   SUMMARY.num_targets_passed
+%   SUMMARY.num_targets_without_tests
+%   SUMMARY.num_targets_with_extraction_errors
+%   SUMMARY.num_tests
+%   SUMMARY.num_tests_passed
+%
+% The latter is probably only relevant when using Texinfo on Octave, where
+% it indicates malformed @example blocks.
 %
 %
 % Description
@@ -147,14 +182,11 @@ function varargout = doctest(varargin)
 % one-at-a-time checking the output after each.
 %
 %
-% Return values
-% =============
+% Terminology
+% ===========
 %
-% [n, f, e] = doctest('class_name1', 'func_name1')
-%
-% Here 'n' is the number of test, 'f' is the number of failures and 'e' is
-% the number of extraction errors.  The latter is probably only relevant
-% when using Texinfo on Octave where it indicates malformed @example blocks.
+% A TARGET is a function, method or texinfo file. Each TARGET comes with a
+% docstring consisting of multiple DOCTESTS, i.e. question-answer snippets.
 %
 %
 % History
@@ -170,134 +202,123 @@ function varargout = doctest(varargin)
 
 disp('Doctest v0.4.0-dev: this is Free Software without warranty, see source.');
 
-% Make a list of every method/function that we need to examine, in the
-% to_test struct.%
 
-% determine whether we are running octave or matlab
-try
-  OCTAVE_VERSION;
-  running_octave = 1;
-catch
-  running_octave = 0;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Process parameters.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% if given a single object, wrap it in a cell array
+if ~iscell(what)
+  what = {what};
 end
 
-% We include a link to the function where the docstring is going to come
-% from, so that it's easier to navigate to that doctest.
-to_test = [];
-for i = 1:nargin
-  func_or_class = varargin{i};
-  to_test = [to_test; doctest_collect(func_or_class)];
+% mode is always 'normal'
+if nargin < 2
+  mode = 'normal';
+else
+  mode = validatestring(mode, {'normal'}, 'doctest', 'mode');
 end
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Examine each function/method for a docstring, and run any examples in
-% that docstring
-%
+% by default, print to stdout
+if nargin < 3
+  fid = 1;
+end
 
+% get terminal color codes
 [color_ok, color_err, color_warn, reset] = doctest_colors();
 
-all_results = cell(1, length(to_test));
 
-if running_octave
-  disp('==========================================================================')
-  disp('Start of temporary output (github.com/catch22/octave-doctest/issues/6)');
-  disp('==========================================================================')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Collect all targets to be tested.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+targets = [];
+for i=1:numel(what)
+  targets = [targets; doctest_collect(what{i})];
 end
 
-for I = 1:length(to_test)
-    these_results = doctest_run(to_test(I).docstring);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Run all doctests
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+summary = struct;
+summary.num_targets = length(targets);
+summary.num_targets_passed = summary.num_targets_without_tests = summary.num_targets_with_extraction_errors = 0;
+summary.num_tests = summary.num_tests_passed = 0;
 
-    if ~ isempty(these_results)
-        [these_results.link] = deal(to_test(I).link);
+for i=1:numel(targets)
+  % run doctests for target and update statistics
+  target = targets(i);
+  fprintf(fid, '%s %s ', target.name, repmat('.', 1, 55 - numel(target.name)));
+
+  % extraction error?
+  if target.error
+    summary.num_targets_with_extraction_errors = summary.num_targets_with_extraction_errors + 1;
+    fprintf(fid, [color_err  'EXTRACTION ERROR' reset '\n\n']);
+    fprintf(fid, '    %s\n\n', target.error);
+    continue;
+  end
+
+  % run doctest
+  results = doctest_run(target.docstring);
+
+  % determine number of tests passed
+  num_tests = numel(results);
+  num_tests_passed = 0;
+  for j=1:num_tests
+    if results(j).passed
+      num_tests_passed = num_tests_passed + 1;
     end
-
-    all_results{I} = these_results;
-    % Print the results after each file
-    %print_test_results(to_test(I), these_results, err, msg);
-end
-
-if running_octave
-  disp('========================================================================')
-  disp('End of temporary output (github.com/catch22/octave-doctest/issues/6)');
-  disp('========================================================================')
-end
-
-total_test = 0;
-total_fail = 0;
-total_notests = 0;
-total_extract_errs = 0;
-for I=1:length(all_results);
-  extract_error = to_test(I).error;
-  [count, numfail] = print_test_results(to_test(I), all_results{I}, extract_error);
-  total_test = total_test + count;
-  total_fail = total_fail + numfail;
-  if (length(all_results{I}) == 0)
-    total_notests = total_notests + 1;
   end
-  if (extract_error)
-    total_extract_errs = total_extract_errs + 1;
+
+  % update summary
+  summary.num_tests = summary.num_tests + num_tests;
+  summary.num_tests_passed = summary.num_tests_passed + num_tests_passed;
+  if num_tests_passed == num_tests
+    summary.num_targets_passed = summary.num_targets_passed + 1;
+  end
+  if num_tests == 0
+    summary.num_targets_without_tests = summary.num_targets_without_tests + 1;
+  end
+
+  % pretty print outcome
+  if num_tests == 0
+    fprintf(fid, 'NO TESTS\n');
+  elseif num_tests_passed == num_tests
+    fprintf(fid, [color_ok 'PASS %4d/%-4d' reset '\n'], num_tests_passed, num_tests);
+  else
+    fprintf(fid, [color_err 'FAIL %4d/%-4d' reset '\n\n'], num_tests - num_tests_passed, num_tests);
+    for j = 1:num_tests
+      if ~results(j).passed
+        fprintf(fid, '   >> %s\n\n', results(j).source);
+        fprintf(fid, [ '      expected: ' '%s' '\n' ], results(j).want);
+        fprintf(fid, [ '      got     : ' color_err '%s' reset '\n' ], results(j).got);
+        fprintf(fid, '\n');
+      end
+    end
   end
 end
 
-fprintf('\nDoctest Summary:\n\n');
-fprintf('  Searched %d targets: found %d tests total, %d targets without tests.\n', ...
-        length(all_results), total_test, total_notests);
 
-fprintf('  Extraction errors: ');
-if (total_extract_errs == 0)
-  fprintf('0\n');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Report summary
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fprintf(fid, '\nSummary:\n\n');
+if (summary.num_tests_passed == summary.num_tests)
+  fprintf(fid, ['   ' color_ok 'PASS %4d/%-4d' reset '\n\n'], summary.num_tests_passed, summary.num_tests);
 else
-  fprintf([color_warn '%d targets appear to have unusable tests.' reset '\n'], ...
-          total_extract_errs);
-end
-if (total_fail == 0)
-  hilite = color_ok;
-else
-  hilite = color_err;
-end
-fprintf(['  ' hilite 'Tests passed: %d/%d' reset '\n\n'], ...
-        total_test - total_fail, total_test);
-
-if (nargout > 0)
-  varargout = {total_test, total_fail, total_extract_errs};
+  fprintf(fid, ['   ' color_err 'FAIL %4d/%-4d' reset '\n\n'], summary.num_tests - summary.num_tests_passed, summary.num_tests);
 end
 
+fprintf(fid, '%d/%d targets passed, %d without tests', summary.num_targets_passed, summary.num_targets, summary.num_targets_without_tests);
+if summary.num_targets_with_extraction_errors > 0
+  fprintf(fid, [', ' color_err '%d with extraction errors' reset], summary.num_targets_with_extraction_errors);
 end
+fprintf(fid, '.\n\n');
 
-
-function [total, errors] = print_test_results(to_test, results, extract_err)
-
-out = 1; % stdout
-err = 2;
-
-total = length(results);
-errors = 0;
-for i = 1:total
-  if ~results(i).pass
-    errors = errors + 1;
-  end
-end
-
-[color_ok, color_err, color_warn, reset] = doctest_colors();
-
-if total == 0 && extract_err
-  fprintf(err, ['%s: ' color_warn  'Warning: could not extract tests' reset '\n'], to_test.name);
-  fprintf(err, '  %s\n', extract_err);
-elseif total == 0
-  fprintf(err, '%s: NO TESTS\n', to_test.name);
-elseif errors == 0
-  fprintf(out, '%s: OK (%d tests)\n', to_test.name, length(results));
-else
-  fprintf(err, ['%s: ' color_err '%d ERRORS' reset '\n'], to_test.name, errors);
-end
-for I = 1:length(results)
-  if ~results(I).pass
-    fprintf(out, '  >> %s\n\n', results(I).source);
-    fprintf(out, [ '     expected: ' '%s' '\n' ], results(I).want);
-    fprintf(out, [ '     got     : ' color_err '%s' reset '\n' ], results(I).got);
-  end
+if nargout == 1
+  varargout = {summary.num_targets_passed == summary.num_targets};
+elseif nargout > 1
+  varargout = {summary.num_tests_passed, summary.num_tests, summary};
 end
 
 end
