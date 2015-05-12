@@ -9,7 +9,7 @@ doctest 0.3.0 (2015-05-12)
 
   * Other bug fixes.
 
-  * Support for becoming an Octave-Forge package.
+  * Support and directory structure for being an Octave package.
 
 
 
