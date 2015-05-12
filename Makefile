@@ -15,6 +15,7 @@ matlab_pkg:
 	cp -ra COPYING tmp/${MATLAB_PKG_DIR}/
 	cp -ra CONTRIBUTORS tmp/${MATLAB_PKG_DIR}/
 	cp -ra NEWS tmp/${MATLAB_PKG_DIR}/
+	cp -ra README.matlab.md tmp/${MATLAB_PKG_DIR}/
 	pushd tmp; zip -r ${MATLAB_PKG_DIR}.zip ${MATLAB_PKG_DIR}; popd
 	mv tmp/${MATLAB_PKG_DIR}.zip .
 
