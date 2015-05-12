@@ -227,7 +227,7 @@ if nargin < 3
 end
 
 % get terminal color codes
-[color_ok, color_err, color_warn, reset] = doctest_colors();
+[color_ok, color_err, color_warn, reset] = doctest_colors(fid);
 
 % determine if runing with octave
 try
