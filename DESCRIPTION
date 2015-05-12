@@ -10,5 +10,5 @@ Description: The Octave-Forge Doctest package finds specially-formatted
  a testing framework or simply to ensure that documentation stays up-to-date
  during software development.
 Categories: testing
-Url: http://octave.sf.net/
+Url: https://github.com/catch22/octave-doctest
 License: modified BSD
