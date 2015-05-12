@@ -1,6 +1,6 @@
 .PHONY: test matlab_pkg
 
-MATLAB_PKG_DIR=doctest-0.3.0-dev
+MATLAB_PKG_DIR=doctest-0.3.0
 
 SHELL = '/bin/bash'
 

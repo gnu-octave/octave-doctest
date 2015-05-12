@@ -168,7 +168,7 @@ function varargout = doctest(varargin)
 % See the CONTRIBUTORS file for a list of authors and contributors.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-disp('Doctest v0.3.0-dev: this is Free Software without warranty, see source.');
+disp('Doctest v0.3.0: this is Free Software without warranty, see source.');
 
 % Make a list of every method/function that we need to examine, in the
 % to_test struct.%

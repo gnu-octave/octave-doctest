@@ -1,5 +1,5 @@
-doctest 0.3.0-dev
-=================
+doctest 0.3.0 (2015-05-12)
+==========================
 
   * Multiline input now works (e.g., a matrix split across lines).
 
