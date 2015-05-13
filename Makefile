@@ -1,11 +1,13 @@
 .PHONY: test matlab_pkg
 
 MATLAB_PKG_DIR=doctest-matlab-0.4.0-dev
-
 SHELL = '/bin/bash'
 
 test:
 	octave --path inst --path inst/private --eval "success = doctest({'doctest', 'doctest_run', 'doctest_compare', 'doctest_collect', 'doctest_colors'}); exit(~success);"
+
+test-matlab:
+	matlab -nojvm -nodisplay -nosplash -r "addpath('inst'); success = doctest('doctest'); exit(~success);"
 
 matlab_pkg:
 	mkdir -p tmp/${MATLAB_PKG_DIR}/private
