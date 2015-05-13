@@ -7,7 +7,7 @@ test:
 	octave --path inst --path inst/private --eval "success = doctest({'doctest', 'doctest_run', 'doctest_compare', 'doctest_collect', 'doctest_colors'}); exit(~success);"
 
 test-matlab:
-	matlab -nojvm -nodisplay -nosplash -r "addpath('inst'); success = doctest('doctest'); exit(~success);"
+	matlab -nojvm -nodisplay -nosplash -r "addpath('inst'); success = doctest({'doctest', 'private/doctest_run', 'private/doctest_compare', 'private/doctest_collect', 'private/doctest_colors'}); exit(~success);"
 
 matlab_pkg:
 	mkdir -p tmp/${MATLAB_PKG_DIR}/private
