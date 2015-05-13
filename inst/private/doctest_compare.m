@@ -38,7 +38,7 @@ got = regexprep(got, '.\x08', '');
 want = strtrim(want);
 got = strtrim(got);
 
-if isempty(want) && isempty(got)
+if isempty(got) && (isempty(want) || strcmp(want, '***'))
     match = 1;
     return
 end
