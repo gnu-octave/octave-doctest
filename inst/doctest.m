@@ -280,7 +280,7 @@ end
 for i=1:numel(targets)
   % run doctests for target and update statistics
   target = targets(i);
-  progress_printf('%s %s ', target.name, repmat('.', 1, 55 - numel(target.name)));
+  progress_printf('%s %s ', target.name, repmat('.', 1, 70 - numel(target.name)));
 
   % extraction error?
   if target.error
