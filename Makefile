@@ -5,7 +5,7 @@ MATLAB_PKG_DIR=doctest-matlab-0.4.0-dev
 SHELL = '/bin/bash'
 
 test:
-	octave --path inst --path inst/private --eval "[~, total_fail, total_extract_err] = doctest('doctest', 'doctest_run', 'doctest_compare'); exit(total_fail + total_extract_err > 0);"
+	octave --path inst --path inst/private --eval "success = doctest({'doctest', 'doctest_run', 'doctest_compare', 'doctest_collect', 'doctest_colors'}); exit(~success);"
 
 matlab_pkg:
 	mkdir -p tmp/${MATLAB_PKG_DIR}/private

@@ -1,6 +1,8 @@
 doctest 0.4.0-dev
 =================
 
+  * Change doctest interface to be closer to Octave's test function.
+
 
 
 doctest 0.3.0 (2015-05-12)

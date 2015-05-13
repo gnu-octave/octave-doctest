@@ -1,10 +1,44 @@
-function varargout = doctest(varargin)
+function varargout = doctest(what, mode, fid)
 % Run examples embedded in documentation
 %
 % Usage
 % =====
 %
-% doctest class_name1 func_name2 class_name3 ...
+% doctest WHAT
+% doctest WHAT normal
+% doctest(WHAT, MODE, FID)
+% SUCCESS = doctest(...)
+% [NUM_TESTS_PASSED, NUM_TESTS, SUMMARY] = doctest(...)
+%
+% The parameter WHAT contains the name of the function or class for
+% which to run the doctests. When running with Octave, WHAT can be the
+% filename of a Texinfo file, in which case all @example blocks are processed.
+% The parameter WHAT can also be a cell array of such items.
+%
+% The optional parameter MODE is always 'normal'. It exists for compatibility
+% with Octave's test API.
+%
+% The optional parameter FID can be used to redirect all output to a file id
+% other than stdout.
+%
+%
+% When called with a single return value, return whether all tests have
+% succeeded (SUCCESS).
+%
+% When called with two or more return values, return the number of tests
+% passed (NUM_TESTS_PASSED), the total number of tests (NUM_TESTS) and a
+% structure with the following fields:
+%
+%   SUMMARY.num_targets
+%   SUMMARY.num_targets_passed
+%   SUMMARY.num_targets_without_tests
+%   SUMMARY.num_targets_with_extraction_errors
+%   SUMMARY.num_tests
+%   SUMMARY.num_tests_passed
+%
+% The field 'num_targets_with_extraction_errors' is probably only relevant
+% when using Texinfo documentation on Octave, where it typically indicates
+% malformed @example blocks.
 %
 %
 % Description
@@ -147,14 +181,12 @@ function varargout = doctest(varargin)
 % one-at-a-time checking the output after each.
 %
 %
-% Return values
-% =============
+% Terminology
+% ===========
 %
-% [n, f, e] = doctest('class_name1', 'func_name1')
-%
-% Here 'n' is the number of test, 'f' is the number of failures and 'e' is
-% the number of extraction errors.  The latter is probably only relevant
-% when using Texinfo on Octave where it indicates malformed @example blocks.
+% A TARGET is a function, method, class or texinfo file.  Each TARGET comes
+% with a docstring consisting of multiple DOCTESTS, i.e., question-answer
+% snippets.
 %
 %
 % History
@@ -170,10 +202,32 @@ function varargout = doctest(varargin)
 
 disp('Doctest v0.4.0-dev: this is Free Software without warranty, see source.');
 
-% Make a list of every method/function that we need to examine, in the
-% to_test struct.%
 
-% determine whether we are running octave or matlab
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Process parameters.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% if given a single object, wrap it in a cell array
+if ~iscell(what)
+  what = {what};
+end
+
+% mode is always 'normal'
+if nargin < 2
+  mode = 'normal';
+else
+  mode = validatestring(mode, {'normal'}, 'doctest', 'mode');
+end
+
+% by default, print to stdout
+if nargin < 3
+  fid = 1;
+end
+
+% get terminal color codes
+[color_ok, color_err, color_warn, reset] = doctest_colors(fid);
+
+% determine if running with octave
 try
   OCTAVE_VERSION;
   running_octave = 1;
@@ -181,331 +235,138 @@ catch
   running_octave = 0;
 end
 
-% We include a link to the function where the docstring is going to come
-% from, so that it's easier to navigate to that doctest.
-to_test = [];
-for i = 1:nargin
-  func_or_class = varargin{i};
 
-  % If it's a class, add the methods to to_test.
-  if (~running_octave)
-    theMethods = methods(func_or_class);
-  else
-    % Octave unhappy on methods(<non-class>)
-    if (exist(func_or_class, 'file') || exist(func_or_class, 'builtin'))
-      theMethods = [];
-    else
-      theMethods = methods(func_or_class);
-    end
-  end
-
-  if (isempty(theMethods))
-    this_test = [];
-    this_test.name = func_or_class;
-    this_test.func_name = func_or_class;
-    this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', ...
-            which(func_or_class), func_or_class);
-    to_test = [to_test; this_test];
-  end
-
-  for I = 1:length(theMethods) % might be 0
-    this_test = [];
-
-    this_test.func_name = theMethods{I};
-    if (running_octave)
-      this_test.name = sprintf('@%s/%s', func_or_class, theMethods{I});
-    else
-      this_test.name = sprintf('%s.%s', func_or_class, theMethods{I});
-    end
-
-    try
-        this_test.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', ...
-            which(func_or_class), this_test.func_name, this_test.name);
-    catch
-        this_test.link = this_test.name;
-    end
-
-    to_test = [to_test; this_test];
-  end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Collect all targets to be tested.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+targets = [];
+for i=1:numel(what)
+  targets = [targets; doctest_collect(what{i})];
 end
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Examine each function/method for a docstring, and run any examples in
-% that docstring
-%
 
-[color_ok, color_err, color_warn, reset] = terminal_escapes();
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Run all doctests
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+summary = struct;
+summary.num_targets = length(targets);
+summary.num_targets_passed = 0;
+summary.num_targets_without_tests = 0;
+summary.num_targets_with_extraction_errors = 0;
+summary.num_tests = 0;
+summary.num_tests_passed = 0;
 
-all_results = cell(1, length(to_test));
-all_extract_err = zeros(1, length(to_test));
-all_extract_msgs = cell(1, length(to_test));
+% if running with octave and printing to stdout: buffer all output to work around issue #6
+run_buffered = running_octave && fid == stdout;
+if run_buffered
+  progress_buffer = '';
+end
 
+% print warning banner to stdout when running octave
 if running_octave
-  disp('==========================================================================')
-  disp('Start of temporary output (github.com/catch22/octave-doctest/issues/6)');
-  disp('==========================================================================')
+  fprintf('======================================================================\n');
+  fprintf('Start of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
+  fprintf('======================================================================\n');
 end
 
-for I = 1:length(to_test)
-    if running_octave
-      [docstring, err, msg] = octave_extract_doctests(to_test(I).name);
-    else
-      err = 0; msg = '';
-      docstring = help(to_test(I).name);
+% run all tests
+for i=1:numel(targets)
+  % run doctests for target and update statistics
+  target = targets(i);
+  progress_printf('%s %s ', target.name, repmat('.', 1, 55 - numel(target.name)));
+
+  % extraction error?
+  if target.error
+    summary.num_targets_with_extraction_errors = summary.num_targets_with_extraction_errors + 1;
+    progress_printf([color_err  'EXTRACTION ERROR' reset '\n\n']);
+    progress_printf('    %s\n\n', target.error);
+    continue;
+  end
+
+  % run doctest
+  results = doctest_run(target.docstring);
+
+  % determine number of tests passed
+  num_tests = numel(results);
+  num_tests_passed = 0;
+  for j=1:num_tests
+    if results(j).passed
+      num_tests_passed = num_tests_passed + 1;
     end
+  end
 
-    these_results = doctest_run(docstring);
+  % update summary
+  summary.num_tests = summary.num_tests + num_tests;
+  summary.num_tests_passed = summary.num_tests_passed + num_tests_passed;
+  if num_tests_passed == num_tests
+    summary.num_targets_passed = summary.num_targets_passed + 1;
+  end
+  if num_tests == 0
+    summary.num_targets_without_tests = summary.num_targets_without_tests + 1;
+  end
 
-
-    if ~ isempty(these_results)
-        [these_results.link] = deal(to_test(I).link);
+  % pretty print outcome
+  if num_tests == 0
+    progress_printf('NO TESTS\n');
+  elseif num_tests_passed == num_tests
+    progress_printf([color_ok 'PASS %4d/%-4d' reset '\n'], num_tests_passed, num_tests);
+  else
+    progress_printf([color_err 'FAIL %4d/%-4d' reset '\n\n'], num_tests - num_tests_passed, num_tests);
+    for j = 1:num_tests
+      if ~results(j).passed
+        progress_printf('   >> %s\n\n', results(j).source);
+        progress_printf([ '      expected: ' '%s' '\n' ], results(j).want);
+        progress_printf([ '      got     : ' color_err '%s' reset '\n' ], results(j).got);
+        progress_printf('\n');
+      end
     end
-
-    all_extract_err(I) = err;
-    all_extract_msgs{I} = msg;
-    all_results{I} = these_results;
-    % Print the results after each file
-    %print_test_results(to_test(I), these_results, err, msg);
+  end
 end
 
+% print warning banner to stdout when running octave
 if running_octave
-  disp('========================================================================')
-  disp('End of temporary output (github.com/catch22/octave-doctest/issues/6)');
-  disp('========================================================================')
+  fprintf('====================================================================\n');
+  fprintf('End of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
+  fprintf('====================================================================\n\n');
 end
 
-total_test = 0;
-total_fail = 0;
-total_notests = 0;
-total_extract_errs = 0;
-for I=1:length(all_results);
-  [count, numfail] = print_test_results(to_test(I), all_results{I}, all_extract_err(I), all_extract_msgs{I});
-  total_test = total_test + count;
-  total_fail = total_fail + numfail;
-  if (length(all_results{I}) == 0)
-    total_notests = total_notests + 1;
-  end
-  if (all_extract_err(I) < 0)
-    total_extract_errs = total_extract_errs + 1;
-  end
+% if running with octave, flush output buffer
+if run_buffered
+  fprintf(fid, '%s', progress_buffer);
 end
 
-fprintf('\nDoctest Summary:\n\n');
-fprintf('  Searched %d targets: found %d tests total, %d targets without tests.\n', ...
-        length(all_results), total_test, total_notests);
 
-fprintf('  Extraction errors: ');
-if (total_extract_errs == 0)
-  fprintf('0\n');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Report summary
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fprintf(fid, '\nSummary:\n\n');
+if (summary.num_tests_passed == summary.num_tests)
+  fprintf(fid, ['   ' color_ok 'PASS %4d/%-4d' reset '\n\n'], summary.num_tests_passed, summary.num_tests);
 else
-  fprintf([color_warn '%d targets appear to have unusable tests.' reset '\n'], ...
-          total_extract_errs);
-end
-if (total_fail == 0)
-  hilite = color_ok;
-else
-  hilite = color_err;
-end
-fprintf(['  ' hilite 'Tests passed: %d/%d' reset '\n\n'], ...
-        total_test - total_fail, total_test);
-
-if (nargout > 0)
-  varargout = {total_test, total_fail, total_extract_errs};
+  fprintf(fid, ['   ' color_err 'FAIL %4d/%-4d' reset '\n\n'], summary.num_tests - summary.num_tests_passed, summary.num_tests);
 end
 
+fprintf(fid, '%d/%d targets passed, %d without tests', summary.num_targets_passed, summary.num_targets, summary.num_targets_without_tests);
+if summary.num_targets_with_extraction_errors > 0
+  fprintf(fid, [', ' color_err '%d with extraction errors' reset], summary.num_targets_with_extraction_errors);
+end
+fprintf(fid, '.\n\n');
+
+if nargout == 1
+  varargout = {summary.num_targets_passed == summary.num_targets};
+elseif nargout > 1
+  varargout = {summary.num_tests_passed, summary.num_tests, summary};
 end
 
 
-function [total, errors] = print_test_results(to_test, results, extract_err, extract_msg)
-
-out = 1; % stdout
-err = 2;
-
-total = length(results);
-errors = 0;
-for i = 1:total
-  if ~results(i).pass
-    errors = errors + 1;
-  end
-end
-
-[color_ok, color_err, color_warn, reset] = terminal_escapes();
-
-if total == 0 && extract_err < 0
-  fprintf(err, ['%s: ' color_warn  'Warning: could not extract tests' reset '\n'], to_test.name);
-  fprintf(err, '  %s\n', extract_msg);
-elseif total == 0
-  fprintf(err, '%s: NO TESTS\n', to_test.name);
-elseif errors == 0
-  fprintf(out, '%s: OK (%d tests)\n', to_test.name, length(results));
-else
-  fprintf(err, ['%s: ' color_err '%d ERRORS' reset '\n'], to_test.name, errors);
-end
-for I = 1:length(results)
-  if ~results(I).pass
-    fprintf(out, '  >> %s\n\n', results(I).source);
-    fprintf(out, [ '     expected: ' '%s' '\n' ], results(I).want);
-    fprintf(out, [ '     got     : ' color_err '%s' reset '\n' ], results(I).got);
-  end
-end
-
-
-end
-
-
-
-function [docstring, err, msg] = octave_extract_doctests(name)
-%OCTAVE_EXTRACT_DOCTESTS
-% XXX: What is err > 0 vs err < 0?
-
-  err = 1; msg = '';
-
-  [tempdir, tempname, ext] = fileparts(name);
-  if (any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'})))
-    docstring = fileread(name);
+function progress_printf(template, varargin)
+  str = sprintf(template, varargin{:});
+  if run_buffered
+    progress_buffer = strcat({progress_buffer}, {str});
+    progress_buffer = progress_buffer{1};
   else
-    % assume .m file, or something else where "help" works
-    [docstring, form] = get_help_text(name);
-
-    if (~strcmp(form, 'texinfo'))
-      err = 1;  msg = 'not texinfo';
-      return
-    end
+    fprintf(fid, str);
   end
-
-  %% Just convert to plain text
-  % Matlab parser unhappy with underscore, hide inside eval
-  %docstring = eval('__makeinfo__(docstring, "plain text")');
-
-  % strip @group, and escape sequences
-  docstring = regexprep(docstring, '^\s*@group\n', '\n', 'lineanchors');
-  docstring = regexprep(docstring, '@end group\n', '');
-  docstring = strrep(docstring, '@{', '{');
-  docstring = strrep(docstring, '@}', '}');
-  docstring = strrep(docstring, '@@', '@');
-
-  % no example block, bail out
-  if (isempty(strfind(docstring, '@example')))
-    err = 0;  msg = 'no @example blocks';
-    docstring = '';
-    return
-  end
-  % Leave the @example lines in, may need them later
-  T = regexp(docstring, '(@example.*?@end example)', 'tokens');
-  if (isempty(T))
-    err = -1;  msg('malformed @example blocks');
-    docstring = '';
-    return
-  else
-    % flatten
-    for i=1:length(T)
-      assert(length(T{i}) == 1)
-      T{i} = T{i}{1};
-    end
-    docstring = strjoin(T, '\n');
-  end
-
-  if (isempty(docstring) || ~isempty(regexp(docstring, '^\s*$')))
-    err = -1;  msg = 'empty @example blocks';
-    docstring = '';
-    return
-  end
-
-  if (~isempty(strfind(docstring, '>>')))
-    %% Has '>>' indicators
-    err = 1;  msg = 'used >>';
-  else
-    %% No '>>', split on @result
-    err = 2;  msg = 'used @result splitting';
-    L = strsplit (docstring, '\n');
-
-    % mask for lines with @result in them
-    [S, ~, ~, ~, ~, ~, ~] = regexp(L, '@result\s*{}');
-    Ires = ~cellfun(@isempty, S);
-    if (nnz(Ires) == 0)
-      docstring
-      err = -2;  msg = 'has @example blocks but neither ">>" nor "@result{}"';
-      docstring = '';
-      return
-    end
-    if Ires(1)
-      err = -4;  msg = 'no command: @result on first line?';
-      return
-    end
-    for i=1:length(L)
-      if (length(S{i}) > 1)
-        err = -3;  msg = 'more than one @result on one line';
-        docstring = '';
-        return
-      end
-    end
-
-    % mask for lines with @example in them
-    Iex_start = ~cellfun(@isempty, regexp(L, '@example'));
-    Iex_end = ~cellfun(@isempty, regexp(L, '@end example'));
-
-    % build a new mask for lines which we think are commands
-    I = zeros(size(Ires), 'logical');
-    start_of_block = false;
-    for i=1:length(L)-1
-      if Iex_start(i)
-        start_of_block = true;
-      end
-      if (start_of_block)
-        I(i) = true;
-      end
-      if Ires(i+1)
-        % Next line has an @result so mark this line with '>>'
-        I(i) = true;
-        start_of_block = false;
-      end
-    end
-    % remove @example/@end lines from commands
-    I(Iex_start) = false;
-    I(Iex_end) = false;
-
-    starts = [0 diff(I)] == 1;
-    for i=1:length(L)
-      if (I(i) && ~isempty(L{i}) && isempty(regexp(L{i}, '^\s+$', 'match')))
-        if (starts(i))
-          L{i} = ['>> ' L{i}];
-        else
-          L{i} = ['.. ' L{i}];
-        end
-      end
-    end
-    docstring = strjoin(L, '\n');
-    docstring = [docstring sprintf('\n')];
-  end
-  docstring = regexprep(docstring, '^\s*@example\n', '', 'lineanchors');
-  docstring = regexprep(docstring, '^\s*@end example\n', '', 'lineanchors');
-  docstring = regexprep(docstring, '@result\s*{}', '');
 end
 
-
-function [color_ok, color_err, color_warn, reset] = terminal_escapes()
-
-  try
-    OCTAVE_VERSION;
-    running_octave = 1;
-  catch
-    running_octave = 0;
-  end
-
-  if (running_octave)
-    have_colorterm = index(getenv('TERM'), 'color') > 0;
-    if have_colorterm
-      % terminal escapes for Octave color, hide from Matlab inside eval
-      color_ok = eval('"\033[1;32m"');    % green
-      color_err = eval('"\033[1;31m"');   % red
-      color_warn = eval('"\033[1;35m"');  % purple
-      reset = eval('"\033[m"');
-    end
-  else
-    color_ok = '';
-    color_err = '';
-    color_warn = '';
-    reset = '';
-  end
 end
