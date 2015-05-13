@@ -7,10 +7,8 @@ function varargout = doctest(what, mode, fid)
 % doctest WHAT
 % doctest WHAT normal
 % doctest(WHAT, MODE, FID)
-%
-% SUCCESS = doctest ...
-% [NUM_TESTS_PASSED, NUM_TESTS, SUMMARY] = doctest ...
-%
+% SUCCESS = doctest(...)
+% [NUM_TESTS_PASSED, NUM_TESTS, SUMMARY] = doctest(...)
 %
 % The parameter WHAT contains the name of the function or class for
 % which to run the doctests. When running with Octave, WHAT can be the
@@ -229,7 +227,7 @@ end
 % get terminal color codes
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
 
-% determine if runing with octave
+% determine if running with octave
 try
   OCTAVE_VERSION;
   running_octave = 1;
@@ -263,9 +261,9 @@ end
 
 % print warning banner to stdout when running octave
 if running_octave
-  fprintf('==========================================================================\n');
+  fprintf('======================================================================\n');
   fprintf('Start of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
-  fprintf('==========================================================================\n');
+  fprintf('======================================================================\n');
 end
 
 % run all tests
@@ -324,9 +322,9 @@ end
 
 % print warning banner to stdout when running octave
 if running_octave
-  fprintf('==========================================================================\n');
+  fprintf('====================================================================\n');
   fprintf('End of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
-  fprintf('==========================================================================\n\n');
+  fprintf('====================================================================\n\n');
 end
 
 % if running with octave, flush output buffer
