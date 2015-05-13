@@ -207,12 +207,16 @@ function varargout = doctest(what, mode, fid)
 % See the CONTRIBUTORS file for a list of authors and contributors.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-disp('Doctest v0.4.0-dev: this is Free Software without warranty, see source.');
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Process parameters.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% print usage?
+if nargin < 1
+  help doctest;
+  return;
+end
 
 % if given a single object, wrap it in a cell array
 if ~iscell(what)
@@ -241,6 +245,9 @@ try
 catch
   running_octave = 0;
 end
+
+% print banner
+fprintf(fid, 'Doctest v0.4.0-dev: this is Free Software without warranty, see source.\n');
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -271,7 +278,7 @@ end
 
 % print warning banner to stdout when running octave
 if running_octave
-  fprintf('======================================================================\n');
+  fprintf('\n======================================================================\n');
   fprintf('Start of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
   fprintf('======================================================================\n');
 end
