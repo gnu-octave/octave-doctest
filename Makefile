@@ -14,8 +14,10 @@ test-matlab:
 matlab_pkg:
 	mkdir -p tmp/${MATLAB_PKG_DIR}/private
 	cp -ra inst/doctest.m tmp/${MATLAB_PKG_DIR}/
-	cp -ra inst/private/doctest_run.m tmp/${MATLAB_PKG_DIR}/private/
+	cp -ra inst/private/doctest_collect.m tmp/${MATLAB_PKG_DIR}/private/
+	cp -ra inst/private/doctest_colors.m tmp/${MATLAB_PKG_DIR}/private/
 	cp -ra inst/private/doctest_compare.m tmp/${MATLAB_PKG_DIR}/private/
+	cp -ra inst/private/doctest_run.m tmp/${MATLAB_PKG_DIR}/private/
 	cp -ra COPYING tmp/${MATLAB_PKG_DIR}/
 	cp -ra CONTRIBUTORS tmp/${MATLAB_PKG_DIR}/
 	cp -ra NEWS tmp/${MATLAB_PKG_DIR}/
