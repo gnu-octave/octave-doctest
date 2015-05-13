@@ -35,7 +35,7 @@ if running_octave
     type = 'class';
   end
 else
-  if exist(what, 'class')
+  if ~isempty(methods(what))
     type = 'class';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
