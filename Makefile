@@ -9,6 +9,10 @@ test:
 test-matlab:
 	matlab -nojvm -nodisplay -nosplash -r "addpath('inst'); success = doctest({'doctest', 'private/doctest_run', 'private/doctest_compare', 'private/doctest_collect', 'private/doctest_colors'}); exit(~success);"
 
+testwip:
+	octave --path inst --path inst/private --path test --eval "doctest $(shell (ls inst; ls inst/private; ls test) | grep \\.m | cut -f1 -d.)"
+
+
 matlab_pkg:
 	mkdir -p tmp/${MATLAB_PKG_DIR}/private
 	cp -ra inst/doctest.m tmp/${MATLAB_PKG_DIR}/
