@@ -29,10 +29,10 @@ if running_octave
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texfile';
-  elseif exist(sprintf('@%s', what), 'dir')
-    type = 'class';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
+  elseif exist(what) == 2  % exist('@class', 'dir') does not work even when the directory is in the path
+    type = 'class';
   end
 else
   if exist(what, 'class')

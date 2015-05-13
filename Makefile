@@ -2,7 +2,7 @@
 
 MATLAB_PKG_DIR=doctest-matlab-0.4.0-dev
 SHELL='/bin/bash'
-TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_hyperlinks', 'test_compare_backspace'}); exit(~success);
+TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_hyperlinks', 'test_compare_backspace', 'test_class'}); exit(~success);
 
 test:
 	octave --path inst --path test --eval "${TEST_CODE}"
