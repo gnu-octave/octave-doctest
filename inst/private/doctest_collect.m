@@ -24,21 +24,31 @@ end
 
 
 % determine type of target
+type = false;
 if running_octave
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texfile';
+  elseif exist(sprintf('@%s', what), 'dir')
+    type = 'class';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
-  else
-    type = 'class';
   end
 else
   if exist(what, 'class')
     type = 'class';
-  else
+  elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
   end
+end
+if ~type
+  target = struct;
+  target.name = what;
+  target.link = '';
+  target.docstring = '';
+  target.error = 'Function or class not found.';
+  targets = [target];
+  return;
 end
 
 
