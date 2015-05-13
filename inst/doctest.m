@@ -250,8 +250,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 summary = struct;
 summary.num_targets = length(targets);
-summary.num_targets_passed = summary.num_targets_without_tests = summary.num_targets_with_extraction_errors = 0;
-summary.num_tests = summary.num_tests_passed = 0;
+summary.num_targets_passed = 0;
+summary.num_targets_without_tests = 0;
+summary.num_targets_with_extraction_errors = 0;
+summary.num_tests = 0;
+summary.num_tests_passed = 0;
 
 % if running with octave and printing to stdout: buffer all output to work around issue #6
 run_buffered = running_octave && fid == stdout;
