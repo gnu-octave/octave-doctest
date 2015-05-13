@@ -11,9 +11,14 @@ catch
   running_octave = 0;
 end
 
+% by default, no colors
+color_ok = '';
+color_err = '';
+color_warn = '';
+reset = '';
 
+% only use colors in Octave, when printing to stdout, and when terminal supports colors (XXX: should really check if fid isatty)
 if (running_octave)
-  % only use colors when printing to stdout and when terminal supports colors (XXX: should really check if fid isatty)
   have_colorterm = index(getenv('TERM'), 'color') > 0;
   if fid == stdout && have_colorterm
     % hide terminal escapes from Matlab
@@ -22,11 +27,6 @@ if (running_octave)
     color_warn = eval('"\033[1;35m"');  % purple
     reset = eval('"\033[m"');
   end
-else
-  color_ok = '';
-  color_err = '';
-  color_warn = '';
-  reset = '';
 end
 
 end
