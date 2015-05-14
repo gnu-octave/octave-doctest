@@ -7,6 +7,9 @@ TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_hyperl
 test:
 	octave --path inst --path test --eval "${TEST_CODE}"
 
+test-interactive:
+	script --quiet --command "octave --path inst --path test --eval \"${TEST_CODE}\"" /dev/null
+
 test-matlab:
 	matlab -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
 
