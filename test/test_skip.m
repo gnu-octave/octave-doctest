@@ -17,7 +17,7 @@ function y = test_skip()
 % A = 42
 %
 %
-% Put it whether you want:
+% Put it on any line of multiline input:
 % >> A = [1 2;    % doctest: +SKIP
 % ..      3 4]
 % A = 42
