@@ -95,9 +95,16 @@ else
   [target.docstring, target.error] = parse_texinfo(fileread(what));
   targets = [target];
 end
+end
 
 
 function [docstring, error] = extract_docstring(name)
+  try
+    OCTAVE_VERSION;
+    running_octave = 1;
+  catch
+    running_octave = 0;
+  end
   if running_octave
     [docstring, format] = get_help_text(name);
     if strcmp(format, 'texinfo')
@@ -216,6 +223,4 @@ function [docstring, error] = parse_texinfo(str)
   str = regexprep(str, '@result\s*{}', '');
 
   docstring = str;
-end
-
 end
