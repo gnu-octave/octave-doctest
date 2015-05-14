@@ -24,21 +24,28 @@ end
 
 
 % determine type of target
-type = false;
 if running_octave
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texfile';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
-  elseif exist(what) == 2  % exist('@class', 'dir') does not work even when the directory is in the path
+  elseif exist(what) == 2 || exist(what) == 103
+    % Notes:
+    %   * exist('@class', 'dir') only works if pwd is the parent of
+    %     '@class', having it in the path is not sufficient.
+    %   * Return 2 on Octave 3.8 and 103 on Octave 4.
     type = 'class';
+  else
+    type = false;
   end
 else
   if ~isempty(methods(what))
     type = 'class';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
+  else
+    type = false;
   end
 end
 if ~type
