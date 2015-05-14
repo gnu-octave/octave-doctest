@@ -23,10 +23,22 @@ example_re = [
     '((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)'];  % the output
 [~,~,~,~,examples] = regexp(docstring, example_re);
 
+
+% Some tests are marked to skip
+keep = ones(size(examples), 'logical');
 for i = 1:length(examples)
   % each block should be split into input/output by the regex
   assert (length(examples{i}) == 2);
 
+  % this test marked for skip
+  if (regexp(examples{i}{1}, '[#|%] doctest: \+SKIP'))
+    keep(i) = false;
+  end
+end
+examples = examples(keep);
+
+
+for i = 1:length(examples)
   % split into lines
   lines = textscan(examples{i}{1}, '%s', 'delimiter', sprintf('\n'));
   lines = lines{1};

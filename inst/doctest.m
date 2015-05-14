@@ -134,6 +134,18 @@ function varargout = doctest(what, mode, fid)
 % gives some freedom to, e.g., indent the code output as you wish.
 %
 %
+% Skipping tests
+% --------------
+%
+% You can skip certain tests by marking them with a special comment.  This
+% can be used, for example, for a test not expected to pass or to avoid
+% opening a figure window during automated testing.
+%
+% >> a = 6         % doctest: +SKIP
+% b = 42
+% >> plot(...)     % doctest: +SKIP
+%
+%
 % Limitations
 % ===========
 %
