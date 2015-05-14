@@ -108,10 +108,11 @@ function [docstring, error] = extract_docstring(name)
   else
     docstring = help(name);
     error = '';
-  end    
+  end
 end
 
-function [docstring, error] = parse_texinfo(str)  
+
+function [docstring, error] = parse_texinfo(str)
   docstring = '';
   error = '';
 
