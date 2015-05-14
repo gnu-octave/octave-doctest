@@ -31,7 +31,7 @@ for i = 1:length(examples)
   assert (length(examples{i}) == 2);
 
   % this test marked for skip
-  if (regexp(examples{i}{1}, 'doctest: \+SKIP$'))
+  if (regexp(examples{i}{1}, '[#|%] doctest: \+SKIP$'))
     keep(i) = false;
   end
 end
