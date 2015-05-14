@@ -2,7 +2,9 @@ doctest 0.4.0-dev
 =================
 
   * Change doctest interface to be closer to Octave's test function.
-  
+
+  * Some doctests can be marked to skip by appending "% doctest: +SKIP".
+
   * Other bug fixes.
 
 
