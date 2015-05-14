@@ -14,17 +14,8 @@ function targets = doctest_collect(what)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% determine whether we are running octave or matlab
-try
-  OCTAVE_VERSION;
-  running_octave = 1;
-catch
-  running_octave = 0;
-end
-
-
 % determine type of target
-if running_octave
+if is_octave()
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texfile';
@@ -63,7 +54,7 @@ end
 if strcmp(type, 'function')
   target = struct;
   target.name = what;
-  if running_octave
+  if is_octave()
     target.link = '';
   else
     target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
@@ -77,7 +68,7 @@ elseif strcmp(type, 'class')
   targets = [];
   for i=1:numel(meths)
     target = struct;
-    if running_octave
+    if is_octave()
       target.name = sprintf('@%s/%s', what, meths{i});
       target.link = '';
     else
@@ -99,13 +90,7 @@ end
 
 
 function [docstring, error] = extract_docstring(name)
-  try
-    OCTAVE_VERSION;
-    running_octave = 1;
-  catch
-    running_octave = 0;
-  end
-  if running_octave
+  if is_octave()
     [docstring, format] = get_help_text(name);
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);

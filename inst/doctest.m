@@ -250,14 +250,6 @@ end
 % get terminal color codes
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
 
-% determine if running with octave
-try
-  OCTAVE_VERSION;
-  running_octave = 1;
-catch
-  running_octave = 0;
-end
-
 % print banner
 fprintf(fid, 'Doctest v0.4.0-dev: this is Free Software without warranty, see source.\n');
 
@@ -283,13 +275,13 @@ summary.num_tests = 0;
 summary.num_tests_passed = 0;
 
 % if running with octave and printing to stdout: buffer all output to work around issue #6
-run_buffered = running_octave && fid == stdout;
+run_buffered = is_octave() && fid == stdout;
 if run_buffered
   progress_buffer = '';
 end
 
 % print warning banner to stdout when running octave
-if running_octave
+if is_octave()
   fprintf('\n======================================================================\n');
   fprintf('Start of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
   fprintf('======================================================================\n');
@@ -350,7 +342,7 @@ for i=1:numel(targets)
 end
 
 % print warning banner to stdout when running octave
-if running_octave
+if is_octave()
   fprintf('====================================================================\n');
   fprintf('End of temporary output (github.com/catch22/octave-doctest/issues/6)\n');
   fprintf('====================================================================\n\n');
