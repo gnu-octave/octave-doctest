@@ -25,17 +25,17 @@ example_re = [
 
 
 % Some tests are marked to skip
-keep = ones(size(examples), 'logical');
+skip = false(size(examples));
 for i = 1:length(examples)
   % each block should be split into input/output by the regex
   assert (length(examples{i}) == 2);
 
   % this test marked for skip
   if (regexp(examples{i}{1}, '[#|%] doctest: \+SKIP'))
-    keep(i) = false;
+    skip(i) = true;
   end
 end
-examples = examples(keep);
+examples = examples(~skip);
 
 
 for i = 1:length(examples)
