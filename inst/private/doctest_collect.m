@@ -116,9 +116,6 @@ function [docstring, error] = parse_texinfo(str)
   docstring = '';
   error = '';
 
-  % Matlab parser unhappy with underscore, hide inside eval
-  %str = eval('__makeinfo__(str, "plain text")');
-
   % strip @group, and escape sequences
   str = regexprep(str, '^\s*@group\n', '\n', 'lineanchors');
   str = regexprep(str, '@end group\n', '');
