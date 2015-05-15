@@ -59,16 +59,16 @@ DEFUN_DLD (doctest_evalc, args, nargout,
       int parse_status = 0;
 
       octave_value_list tmp = eval_string (args(0).string_value (), false,
-                                           parse_status, nargout);
+                                           parse_status, 0);
 
       if (nargin > 1 && (parse_status != 0 || error_state))
         {
           error_state = 0;
 
-          tmp = eval_string (args(1).string_value (), false, 
-                             parse_status, nargout);
+          tmp = eval_string (args(1).string_value (), false,
+                             parse_status, 0);
         }
-      
+
       // Stop capturing buffer and restore stdout
       stdout.flush ();
       retval (0) = buffer.str ();
