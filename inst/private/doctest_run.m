@@ -80,12 +80,7 @@ end
 function DOCTEST__results = DOCTEST__evalc(DOCTEST__examples_to_run)
 
 % Octave has [no evalc command](https://savannah.gnu.org/patch/?8033).
-have_evalc = true;
-try
-  evalc('');
-catch
-  have_evalc = false;
-end
+DOCTEST__has_builtin_evalc = exist('evalc', 'builtin');
 
 % structure adapted from a StackOverflow answer by user Amro, see
 % http://stackoverflow.com/questions/3283586 and
@@ -93,11 +88,11 @@ end
 DOCTEST__results = cell(size(DOCTEST__examples_to_run));
 for DOCTEST__i = 1:numel(DOCTEST__examples_to_run)
   try
-    if (have_evalc)
+    if (DOCTEST__has_builtin_evalc)
       DOCTEST__results{DOCTEST__i} = evalc( ...
           DOCTEST__examples_to_run{DOCTEST__i}{1});
     else
-      DOCTEST__results{DOCTEST__i} = doctest_fake_evalc( ...
+      DOCTEST__results{DOCTEST__i} = doctest_evalc( ...
           DOCTEST__examples_to_run{DOCTEST__i}{1});
     end
   catch DOCTEST__exception
@@ -123,27 +118,4 @@ function formatted = DOCTEST__format_exception(ex)
   else
     formatted = ['??? ' ex.getReport('basic')];
   end
-end
-
-
-function s = doctest_fake_evalc(cmd)
-%DOCTEST_FAKE_EVALC
-%   A helper routine to (poorly) emulate evalc using diary and a temp
-%   file.  Octave has no evalc command (as of 2015-02).
-
-  % redirect stdout to /dev/null for the duration of this function
-  % fflush(stdout);
-  % PAGER('cat > /dev/null', 'local');
-  % PAGER_FLAGS('-', 'local');
-  % page_screen_output(1, 'local');
-  % page_output_immediately(1, 'local');
-
-  tf = tmpnam();
-  diary(tf);
-  % could have escaped newlines?  No, eval doesn't like them.
-  %cmd = strrep(cmd, '\n', sprintf('\n'))
-  evalin('caller', cmd);
-  diary off;
-  s = fileread(tf);
-  unlink(tf);
 end

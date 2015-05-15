@@ -5,10 +5,12 @@ SHELL='/bin/bash'
 TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_hyperlinks', 'test_compare_backspace', 'test_class', 'test_skip', 'test_skip_only_one'}); exit(~success);
 
 test:
-	octave --path inst --path test --eval "${TEST_CODE}"
+	$(MAKE) -C src
+	octave --path inst --path src --path test --eval "${TEST_CODE}"
 
 test-interactive:
-	script --quiet --command "octave --path inst --path test --eval \"${TEST_CODE}\"" /dev/null
+	$(MAKE) -C src
+	script --quiet --command "octave --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
 
 test-matlab:
 	matlab -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
