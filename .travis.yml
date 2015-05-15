@@ -5,6 +5,6 @@ install:
   - export
   - sudo add-apt-repository ppa:octave/stable -y
   - sudo apt-get update -qq
-  - sudo apt-get install -qq octave
+  - sudo apt-get install -qq octave liboctave-dev
 
 script: make test test-interactive
