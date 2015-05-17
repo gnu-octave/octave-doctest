@@ -1,2 +1,5 @@
 octaveforge_pkg/
 doctest.tar.gz
+src/*.oct
+src/*.o
+
