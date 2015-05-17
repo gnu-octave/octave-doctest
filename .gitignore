@@ -1,3 +1,5 @@
 octaveforge_pkg/
 doctest.tar.gz
-src/doctest_evalc.oct
+src/*.oct
+src/*.o
+

@@ -54,6 +54,8 @@ DEFUN_DLD (doctest_evalc, args, nargout,
       // Redirect stdout to capturing buffer
       std::ostream & out_stream = octave_stdout;
       std::ostream & err_stream = std::cerr;
+      out_stream.flush ();
+      err_stream.flush ();
       std::ostringstream buffer;
       std::streambuf* old_out_buf = out_stream.rdbuf (buffer.rdbuf ());
       std::streambuf* old_err_buf = err_stream.rdbuf (buffer.rdbuf ());
@@ -77,11 +79,6 @@ DEFUN_DLD (doctest_evalc, args, nargout,
       retval (0) = buffer.str ();
       out_stream.rdbuf (old_out_buf);
       err_stream.rdbuf (old_err_buf);
-
-      // Reset error state, otherwise this function would
-      // not be able to return anything in case of errors.
-      // XXX: The following line causes errors not to be propagated to the parent (#61).
-      // error_state = 0;
     }
   else
     print_usage ();
