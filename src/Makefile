@@ -1,7 +1,6 @@
-MKOCTFILE = mkoctfile -Wall
+MKOCTFILE ?= mkoctfile -Wall
 
 all: doctest_evalc.oct
-
 
 %.oct: %.cc
 	$(MKOCTFILE) $<

@@ -25,7 +25,7 @@ DEFUN_DLD (doctest_evalc, args, nargout,
   "@deftypefnx {Loadable Function} {@var{S} =} doctest_evalc (@var{TRY}, @var{CATCH})\n"
   "\n"
   "Parse the string @var{TRY} and evaluate it as if it were an Octave "
-  "program.  If that fails, evaluate the optional string @var{CATCH}.  The"
+  "program.  If that fails, evaluate the optional string @var{CATCH}.  The "
   "string @var{TRY} is evaluated in the current context, so any results "
   "remain available after @command{doctest_evalc} returns."
   "\n\n"
@@ -52,9 +52,11 @@ DEFUN_DLD (doctest_evalc, args, nargout,
   if (nargin > 0)
     {
       // Redirect stdout to capturing buffer
-      std::ostream & stdout = octave_stdout;
+      std::ostream & out_stream = octave_stdout;
+      std::ostream & err_stream = std::cerr;
       std::ostringstream buffer;
-      stdout.rdbuf (buffer.rdbuf ());
+      std::streambuf* old_out_buf = out_stream.rdbuf (buffer.rdbuf ());
+      std::streambuf* old_err_buf = err_stream.rdbuf (buffer.rdbuf ());
 
       int parse_status = 0;
 
@@ -70,9 +72,16 @@ DEFUN_DLD (doctest_evalc, args, nargout,
         }
 
       // Stop capturing buffer and restore stdout
-      stdout.flush ();
+      out_stream.flush ();
+      err_stream.flush ();
       retval (0) = buffer.str ();
-      octave_pager_stream::reset ();
+      out_stream.rdbuf (old_out_buf);
+      err_stream.rdbuf (old_err_buf);
+
+      // Reset error state, otherwise this function would
+      // not be able to return anything in case of errors.
+      // XXX: The following line causes errors not to be propagated to the parent (#61).
+      // error_state = 0;
     }
   else
     print_usage ();
