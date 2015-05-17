@@ -23,7 +23,7 @@ clean:
 TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class'}); exit(~success);
 
 test: $(OCT_COMPILED)
-	octave --path inst --path src --path test --eval "${TEST_CODE}"
+	$(OCTAVE) --path inst --path src --path test --eval "${TEST_CODE}"
 
 test-interactive: $(OCT_COMPILED)
 	script --quiet --command "octave --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
