@@ -1,4 +1,6 @@
 function test_warning()
-% >> sprintf('%s', 65)
-% warning: implicit conversion from scalar to sq_string
-% ans = A
+% >> toeplitz ([1 2], [2 3])
+% ***arning: ***olumn wins diagonal conflict***
+% ans =
+%    1   3
+%    2   1
