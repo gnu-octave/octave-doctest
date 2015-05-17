@@ -2,7 +2,7 @@
 
 MATLAB_PKG_DIR=doctest-matlab-0.4.0-dev
 SHELL='/bin/bash'
-TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_hyperlinks', 'test_compare_backspace', 'test_class', 'test_skip', 'test_skip_only_one', 'test_warning'}); exit(~success);
+TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class'}); exit(~success);
 
 test:
 	$(MAKE) -C src
