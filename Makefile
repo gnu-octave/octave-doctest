@@ -9,6 +9,7 @@ OCT_COMPILED = $(BUILD_DIR)/.oct
 
 OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
+MATLAB ?= matlab
 
 .PHONY: help test matlab_pkg
 
@@ -28,7 +29,7 @@ test-interactive: $(OCT_COMPILED)
 	script --quiet --command "octave --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
 
 test-matlab:
-	matlab -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
+	$(MATLAB) -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
 
 ## If the src/Makefile changes, recompile all oct-files
 $(CC_SOURCES): src/Makefile
