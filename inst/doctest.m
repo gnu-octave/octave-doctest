@@ -196,7 +196,7 @@ function varargout = doctest(what)
 % Terminology
 % ===========
 %
-% A TARGET is a function, method, class or texinfo file.  Each TARGET comes
+% A TARGET is a function, method or texinfo file.  Each TARGET comes
 % with a docstring consisting of multiple DOCTESTS, i.e., question-answer
 % snippets.
 %
