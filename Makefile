@@ -11,7 +11,7 @@ OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
-.PHONY: help test matlab_pkg
+.PHONY: help test test-interactive test-matlab matlab_pkg
 
 $(BUILD_DIR) tmp/${MATLAB_PKG_DIR}/private:
 	mkdir -p "$@"
