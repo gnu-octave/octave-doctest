@@ -1,25 +1,18 @@
-function varargout = doctest(what, mode, fid)
+function varargout = doctest(what)
 % Run examples embedded in documentation
 %
 % Usage
 % =====
 %
 % doctest WHAT
-% doctest WHAT normal
-% doctest(WHAT, MODE, FID)
 % SUCCESS = doctest(...)
 % [NUM_TESTS_PASSED, NUM_TESTS, SUMMARY] = doctest(...)
+%
 %
 % The parameter WHAT contains the name of the function or class for
 % which to run the doctests. When running with Octave, WHAT can be the
 % filename of a Texinfo file, in which case all @example blocks are processed.
 % The parameter WHAT can also be a cell array of such items.
-%
-% The optional parameter MODE is always 'normal'. It exists for compatibility
-% with Octave's test API.
-%
-% The optional parameter FID can be used to redirect all output to a file id
-% other than stdout.
 %
 %
 % When called with a single return value, return whether all tests have
@@ -235,17 +228,8 @@ if ~iscell(what)
   what = {what};
 end
 
-% mode is always 'normal'
-if nargin < 2
-  mode = 'normal';
-else
-  mode = validatestring(mode, {'normal'}, 'doctest', 'mode');
-end
-
-% by default, print to stdout
-if nargin < 3
-  fid = 1;
-end
+% for now, always print to stdout
+fid = stdout;
 
 % get terminal color codes
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
