@@ -1,0 +1,27 @@
+First actually set A (we'll check later that nobody messed it up)
+@example
+A = 5
+@result{} A = 5
+@end example
+
+@example
+A = 10   # doctest: +SKIP
+@result{}
+@end example
+
+@example
+A = 10       @c # doctest: +SKIP
+@result{}
+A = 10       @c doctest: +SKIP
+@result{}
+A = 10       @c# doctest: +SKIP
+@result{}
+A = 10       @comment doctest: +SKIP
+@result{}
+@end example
+
+Ensure A is still 5 (none of the skipped tests ran)
+@example
+A
+@result{} A = 5
+@end example
