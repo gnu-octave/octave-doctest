@@ -26,7 +26,7 @@ test: $(OCT_COMPILED)
 	$(OCTAVE) --path inst --path src --path test --eval "${TEST_CODE}"
 
 test-interactive: $(OCT_COMPILED)
-	script --quiet --command "octave --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
+	script --quiet --command "$(OCTAVE) --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
 
 test-matlab:
 	$(MATLAB) -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
