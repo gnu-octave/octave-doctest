@@ -115,6 +115,13 @@ function [docstring, error] = parse_texinfo(str)
   str = strrep(str, '@}', '}');
   str = strrep(str, '@@', '@');
 
+  % certain special comments are translated
+  str = regexprep(str, '(@c|@comment)\s*(#|%)?\s*doctest:\s*\+SKIP', ...
+                  '# doctest: +SKIP');
+
+  % @c or @comment: drop remainder of line (even in {} case)
+  str = regexprep(str, '(@c|@comment)\s+.*\n', '\n', 'dotexceptnewline');
+
   % no example blocks? not an error, but nothing to do
   if (isempty(strfind(str, '@example')))
     % error = 'no @example blocks';
