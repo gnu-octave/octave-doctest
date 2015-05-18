@@ -11,7 +11,19 @@ OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
-.PHONY: help test test-interactive test-matlab matlab_pkg
+TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class'}); exit(~success);
+
+
+.PHONY: help test test-interactive matlab_test matlab_pkg
+
+help:
+	@echo Available rules:
+	@echo "  clean              clean all temporary files"
+	@echo "  test               run tests with Octave"
+	@echo "  test-interactive   run tests with Octave in interactive mode"
+	@echo "  matlab_test        run tests with Matlab"
+	@echo "  matlab_pkg         create Matlab package (${MATLAB_PKG_DIR}.zip)"
+
 
 $(BUILD_DIR) tmp/${MATLAB_PKG_DIR}/private:
 	mkdir -p "$@"
@@ -19,17 +31,6 @@ $(BUILD_DIR) tmp/${MATLAB_PKG_DIR}/private:
 clean:
 	rm -rf "$(BUILD_DIR)"
 	rm -f src/*.oct src/*.o
-
-TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class'}); exit(~success);
-
-test: $(OCT_COMPILED)
-	$(OCTAVE) --path inst --path src --path test --eval "${TEST_CODE}"
-
-test-interactive: $(OCT_COMPILED)
-	script --quiet --command "$(OCTAVE) --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
-
-test-matlab:
-	$(MATLAB) -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
 
 ## If the src/Makefile changes, recompile all oct-files
 $(CC_SOURCES): src/Makefile
@@ -41,6 +42,17 @@ $(CC_SOURCES): src/Makefile
 $(OCT_COMPILED): $(CC_SOURCES) | $(BUILD_DIR)
 	MKOCTFILE="$(MKOCTFILE)" $(MAKE) -C src
 	@touch "$@"
+
+
+test: $(OCT_COMPILED)
+	$(OCTAVE) --path inst --path src --path test --eval "${TEST_CODE}"
+
+test-interactive: $(OCT_COMPILED)
+	script --quiet --command "$(OCTAVE) --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
+
+
+matlab_test:
+	$(MATLAB) -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
 
 matlab_pkg: | tmp/${MATLAB_PKG_DIR}/private
 	cp -ra inst/doctest.m tmp/${MATLAB_PKG_DIR}/
