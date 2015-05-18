@@ -10,7 +10,7 @@ color_err = '';
 color_warn = '';
 reset = '';
 
-% only use colors in Octave, when printing to stdout, and when terminal supports colors (XXX: should really check if fid isatty)
+% only use colors in Octave, when printing to stdout, and when terminal supports colors
 if (is_octave())
   have_colorterm = index(getenv('TERM'), 'color') > 0;
   if fid == stdout && have_colorterm
