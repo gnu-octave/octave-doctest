@@ -229,7 +229,7 @@ if ~iscell(what)
 end
 
 % for now, always print to stdout
-fid = stdout;
+fid = 1;
 
 % get terminal color codes
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
