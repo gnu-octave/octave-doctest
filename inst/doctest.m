@@ -164,13 +164,6 @@ function varargout = doctest(what)
 % Octave-specific notes
 % =====================
 %
-% As Octave currently does not provide a evalc implementation, doctest
-% implements a workaround based on the eval and diary functions. This has
-% the unwanted side effect of all doctest output being echoed on stdout.
-% As to not intermingle this "line noise" and doctest's progress reporting,
-% doctest buffers the latter and prints it out after all tests have run
-% (when running with Octave and if the FID parameter is stdout).
-%
 % Octave m-files are commonly documented using Texinfo.  If you are running
 % Octave and your m-file contains texinfo markup, then the rules noted above
 % are slightly different.  First, text outside of "@example" ... "@end
