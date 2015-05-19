@@ -142,10 +142,6 @@ function varargout = doctest(what)
 % before comparison, so it can't detect anything that's purely a
 % whitespace difference.
 %
-% When you're working on writing/debugging a class, you might need
-% to run 'clear classes' to get correct results from doctests (this is a
-% general problem with developing classes).
-%
 % It doesn't say what line number the doctest error is on.
 %
 %
