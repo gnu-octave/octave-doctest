@@ -10,7 +10,7 @@ function varargout = doctest(what)
 %
 %
 % The parameter WHAT contains the name of the function or class for
-% which to run the doctests. When running with Octave, WHAT can be the
+% which to run the doctests.  When running with Octave, WHAT can be the
 % filename of a Texinfo file, in which case all @example blocks are processed.
 % The parameter WHAT can also be a cell array of such items.
 %
@@ -30,14 +30,14 @@ function varargout = doctest(what)
 %   SUMMARY.num_tests_passed
 %
 % The field 'num_targets_with_extraction_errors' is probably only relevant
-% when using Texinfo documentation on Octave, where it typically indicates
-% malformed @example blocks.
+% when testing Texinfo documentation, where it typically indicates malformed
+% @example blocks.
 %
 %
 % Description
 % ===========
 %
-% Each time doctest runs a test, it's running a line of code and checking
+% Each time doctest runs a test, it's running a block of code and checking
 % that the output is what you say it should be.  It knows something is an
 % example because it's a line in help('your_function') that starts with
 % '>>'.  It knows what you think the output should be by starting on the
@@ -52,9 +52,7 @@ function varargout = doctest(what)
 % results.
 %
 % >> 1 + 3
-%
 % ans =
-%
 %      4
 %
 %
@@ -68,9 +66,7 @@ function varargout = doctest(what)
 %
 % >> x = 3 + 4;
 % >> x
-%
 % x =
-%
 %    7
 %
 %
@@ -150,9 +146,9 @@ function varargout = doctest(what)
 % comparison, so right now it can't detect anything that's purely a
 % whitespace difference.
 %
-% When you're working on writing/debugging a Matlab class, you might need
+% When you're working on writing/debugging a class, you might need
 % to run 'clear classes' to get correct results from doctests (this is a
-% general problem with developing classes in Matlab).
+% general problem with developing classes).
 %
 % It doesn't say what line number/file the doctest error is in.  This is
 % because it uses Matlab's plain ol' HELP function to extract the
@@ -161,8 +157,8 @@ function varargout = doctest(what)
 % below)
 %
 %
-% Octave-specific notes
-% =====================
+% Testing Texinfo documentation
+% =============================
 %
 % Octave m-files are commonly documented using Texinfo.  If you are running
 % Octave and your m-file contains texinfo markup, then the rules noted above
