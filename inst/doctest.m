@@ -138,23 +138,15 @@ function varargout = doctest(what)
 % Limitations
 % ===========
 %
-% The examples MUST END with either the END OF THE DOCUMENTATION or TWO
-% BLANK LINES (or anyway, lines with just the comment marker % and nothing
-% else).
-%
-% All adjacent white space is collapsed into a single space before
-% comparison, so right now it can't detect anything that's purely a
+% Currently, all adjacent white space is collapsed into a single space
+% before comparison, so it can't detect anything that's purely a
 % whitespace difference.
 %
 % When you're working on writing/debugging a class, you might need
 % to run 'clear classes' to get correct results from doctests (this is a
 % general problem with developing classes).
 %
-% It doesn't say what line number/file the doctest error is in.  This is
-% because it uses Matlab's plain ol' HELP function to extract the
-% documentation.  It wouldn't be too hard to write our own comment parser,
-% but this hasn't happened yet.  (See Issue #2 on the bitbucket site,
-% below)
+% It doesn't say what line number the doctest error is on.
 %
 %
 % Testing Texinfo documentation
