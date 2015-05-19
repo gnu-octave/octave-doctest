@@ -139,6 +139,12 @@ function varargout = doctest(what)
 % >> plot(...)     % doctest: +SKIP
 %
 %
+% You can also mark tests that you expect to fail:
+%
+% >> a = 6         % doctest: +XFAIL
+% b = 42
+%
+%
 % Limitations
 % ===========
 %
