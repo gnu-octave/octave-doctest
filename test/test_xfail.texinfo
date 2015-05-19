@@ -1,0 +1,5 @@
+This test is supposed to fail
+@example
+a = 5     @c doctest: +XFAIL
+@result{} b = 7
+@end example
