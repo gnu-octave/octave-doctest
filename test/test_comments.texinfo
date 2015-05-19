@@ -1,0 +1,22 @@
+@example
+@group
+A = 5
+@result{} A = 5
+@comment Don't break my test
+@end group
+@end example
+
+@example
+@group
+A = 6
+  @comment My achy breaky test
+@result{} A = 6
+@end group
+@end example
+
+@example
+@group
+A = 7             @c I just don't think my
+@result{} A = 7   @c test would understand
+@end group
+@end example

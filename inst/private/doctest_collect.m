@@ -115,6 +115,15 @@ function [docstring, error] = parse_texinfo(str)
   str = strrep(str, '@}', '}');
   str = strrep(str, '@@', '@');
 
+  % special comments "@c doctest: cmd" are translated
+  re = [ '@c(?:omment)?'    ...  % @c or @comment, ?: means no token
+         '\s*(?:#|%|\s)\s*' ...  % at least one space or one of #,%
+         '(doctest:\s*.*\n)' ];  % want the doctest token
+  str = regexprep(str, re, '% $1', 'dotexceptnewline');
+
+  % texinfo comments: drop remainder of line
+  str = regexprep(str, '@c(omment)?\s+.*\n', '\n', 'dotexceptnewline');
+
   % no example blocks? not an error, but nothing to do
   if (isempty(strfind(str, '@example')))
     % error = 'no @example blocks';
