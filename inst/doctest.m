@@ -70,6 +70,17 @@ function varargout = doctest(what)
 %    7
 %
 %
+% Wildcards
+% ---------
+%
+% If you have something that has changing output, for instance line numbers
+% in a stack trace, or something with random numbers, you can use a
+% wildcard to match that part.
+%
+% >> datestr(now, 'yyyy-mm-dd')
+% 2***
+%
+%
 % Expecting an error
 % ------------------
 %
@@ -86,17 +97,6 @@ function varargout = doctest(what)
 % the current version can't deal with that.  For more info see Issue #4 on
 % the bitbucket site (below).  Warnings are different from errors, and they
 % work fine.
-%
-%
-% Wildcards
-% ---------
-%
-% If you have something that has changing output, for instance line numbers
-% in a stack trace, or something with random numbers, you can use a
-% wildcard to match that part.
-%
-% >> datestr(now, 'yyyy-mm-dd')
-% 2***
 %
 %
 % Multiple lines of code
