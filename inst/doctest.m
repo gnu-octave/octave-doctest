@@ -10,7 +10,7 @@ function varargout = doctest(what)
 %
 %
 % The parameter WHAT contains the name of the function or class for
-% which to run the doctests. When running with Octave, WHAT can be the
+% which to run the doctests.  When running with Octave, WHAT can be the
 % filename of a Texinfo file, in which case all @example blocks are processed.
 % The parameter WHAT can also be a cell array of such items.
 %
@@ -30,14 +30,14 @@ function varargout = doctest(what)
 %   SUMMARY.num_tests_passed
 %
 % The field 'num_targets_with_extraction_errors' is probably only relevant
-% when using Texinfo documentation on Octave, where it typically indicates
-% malformed @example blocks.
+% when testing Texinfo documentation, where it typically indicates malformed
+% @example blocks.
 %
 %
 % Description
 % ===========
 %
-% Each time doctest runs a test, it's running a line of code and checking
+% Each time doctest runs a test, it's running a block of code and checking
 % that the output is what you say it should be.  It knows something is an
 % example because it's a line in help('your_function') that starts with
 % '>>'.  It knows what you think the output should be by starting on the
@@ -52,9 +52,7 @@ function varargout = doctest(what)
 % results.
 %
 % >> 1 + 3
-%
 % ans =
-%
 %      4
 %
 %
@@ -68,10 +66,19 @@ function varargout = doctest(what)
 %
 % >> x = 3 + 4;
 % >> x
-%
 % x =
-%
 %    7
+%
+%
+% Wildcards
+% ---------
+%
+% If you have something that has changing output, for instance line numbers
+% in a stack trace, or something with random numbers, you can use a
+% wildcard to match that part.
+%
+% >> datestr(now, 'yyyy-mm-dd')
+% 2***
 %
 %
 % Expecting an error
@@ -90,17 +97,6 @@ function varargout = doctest(what)
 % the current version can't deal with that.  For more info see Issue #4 on
 % the bitbucket site (below).  Warnings are different from errors, and they
 % work fine.
-%
-%
-% Wildcards
-% ---------
-%
-% If you have something that has changing output, for instance line numbers
-% in a stack trace, or something with random numbers, you can use a
-% wildcard to match that part.
-%
-% >> datestr(now, 'yyyy-mm-dd')
-% 2***
 %
 %
 % Multiple lines of code
@@ -142,34 +138,15 @@ function varargout = doctest(what)
 % Limitations
 % ===========
 %
-% The examples MUST END with either the END OF THE DOCUMENTATION or TWO
-% BLANK LINES (or anyway, lines with just the comment marker % and nothing
-% else).
-%
-% All adjacent white space is collapsed into a single space before
-% comparison, so right now it can't detect anything that's purely a
+% Currently, all adjacent white space is collapsed into a single space
+% before comparison, so it can't detect anything that's purely a
 % whitespace difference.
 %
-% When you're working on writing/debugging a Matlab class, you might need
-% to run 'clear classes' to get correct results from doctests (this is a
-% general problem with developing classes in Matlab).
-%
-% It doesn't say what line number/file the doctest error is in.  This is
-% because it uses Matlab's plain ol' HELP function to extract the
-% documentation.  It wouldn't be too hard to write our own comment parser,
-% but this hasn't happened yet.  (See Issue #2 on the bitbucket site,
-% below)
+% It doesn't say what line number the doctest error is on.
 %
 %
-% Octave-specific notes
-% =====================
-%
-% As Octave currently does not provide a evalc implementation, doctest
-% implements a workaround based on the eval and diary functions. This has
-% the unwanted side effect of all doctest output being echoed on stdout.
-% As to not intermingle this "line noise" and doctest's progress reporting,
-% doctest buffers the latter and prints it out after all tests have run
-% (when running with Octave and if the FID parameter is stdout).
+% Testing Texinfo documentation
+% =============================
 %
 % Octave m-files are commonly documented using Texinfo.  If you are running
 % Octave and your m-file contains texinfo markup, then the rules noted above
