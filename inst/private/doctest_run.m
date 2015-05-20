@@ -37,6 +37,13 @@ for i = 1:length(examples)
 end
 examples = examples(~skip);
 
+% Some tests are marked to fail
+xfailmarked = false(size(examples));
+for i = 1:length(examples)
+  if (regexp(examples{i}{1}, '(#|%)\s*doctest:\s*\+XFAIL'))
+    xfailmarked(i) = true;
+  end
+end
 
 for i = 1:length(examples)
   % split into lines
@@ -68,6 +75,9 @@ for i = 1:length(examples)
   for ii = 1:length(prefix)
     passed = doctest_compare([prefix{ii} want_unspaced], got_unspaced);
     if passed, break, end
+  end
+  if xfailmarked(i)
+    passed = ~passed;
   end
   results(i).passed = passed;
 end
