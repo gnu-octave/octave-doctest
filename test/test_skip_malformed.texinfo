@@ -1,0 +1,5 @@
+@example
+@comment doctest: +SKIP
+Howdy, I'm some verbatim text masquerading as an example.
+I probably should live inside an @@verbatim block, but I don't...
+@end example
