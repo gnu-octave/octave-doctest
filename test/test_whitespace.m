@@ -42,3 +42,12 @@ function test_whitespace()
 %    -3
 %
 %
+% Matlab and Octave format differently, even for scalars, so
+% make sure our auto "ans = " bit still works.
+%
+% >> 42                 % doctest: -NORMALIZEWHITESPACE
+% 42
+%
+%
+% Note: even very simple scalar tests like "x = 5" are difficult to
+% pass in both Octave and Matlab when using -NORMALIZEWHITESPACE.

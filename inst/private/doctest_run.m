@@ -106,12 +106,7 @@ for i = 1:length(examples)
   results(i).source = examples{i}{1};
   results(i).want = want;
   results(i).got = got;
-  % a list of acceptably-missing prefixes (allow customizing?)
-  prefix = {'', 'ans = '};
-  for ii = 1:length(prefix)
-    passed = doctest_compare([prefix{ii} want], got);
-    if passed, break, end
-  end
+  passed = doctest_compare(want, got);
   if xfailmarked(i)
     passed = ~passed;
   end
