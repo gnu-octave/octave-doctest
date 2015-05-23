@@ -37,6 +37,7 @@ for i = 1:length(examples)
 end
 examples = examples(~skip);
 
+
 % Some tests are marked to fail
 xfailmarked = false(size(examples));
 for i = 1:length(examples)
@@ -45,17 +46,21 @@ for i = 1:length(examples)
   end
 end
 
-for i = 1:length(examples)
-  % split into lines
-  lines = textscan(examples{i}{1}, '%s', 'delimiter', sprintf('\n'));
-  lines = lines{1};
 
-  % replace initial '..' by '  ' in subsequent lines
-  examples{i}{1} = lines{1,1};
-  for j=2:length(lines)
-    examples{i}{1} = sprintf('%s\n     %s', examples{i}{1}, lines{j,1}(4:end));
+% replace initial '..' by '  ' in subsequent lines
+for i = 1:length(examples)
+  lines = strsplit(examples{i}{1}, '\n');
+  s = lines{1};
+  for j = 2:length(lines)
+    T = regexp(lines{j}, '^\s*(\.\.)(.*)$', 'tokens');
+    assert(length(T) == 1)
+    T = T{1};
+    assert(length(T) == 2)
+    s = sprintf('%s\n   %s', s, T{2});
   end
+  examples{i}{1} = s;
 end
+
 
 % run tests and store results
 all_outputs = DOCTEST__evalc(examples);
