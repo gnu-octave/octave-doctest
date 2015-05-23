@@ -5,6 +5,8 @@ doctest 0.4.0-dev
 
   * Some doctests can be marked to skip by appending "% doctest: +SKIP".
 
+  * doctests can be marked as expected to fail with "% doctest: XFAIL".
+
   * Improve evalc implementatoin (Octave).
 
   * Other bug fixes.
