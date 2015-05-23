@@ -69,7 +69,6 @@ for i = 1:length(examples)
   results(i).source = examples{i}{1};
   results(i).want = strtrim(want_unspaced);
   results(i).got = strtrim(got_unspaced);
-  passed = doctest_compare(want_unspaced, got_unspaced);
   % a list of acceptably-missing prefixes (allow customizing?)
   prefix = {'', 'ans = '};
   for ii = 1:length(prefix)
