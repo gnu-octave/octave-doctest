@@ -47,6 +47,25 @@ for i = 1:length(examples)
 end
 
 
+% whitespace treatment
+normalizewhitespace_default = true;
+normalizewhitespace = normalizewhitespace_default .* true(size(examples));
+for i = 1:length(examples)
+  re = '(?:#|%)\s*doctest:\s*(\+|\-)NORMALIZEWHITESPACE';
+  T = regexp(examples{i}{1}, re, 'tokens');
+
+  if (isempty(T))
+    % no-op
+  elseif (strcmp(T{1}, '+'))
+    normalizewhitespace(i) = true;
+  elseif (strcmp(T{1}, '-'))
+    normalizewhitespace(i) = false;
+  else
+    error('tertium non datur (bug?)');
+  end
+end
+
+
 % replace initial '..' by '  ' in subsequent lines
 for i = 1:length(examples)
   lines = strsplit(examples{i}{1}, '\n');
@@ -64,20 +83,33 @@ end
 
 % run tests and store results
 all_outputs = DOCTEST__evalc(examples);
+
+
+% deal with whitespace
+for i = 1:length(examples)
+  if (normalizewhitespace(i))
+    % collapse multiple spaces to one
+    examples{i}{2} = strtrim(regexprep(examples{i}{2}, '\s+', ' '));
+    all_outputs{i} = strtrim(regexprep(all_outputs{i}, '\s+', ' '));
+  else
+    examples{i}{2} = strtrim_lines_discard_empties(examples{i}{2});
+    all_outputs{i} = strtrim_lines_discard_empties(all_outputs{i});
+  end
+end
+
+
+
 results = [];
 for i = 1:length(examples)
-  % collapse all space (FIXME: could try something more sophisticated)
-  want_unspaced = regexprep(examples{i}{2}, '\s+', ' ');
-  got_unspaced = regexprep(all_outputs{i}, '\s+', ' ');
-  want_unspaced = strtrim(want_unspaced);
-  got_unspaced = strtrim(got_unspaced);
+  want = examples{i}{2};
+  got = all_outputs{i};
   results(i).source = examples{i}{1};
-  results(i).want = strtrim(want_unspaced);
-  results(i).got = strtrim(got_unspaced);
+  results(i).want = want;
+  results(i).got = got;
   % a list of acceptably-missing prefixes (allow customizing?)
   prefix = {'', 'ans = '};
   for ii = 1:length(prefix)
-    passed = doctest_compare([prefix{ii} want_unspaced], got_unspaced);
+    passed = doctest_compare([prefix{ii} want], got);
     if passed, break, end
   end
   if xfailmarked(i)
@@ -132,4 +164,19 @@ function formatted = DOCTEST__format_exception(ex)
   else
     formatted = ['??? ' ex.getReport('basic')];
   end
+end
+
+
+function r = strtrim_lines_discard_empties(s)
+  lines = strsplit(s, '\n');
+
+  keep = true(size(lines));
+  for j = 1:length(lines)
+    lines{j} = strtrim(lines{j});
+    if (isempty(lines{j}))
+      keep(j) = false;
+    end
+  end
+  lines = lines(keep);
+  r = strjoin(lines, '');
 end
