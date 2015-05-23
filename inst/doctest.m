@@ -123,8 +123,8 @@ function varargout = doctest(what)
 % gives some freedom to, e.g., indent the code output as you wish.
 %
 %
-% Skipping tests
-% --------------
+% Directives
+% ----------
 %
 % You can skip certain tests by marking them with a special comment.  This
 % can be used, for example, for a test not expected to pass or to avoid
@@ -135,20 +135,24 @@ function varargout = doctest(what)
 % >> plot(...)     % doctest: +SKIP
 %
 %
+% These special comments act as directives for modifying test behaviour.
 % You can also mark tests that you expect to fail:
 %
 % >> a = 6         % doctest: +XFAIL
 % b = 42
 %
 %
-% Limitations
-% ===========
+% By default, all adjacent white space is collapsed into a single space
+% before comparison.  A stricter mode where "internal whitespace" must
+% match is available:
 %
-% Currently, all adjacent white space is collapsed into a single space
-% before comparison, so it can't detect anything that's purely a
-% whitespace difference.
+% >> fprintf('a   b\nc   d\n')    % doctest: -NORMALIZEDWHITESPACE
+% a   b
+% c   d
 %
-% It doesn't say what line number the doctest error is on.
+% >> fprintf('a  b\nc  d\n')      % doctest: +NORMALIZEDWHITESPACE
+% a b
+% c d
 %
 %
 % Testing Texinfo documentation
