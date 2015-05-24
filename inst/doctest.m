@@ -78,7 +78,7 @@ function varargout = doctest(what)
 % wildcard to match that part.
 %
 % >> datestr(now, 'yyyy-mm-dd')
-% 2***
+% 2...
 %
 %
 % Expecting an error
@@ -88,7 +88,7 @@ function varargout = doctest(what)
 % handled correctly:
 %
 % >> not_a_real_function(42)
-% ??? ***ndefined ***
+% ??? ...ndefined ...
 %
 %
 % (MATLAB spells this 'Undefined', while Octave uses 'undefined')
@@ -146,13 +146,16 @@ function varargout = doctest(what)
 % before comparison.  A stricter mode where "internal whitespace" must
 % match is available:
 %
-% >> fprintf('a   b\nc   d\n')    % doctest: -NORMALIZEDWHITESPACE
+% >> fprintf('a   b\nc   d\n')    % doctest: -NORMALIZEWHITESPACE
 % a   b
 % c   d
 %
-% >> fprintf('a  b\nc  d\n')      % doctest: +NORMALIZEDWHITESPACE
+% >> fprintf('a  b\nc  d\n')      % doctest: +NORMALIZEWHITESPACE
 % a b
 % c d
+%
+%
+% To disable the '...' wildcard, use the -ELLIPSIS directive.
 %
 %
 % Testing Texinfo documentation

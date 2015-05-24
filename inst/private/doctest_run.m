@@ -23,48 +23,44 @@ example_re = [
     '((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)'];  % the output
 [~,~,~,~,examples] = regexp(docstring, example_re);
 
-
-% Some tests are marked to skip
+% default options
 skip = false(size(examples));
+xfail = false(size(examples));
+normalizewhitespace = true(size(examples));
+ellipsis = true(size(examples));
+
+% parse directives
 for i = 1:length(examples)
   % each block should be split into input/output by the regex
   assert (length(examples{i}) == 2);
 
-  % this test marked for skip
-  if (regexp(examples{i}{1}, '(#|%)\s*doctest:\s*\+SKIP'))
-    skip(i) = true;
+  % find doctest directives
+  t = regexp(examples{i}{1}, '(?:#|%)\s*doctest:\s+(\+|\-)([\w]+)', 'tokens');
+
+  % process directives
+  for j = 1:length(t)
+    directive = t{j}{2};
+    enable = strcmp(t{j}{1}, '+');
+
+    if strcmp(directive, 'SKIP')
+      skip(i) = enable;
+    elseif strcmp(directive, 'XFAIL')
+      xfail(i) = enable;
+    elseif strcmp(directive, 'NORMALIZEWHITESPACE')
+      normalizewhitespace(i) = enable;
+    elseif strcmp(directive, 'ELLIPSIS')
+      ellipsis(i) = enable;
+    else
+      error('doctest: internal error: unexpected directive %s', directive);
+    end
   end
 end
+
+% remove skipped tests
 examples = examples(~skip);
-
-
-% Some tests are marked to fail
-xfailmarked = false(size(examples));
-for i = 1:length(examples)
-  if (regexp(examples{i}{1}, '(#|%)\s*doctest:\s*\+XFAIL'))
-    xfailmarked(i) = true;
-  end
-end
-
-
-% whitespace treatment
-normalizewhitespace_default = true;
-normalizewhitespace = normalizewhitespace_default .* true(size(examples));
-for i = 1:length(examples)
-  re = '(?:#|%)\s*doctest:\s*(\+|\-)NORMALIZEWHITESPACE';
-  T = regexp(examples{i}{1}, re, 'tokens');
-
-  if (isempty(T))
-    % no-op
-  elseif (strcmp(T{1}, '+'))
-    normalizewhitespace(i) = true;
-  elseif (strcmp(T{1}, '-'))
-    normalizewhitespace(i) = false;
-  else
-    error('tertium non datur (bug?)');
-  end
-end
-
+xfail = xfail(~skip);
+normalizewhitespace = normalizewhitespace(~skip);
+ellipsis = ellipsis(~skip);
 
 % replace initial '..' by '  ' in subsequent lines
 for i = 1:length(examples)
@@ -81,11 +77,11 @@ for i = 1:length(examples)
 end
 
 
-% run tests and store results
+% run tests
 all_outputs = DOCTEST__evalc(examples);
 
 
-% deal with whitespace
+% deal with whitespace in inputs and outputs
 for i = 1:length(examples)
   if (normalizewhitespace(i))
     % collapse multiple spaces to one
@@ -98,7 +94,7 @@ for i = 1:length(examples)
 end
 
 
-
+% store results
 results = [];
 for i = 1:length(examples)
   want = examples{i}{2};
@@ -106,8 +102,8 @@ for i = 1:length(examples)
   results(i).source = examples{i}{1};
   results(i).want = want;
   results(i).got = got;
-  passed = doctest_compare(want, got);
-  if xfailmarked(i)
+  passed = doctest_compare(want, got, ellipsis(i));
+  if xfail(i)
     passed = ~passed;
   end
   results(i).passed = passed;

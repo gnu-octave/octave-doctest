@@ -5,10 +5,12 @@ doctest 0.4.0-dev
 
   * Some doctests can be marked to skip by appending "% doctest: +SKIP".
 
-  * doctests can be marked as expected to fail with "% doctest: XFAIL".
+  * Doctests can be marked as expected to fail with "% doctest: +XFAIL".
 
   * Add a mode for stricter whitespace checking: enable with
     "% doctest: -NORMALIZEWHITESPACE".
+
+  * Add a mode to disable "..." wildcards: enable with "% doctest: -ELLIPSIS".
 
   * Improve evalc implementatoin (Octave).
 
@@ -23,7 +25,7 @@ doctest 0.3.0 (2015-05-12)
 
   * Allow "ans = " to be omitted.
 
-  * pure texinfo files can be tested: "doctest myfile.texinfo".
+  * Pure texinfo files can be tested: "doctest myfile.texinfo".
 
   * Other bug fixes.
 
