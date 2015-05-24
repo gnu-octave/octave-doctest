@@ -146,11 +146,11 @@ function varargout = doctest(what)
 % before comparison.  A stricter mode where "internal whitespace" must
 % match is available:
 %
-% >> fprintf('a   b\nc   d\n')    % doctest: -NORMALIZEWHITESPACE
+% >> fprintf('a   b\nc   d\n')    % doctest: -NORMALIZE_WHITESPACE
 % a   b
 % c   d
 %
-% >> fprintf('a  b\nc  d\n')      % doctest: +NORMALIZEWHITESPACE
+% >> fprintf('a  b\nc  d\n')      % doctest: +NORMALIZE_WHITESPACE
 % a b
 % c d
 %
