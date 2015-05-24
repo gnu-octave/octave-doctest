@@ -37,6 +37,7 @@ for i = 1:length(examples)
 end
 examples = examples(~skip);
 
+
 % Some tests are marked to fail
 xfailmarked = false(size(examples));
 for i = 1:length(examples)
@@ -45,36 +46,67 @@ for i = 1:length(examples)
   end
 end
 
-for i = 1:length(examples)
-  % split into lines
-  lines = textscan(examples{i}{1}, '%s', 'delimiter', sprintf('\n'));
-  lines = lines{1};
 
-  % replace initial '..' by '  ' in subsequent lines
-  examples{i}{1} = lines{1,1};
-  for j=2:length(lines)
-    examples{i}{1} = sprintf('%s\n     %s', examples{i}{1}, lines{j,1}(4:end));
+% whitespace treatment
+normalizewhitespace_default = true;
+normalizewhitespace = normalizewhitespace_default .* true(size(examples));
+for i = 1:length(examples)
+  re = '(?:#|%)\s*doctest:\s*(\+|\-)NORMALIZEWHITESPACE';
+  T = regexp(examples{i}{1}, re, 'tokens');
+
+  if (isempty(T))
+    % no-op
+  elseif (strcmp(T{1}, '+'))
+    normalizewhitespace(i) = true;
+  elseif (strcmp(T{1}, '-'))
+    normalizewhitespace(i) = false;
+  else
+    error('tertium non datur (bug?)');
   end
 end
 
+
+% replace initial '..' by '  ' in subsequent lines
+for i = 1:length(examples)
+  lines = strsplit(examples{i}{1}, '\n');
+  s = lines{1};
+  for j = 2:length(lines)
+    T = regexp(lines{j}, '^\s*(\.\.)(.*)$', 'tokens');
+    assert(length(T) == 1)
+    T = T{1};
+    assert(length(T) == 2)
+    s = sprintf('%s\n   %s', s, T{2});
+  end
+  examples{i}{1} = s;
+end
+
+
 % run tests and store results
 all_outputs = DOCTEST__evalc(examples);
+
+
+% deal with whitespace
+for i = 1:length(examples)
+  if (normalizewhitespace(i))
+    % collapse multiple spaces to one
+    examples{i}{2} = strtrim(regexprep(examples{i}{2}, '\s+', ' '));
+    all_outputs{i} = strtrim(regexprep(all_outputs{i}, '\s+', ' '));
+  else
+    examples{i}{2} = strtrim_lines_discard_empties(examples{i}{2});
+    all_outputs{i} = strtrim_lines_discard_empties(all_outputs{i});
+  end
+end
+
+
+
 results = [];
 for i = 1:length(examples)
-  % collapse all space (FIXME: could try something more sophisticated)
-  want_unspaced = regexprep(examples{i}{2}, '\s+', ' ');
-  got_unspaced = regexprep(all_outputs{i}, '\s+', ' ');
-  want_unspaced = strtrim(want_unspaced);
-  got_unspaced = strtrim(got_unspaced);
+  want = examples{i}{2};
+  got = all_outputs{i};
   results(i).source = examples{i}{1};
-  results(i).want = strtrim(want_unspaced);
-  results(i).got = strtrim(got_unspaced);
-  % a list of acceptably-missing prefixes (allow customizing?)
-  prefix = {'', 'ans = '};
-  for ii = 1:length(prefix)
-    passed = doctest_compare([prefix{ii} want_unspaced], got_unspaced);
-    if passed, break, end
-  end
+  results(i).want = want;
+  results(i).got = got;
+  passed = doctest_compare(want, got);
   if xfailmarked(i)
     passed = ~passed;
   end
@@ -127,4 +159,19 @@ function formatted = DOCTEST__format_exception(ex)
   else
     formatted = ['??? ' ex.getReport('basic')];
   end
+end
+
+
+function r = strtrim_lines_discard_empties(s)
+  lines = strsplit(s, '\n');
+
+  keep = true(size(lines));
+  for j = 1:length(lines)
+    lines{j} = strtrim(lines{j});
+    if (isempty(lines{j}))
+      keep(j) = false;
+    end
+  end
+  lines = lines(keep);
+  r = strjoin(lines, '');
 end

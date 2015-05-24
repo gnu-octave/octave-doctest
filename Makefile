@@ -11,7 +11,7 @@ OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
-TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class', 'test_comments.texinfo', 'test_skip_comments.texinfo', 'test_xfail', 'test_xfail.texinfo'}); exit(~success);
+TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class', 'test_comments.texinfo', 'test_skip_comments.texinfo', 'test_xfail', 'test_xfail.texinfo', 'test_whitespace'}); exit(~success);
 
 
 .PHONY: help test test-interactive matlab_test matlab_pkg

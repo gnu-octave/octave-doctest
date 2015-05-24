@@ -7,6 +7,9 @@ doctest 0.4.0-dev
 
   * doctests can be marked as expected to fail with "% doctest: XFAIL".
 
+  * Add a mode for stricter whitespace checking: enable with
+    "% doctest: -NORMALIZEWHITESPACE".
+
   * Improve evalc implementatoin (Octave).
 
   * Other bug fixes.
