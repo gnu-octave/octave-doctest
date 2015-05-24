@@ -7,6 +7,9 @@ BUILD_DIR = tmp
 MATLAB_PKG_DIR=${PACKAGE}-matlab-${VERSION}
 OCTAVE_RELEASE_TARBALL = ${BUILD_DIR}/${PACKAGE}-${VERSION}.tar
 OCTAVE_RELEASE_TARBALL_COMPRESSED = ${OCTAVE_RELEASE_TARBALL}.gz
+INSTALLED_PACKAGE = ~/octave/${PACKAGE}-${VERSION}/packinfo/DESCRIPTION
+HTML_DIR = ${BUILD_DIR}/${PACKAGE}-html
+HTML_TARBALL_COMPRESSED = ${HTML_DIR}.tar.gz
 OCT_COMPILED = ${BUILD_DIR}/.oct
 
 OCTAVE ?= octave
@@ -16,16 +19,18 @@ MATLAB ?= matlab
 TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_ellipsis', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class', 'test_comments.texinfo', 'test_skip_comments.texinfo', 'test_xfail', 'test_xfail.texinfo', 'test_whitespace'}); exit(~success);
 
 
-.PHONY: help test test-interactive matlab_test matlab_pkg octave_pkg
+.PHONY: help test test-interactive matlab_test matlab_pkg octave_pkg octave_html install
 
 help:
 	@echo Available rules:
 	@echo "  clean              clean all temporary files"
+	@echo "  install            install package in Octave"
 	@echo "  test               run tests with Octave"
 	@echo "  test-interactive   run tests with Octave in interactive mode"
 	@echo "  matlab_test        run tests with Matlab"
 	@echo "  matlab_pkg         create Matlab package (${MATLAB_PKG_DIR}.zip)"
-	@echo "  octave_pkg         create Ovtave package (${OCTAVE_RELEASE_TARBALL_COMPRESSED})"
+	@echo "  octave_pkg         create Octave package (${OCTAVE_RELEASE_TARBALL_COMPRESSED})"
+	@echo "  octave_html        create Octave Forge website"
 
 
 ${BUILD_DIR} ${BUILD_DIR}/${MATLAB_PKG_DIR}/private:
@@ -57,13 +62,30 @@ test-interactive: ${OCT_COMPILED}
 matlab_test:
 	${MATLAB} -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
 
+## Install in Octave (locally)
+install: ${INSTALLED_PACKAGE}
+${INSTALLED_PACKAGE}: ${RELEASE_TARBALL_COMPRESSED}
+	@echo "Installing package in GNU Octave ..."
+	$(OCTAVE) --silent --eval "pkg install $<"
+
+## Package release for Octave
 ${OCTAVE_RELEASE_TARBALL}: .git/index | ${BUILD_DIR}
 	git archive --output="$@" --prefix=${PACKAGE}-${VERSION}/ HEAD
 	tar --delete --file "$@" ${PACKAGE}-${VERSION}/README.matlab.md
-
 octave_pkg: ${OCTAVE_RELEASE_TARBALL_COMPRESSED}
 ${OCTAVE_RELEASE_TARBALL_COMPRESSED}: ${OCTAVE_RELEASE_TARBALL}
 	(cd "${BUILD_DIR}" && gzip --best -f -k "../$<")
+
+## HTML Documentation for Octave Forge
+octave_html: ${HTML_TARBALL_COMPRESSED}
+${HTML_TARBALL_COMPRESSED}: ${INSTALLED_PACKAGE} | ${BUILD_DIR}
+	@echo "Generating HTML documentation for the package. This may take a while ..."
+	rm -rf "${HTML_DIR}"
+	$(OCTAVE) --silent --eval \
+		"pkg load generate_html; \
+		 options = get_html_options ('octave-forge'); \
+		 generate_package_html ('${PACKAGE}', '${HTML_DIR}', options)"
+	tar --create --auto-compress --transform="s!^${BUILD_DIR}/!!" --file "$@" "${HTML_DIR}"
 
 matlab_pkg: | ${BUILD_DIR}/${MATLAB_PKG_DIR}/private
 	cp -ra inst/doctest.m ${BUILD_DIR}/${MATLAB_PKG_DIR}/
