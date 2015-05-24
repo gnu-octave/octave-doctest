@@ -1,8 +1,8 @@
-function match = doctest_compare(want, got)
+function match = doctest_compare(want, got, ellipsis)
 % Matches two strings together.  They should be identical, except:
 %
 %   * the first one can contain '...', which matches anything in
-%     the second;
+%     the second (if ellipsis is true)
 %   * they might match after putting "ans = " on the first;
 %   * various other nonsense of unknown current relevance.
 %
@@ -18,13 +18,15 @@ got = regexprep(got, '.\x08', '');
 want = strtrim(want);
 got = strtrim(got);
 
-if isempty(got) && (isempty(want) || strcmp(want, '...'))
+if isempty(got) && (isempty(want) || (ellipsis && strcmp(want, '...')))
     match = 1;
     return
 end
 
-want_escaped = regexptranslate('escape', want);
-want_re = regexprep(want_escaped, '(\\\.){3}', '.*');
+want_re = regexptranslate('escape', want);
+if ellipsis
+  want_re = regexprep(want_re, '(\\\.){3}', '.*');
+end
 
 % allow "ans = " to be missing
 want_re = ['^(ans\s*=\s*)?' want_re '$'];

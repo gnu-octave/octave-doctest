@@ -66,6 +66,25 @@ for i = 1:length(examples)
 end
 
 
+% ellipsis treatment
+ellipsis_default = true;
+ellipsis = ellipsis_default .* true(size(examples));
+for i = 1:length(examples)
+  re = '(?:#|%)\s*doctest:\s*(\+|\-)ELLIPSIS';
+  T = regexp(examples{i}{1}, re, 'tokens');
+
+  if (isempty(T))
+    % no-op
+  elseif (strcmp(T{1}, '+'))
+    ellipsis(i) = true;
+  elseif (strcmp(T{1}, '-'))
+    ellipsis(i) = false;
+  else
+    error('tertium non datur (bug?)');
+  end
+end
+
+
 % replace initial '..' by '  ' in subsequent lines
 for i = 1:length(examples)
   lines = strsplit(examples{i}{1}, '\n');
@@ -106,7 +125,7 @@ for i = 1:length(examples)
   results(i).source = examples{i}{1};
   results(i).want = want;
   results(i).got = got;
-  passed = doctest_compare(want, got);
+  passed = doctest_compare(want, got, ellipsis(i));
   if xfailmarked(i)
     passed = ~passed;
   end
