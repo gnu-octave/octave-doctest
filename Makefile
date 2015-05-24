@@ -5,6 +5,8 @@ VERSION = $(shell grep "^Version: " DESCRIPTION | cut -f2 -d" ")
 CC_SOURCES = $(wildcard src/*.cc)
 BUILD_DIR = tmp
 MATLAB_PKG_DIR=${PACKAGE}-matlab-${VERSION}
+OCTAVE_RELEASE_TARBALL = ${BUILD_DIR}/${PACKAGE}-${VERSION}.tar
+OCTAVE_RELEASE_TARBALL_COMPRESSED = ${OCTAVE_RELEASE_TARBALL}.gz
 OCT_COMPILED = ${BUILD_DIR}/.oct
 
 OCTAVE ?= octave
@@ -14,7 +16,7 @@ MATLAB ?= matlab
 TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_ellipsis', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class', 'test_comments.texinfo', 'test_skip_comments.texinfo', 'test_xfail', 'test_xfail.texinfo', 'test_whitespace'}); exit(~success);
 
 
-.PHONY: help test test-interactive matlab_test matlab_pkg
+.PHONY: help test test-interactive matlab_test matlab_pkg octave_pkg
 
 help:
 	@echo Available rules:
@@ -23,6 +25,7 @@ help:
 	@echo "  test-interactive   run tests with Octave in interactive mode"
 	@echo "  matlab_test        run tests with Matlab"
 	@echo "  matlab_pkg         create Matlab package (${MATLAB_PKG_DIR}.zip)"
+	@echo "  octave_pkg         create Ovtave package (${OCTAVE_RELEASE_TARBALL_COMPRESSED})"
 
 
 ${BUILD_DIR} ${BUILD_DIR}/${MATLAB_PKG_DIR}/private:
@@ -53,6 +56,14 @@ test-interactive: ${OCT_COMPILED}
 
 matlab_test:
 	${MATLAB} -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
+
+${OCTAVE_RELEASE_TARBALL}: .git/index | ${BUILD_DIR}
+	git archive --output="$@" --prefix=${PACKAGE}-${VERSION}/ HEAD
+	tar --delete --file "$@" ${PACKAGE}-${VERSION}/README.matlab.md
+
+octave_pkg: ${OCTAVE_RELEASE_TARBALL_COMPRESSED}
+${OCTAVE_RELEASE_TARBALL_COMPRESSED}: ${OCTAVE_RELEASE_TARBALL}
+	(cd "${BUILD_DIR}" && gzip --best -f -k "../$<")
 
 matlab_pkg: | ${BUILD_DIR}/${MATLAB_PKG_DIR}/private
 	cp -ra inst/doctest.m ${BUILD_DIR}/${MATLAB_PKG_DIR}/
