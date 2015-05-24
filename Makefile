@@ -25,7 +25,7 @@ help:
 	@echo "  matlab_pkg         create Matlab package (${MATLAB_PKG_DIR}.zip)"
 
 
-${BUILD_DIR} tmp/${MATLAB_PKG_DIR}/private:
+${BUILD_DIR} ${BUILD_DIR}/${MATLAB_PKG_DIR}/private:
 	mkdir -p "$@"
 
 clean:
@@ -54,13 +54,13 @@ test-interactive: ${OCT_COMPILED}
 matlab_test:
 	${MATLAB} -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
 
-matlab_pkg: | tmp/${MATLAB_PKG_DIR}/private
-	cp -ra inst/doctest.m tmp/${MATLAB_PKG_DIR}/
-	cp -ra inst/private/*.m tmp/${MATLAB_PKG_DIR}/private/
-	cp -ra COPYING tmp/${MATLAB_PKG_DIR}/
-	cp -ra CONTRIBUTORS tmp/${MATLAB_PKG_DIR}/
-	cp -ra NEWS tmp/${MATLAB_PKG_DIR}/
-	cp -ra README.matlab.md tmp/${MATLAB_PKG_DIR}/
-	pushd tmp; zip -r ${MATLAB_PKG_DIR}.zip ${MATLAB_PKG_DIR}; popd
-	mv tmp/${MATLAB_PKG_DIR}.zip .
+matlab_pkg: | ${BUILD_DIR}/${MATLAB_PKG_DIR}/private
+	cp -ra inst/doctest.m ${BUILD_DIR}/${MATLAB_PKG_DIR}/
+	cp -ra inst/private/*.m ${BUILD_DIR}/${MATLAB_PKG_DIR}/private/
+	cp -ra COPYING ${BUILD_DIR}/${MATLAB_PKG_DIR}/
+	cp -ra CONTRIBUTORS ${BUILD_DIR}/${MATLAB_PKG_DIR}/
+	cp -ra NEWS ${BUILD_DIR}/${MATLAB_PKG_DIR}/
+	cp -ra README.matlab.md ${BUILD_DIR}/${MATLAB_PKG_DIR}/
+	pushd ${BUILD_DIR}; zip -r ${MATLAB_PKG_DIR}.zip ${MATLAB_PKG_DIR}; popd
+	mv ${BUILD_DIR}/${MATLAB_PKG_DIR}.zip .
 
