@@ -158,7 +158,7 @@ function [docstring, error] = parse_texinfo(str)
     L = strsplit (str, '\n');
 
     % mask for lines with @result in them
-    [S, ~, ~, ~, ~, ~, ~] = regexp(L, '@result\s*{}');
+    S = regexp(L, '@result\s*{}');
     Ires = ~cellfun(@isempty, S);
     if (nnz(Ires) == 0)
       error = 'has @example blocks but neither ">>" nor "@result{}"';
@@ -180,7 +180,7 @@ function [docstring, error] = parse_texinfo(str)
     Iex_end = ~cellfun(@isempty, regexp(L, '@end example'));
 
     % build a new mask for lines which we think are commands
-    I = zeros(size(Ires), 'logical');
+    I = false(size(Ires));
     start_of_block = false;
     for i=1:length(L)-1
       if Iex_start(i)
