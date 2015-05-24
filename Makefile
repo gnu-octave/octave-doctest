@@ -4,8 +4,8 @@ PACKAGE = $(shell grep "^Name: " DESCRIPTION | cut -f2 -d" ")
 VERSION = $(shell grep "^Version: " DESCRIPTION | cut -f2 -d" ")
 CC_SOURCES = $(wildcard src/*.cc)
 BUILD_DIR = tmp
-MATLAB_PKG_DIR=$(PACKAGE)-matlab-$(VERSION)
-OCT_COMPILED = $(BUILD_DIR)/.oct
+MATLAB_PKG_DIR=${PACKAGE}-matlab-${VERSION}
+OCT_COMPILED = ${BUILD_DIR}/.oct
 
 OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
@@ -25,34 +25,34 @@ help:
 	@echo "  matlab_pkg         create Matlab package (${MATLAB_PKG_DIR}.zip)"
 
 
-$(BUILD_DIR) tmp/${MATLAB_PKG_DIR}/private:
+${BUILD_DIR} tmp/${MATLAB_PKG_DIR}/private:
 	mkdir -p "$@"
 
 clean:
-	rm -rf "$(BUILD_DIR)"
+	rm -rf "${BUILD_DIR}"
 	rm -f src/*.oct src/*.o
 
 ## If the src/Makefile changes, recompile all oct-files
-$(CC_SOURCES): src/Makefile
+${CC_SOURCES}: src/Makefile
 	@touch --no-create "$@"
 
 ## Compilation of oct-files happens in a separate Makefile,
 ## which is bundled in the release and will be used during
 ## package installation by Octave.
-$(OCT_COMPILED): $(CC_SOURCES) | $(BUILD_DIR)
-	MKOCTFILE="$(MKOCTFILE)" $(MAKE) -C src
+${OCT_COMPILED}: ${CC_SOURCES} | ${BUILD_DIR}
+	MKOCTFILE="${MKOCTFILE}" ${MAKE} -C src
 	@touch "$@"
 
 
-test: $(OCT_COMPILED)
-	$(OCTAVE) --path inst --path src --path test --eval "${TEST_CODE}"
+test: ${OCT_COMPILED}
+	${OCTAVE} --path inst --path src --path test --eval "${TEST_CODE}"
 
-test-interactive: $(OCT_COMPILED)
-	script --quiet --command "$(OCTAVE) --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
+test-interactive: ${OCT_COMPILED}
+	script --quiet --command "${OCTAVE} --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
 
 
 matlab_test:
-	$(MATLAB) -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
+	${MATLAB} -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
 
 matlab_pkg: | tmp/${MATLAB_PKG_DIR}/private
 	cp -ra inst/doctest.m tmp/${MATLAB_PKG_DIR}/
