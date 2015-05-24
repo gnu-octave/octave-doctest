@@ -9,8 +9,7 @@ function test_ellipsis()
 % ...
 %
 %
-% >> 1 + 2   % doctest: -ELLIPSIS
-% ..         % doctest: +XFAIL
+% >> 1 + 2   % doctest: -ELLIPSIS   % doctest: +XFAIL
 %
 % ...
 %
