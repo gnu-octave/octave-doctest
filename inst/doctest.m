@@ -78,7 +78,7 @@ function varargout = doctest(what)
 % wildcard to match that part.
 %
 % >> datestr(now, 'yyyy-mm-dd')
-% 2***
+% 2...
 %
 %
 % Expecting an error
@@ -88,7 +88,7 @@ function varargout = doctest(what)
 % handled correctly:
 %
 % >> not_a_real_function(42)
-% ??? ***ndefined ***
+% ??? ...ndefined ...
 %
 %
 % (MATLAB spells this 'Undefined', while Octave uses 'undefined')
