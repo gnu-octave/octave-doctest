@@ -65,7 +65,6 @@ matlab_test:
 ## Install in Octave (locally)
 install: ${INSTALLED_PACKAGE}
 ${INSTALLED_PACKAGE}: ${RELEASE_TARBALL_COMPRESSED}
-	@echo "Installing package in GNU Octave ..."
 	$(OCTAVE) --silent --eval "pkg install $<"
 
 ## Package release for Octave
@@ -79,7 +78,6 @@ ${OCTAVE_RELEASE_TARBALL_COMPRESSED}: ${OCTAVE_RELEASE_TARBALL}
 ## HTML Documentation for Octave Forge
 octave_html: ${HTML_TARBALL_COMPRESSED}
 ${HTML_TARBALL_COMPRESSED}: ${INSTALLED_PACKAGE} | ${BUILD_DIR}
-	@echo "Generating HTML documentation for the package. This may take a while ..."
 	rm -rf "${HTML_DIR}"
 	$(OCTAVE) --silent --eval \
 		"pkg load generate_html; \
