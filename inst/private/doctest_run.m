@@ -26,7 +26,7 @@ example_re = [
 % default options
 skip = false(size(examples));
 xfail = false(size(examples));
-normalizewhitespace = true(size(examples));
+normalize_whitespace = true(size(examples));
 ellipsis = true(size(examples));
 
 % parse directives
@@ -46,8 +46,8 @@ for i = 1:length(examples)
       skip(i) = enable;
     elseif strcmp(directive, 'XFAIL')
       xfail(i) = enable;
-    elseif strcmp(directive, 'NORMALIZEWHITESPACE')
-      normalizewhitespace(i) = enable;
+    elseif strcmp(directive, 'NORMALIZE_WHITESPACE')
+      normalize_whitespace(i) = enable;
     elseif strcmp(directive, 'ELLIPSIS')
       ellipsis(i) = enable;
     else
@@ -59,7 +59,7 @@ end
 % remove skipped tests
 examples = examples(~skip);
 xfail = xfail(~skip);
-normalizewhitespace = normalizewhitespace(~skip);
+normalize_whitespace = normalize_whitespace(~skip);
 ellipsis = ellipsis(~skip);
 
 % replace initial '..' by '  ' in subsequent lines
@@ -83,7 +83,7 @@ all_outputs = DOCTEST__evalc(examples);
 
 % deal with whitespace in inputs and outputs
 for i = 1:length(examples)
-  if (normalizewhitespace(i))
+  if (normalize_whitespace(i))
     % collapse multiple spaces to one
     examples{i}{2} = strtrim(regexprep(examples{i}{2}, '\s+', ' '));
     all_outputs{i} = strtrim(regexprep(all_outputs{i}, '\s+', ' '));

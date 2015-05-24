@@ -8,11 +8,11 @@ doctest 0.4.0-dev
   * Doctests can be marked as expected to fail with "% doctest: +XFAIL".
 
   * Add a mode for stricter whitespace checking: enable with
-    "% doctest: -NORMALIZEWHITESPACE".
+    "% doctest: -NORMALIZE_WHITESPACE".
 
   * Add a mode to disable "..." wildcards: enable with "% doctest: -ELLIPSIS".
 
-  * Improve evalc implementatoin (Octave).
+  * Improve evalc implementation on Octave.
 
   * Other bug fixes.
 
