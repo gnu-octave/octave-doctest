@@ -3,14 +3,17 @@ doctest 0.4.0-dev
 
   * Change doctest interface to be closer to Octave's test function.
 
-  * Some doctests can be marked to skip by appending "% doctest: +SKIP".
+  * Change wildcard string from '***' to '...'.
 
-  * Doctests can be marked as expected to fail with "% doctest: +XFAIL".
+  * Doctests can be influences with directives:
 
-  * Add a mode for stricter whitespace checking: enable with
-    "% doctest: -NORMALIZE_WHITESPACE".
+      - mark tests to be skipped by appending "% doctest: +SKIP".
 
-  * Add a mode to disable "..." wildcards: enable with "% doctest: -ELLIPSIS".
+      - mark tests expected to fail with "% doctest: +XFAIL".
+
+      - stricter whitespace matching: "% doctest: -NORMALIZE_WHITESPACE".
+
+      - disable "..." wildcard matching with "% doctest: -ELLIPSIS".
 
   * Improve evalc implementation on Octave.
 
