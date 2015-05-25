@@ -1,0 +1,7 @@
+@example
+@comment doctest: +SKIP
+Some verbatim text masquerading as an example (probably should live inside
+an @@verbatim block, but isn't).
+
+Should not raise an extraction error, because it is marked to skip.
+@end example

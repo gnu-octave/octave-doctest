@@ -161,8 +161,15 @@ function [docstring, error] = parse_texinfo(str)
     S = regexp(L, '@result\s*{}');
     Ires = ~cellfun(@isempty, S);
     if (nnz(Ires) == 0)
-      error = 'has @example blocks but neither ">>" nor "@result{}"';
-      return
+      if (isempty(regexp(str, '% doctest: \+SKIP\n')))
+        error = 'has @example blocks but neither ">>" nor "@result{}"';
+        return
+      else
+        % PR #72: special case if no >>, no @result, but +SKIP is present.
+        % Don't raise extraction error; workaround could mask later errors
+        % but low risk (as someone has deliberately marked +SKIP).
+        return
+      end
     end
     if Ires(1)
       error = 'no command: @result on first line?';
