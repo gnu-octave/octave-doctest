@@ -1,4 +1,4 @@
-function varargout = doctest(what)
+function varargout = doctest(what, varargin)
 % Run examples embedded in documentation
 %
 % Usage
@@ -157,6 +157,10 @@ function varargout = doctest(what)
 %
 % To disable the '...' wildcard, use the -ELLIPSIS directive.
 %
+% The default directives can be overridden on the command line using, for
+% example, "doctest target -NORMALIZE_WHITESPACE +ELLIPSIS".  Note that
+% directives local to a test still take precident of these.
+%
 %
 % Testing Texinfo documentation
 % =============================
@@ -218,6 +222,23 @@ if ~iscell(what)
   what = {what};
 end
 
+% input parsing for options and directives
+directives = doctest_default_directives();
+for i = 1:(nargin-1)
+  assert(ischar(varargin{i}))
+  pm = varargin{i}(1);
+  directive = varargin{i}(2:end);
+  switch directive
+    case 'recursive'
+      assert(strcmp(pm, '-'))
+      error('recursion not implemented yet')
+    otherwise
+      assert(strcmp(pm, '+') || strcmp(pm, '-'))
+      enable = strcmp(varargin{i}(1), '+');
+      directives = doctest_default_directives(directives, directive, enable);
+  end
+end
+
 % for now, always print to stdout
 fid = 1;
 
@@ -263,7 +284,7 @@ for i=1:numel(targets)
   end
 
   % run doctest
-  results = doctest_run(target.docstring);
+  results = doctest_run(target.docstring, directives);
 
   % determine number of tests passed
   num_tests = numel(results);
