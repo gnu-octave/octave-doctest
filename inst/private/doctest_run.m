@@ -21,7 +21,7 @@ example_re = [
     '(?:^ *>> )'                         ... % ">> "
     '(.*(?:\n *\.\. .*)*)\n'             ... % rest of line + ".. " lines
     '((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)'];  % the output
-[~,~,~,~,examples] = regexp(docstring, example_re);
+examples = regexp(docstring, example_re, 'tokens');
 
 % default options
 skip = false(size(examples));
