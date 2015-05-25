@@ -1,4 +1,4 @@
-function results = doctest_run(docstring)
+function results = doctest_run(docstring, defaults)
 %DOCTEST_RUN - used internally by doctest
 %
 % Usage:
@@ -26,8 +26,8 @@ examples = regexp(docstring, example_re, 'tokens');
 % default options
 skip = false(size(examples));
 xfail = false(size(examples));
-normalize_whitespace = true(size(examples));
-ellipsis = true(size(examples));
+normalize_whitespace = defaults.normalize_whitespace .* true(size(examples));
+ellipsis = defaults.ellipsis .* true(size(examples));
 
 % parse directives
 for i = 1:length(examples)
