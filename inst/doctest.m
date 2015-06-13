@@ -9,9 +9,12 @@ function varargout = doctest(what, varargin)
 % [NUM_TESTS_PASSED, NUM_TESTS, SUMMARY] = doctest(...)
 %
 %
-% The parameter WHAT contains the name of the function or class for
-% which to run the doctests.  When running with Octave, WHAT can be the
-% filename of a Texinfo file, in which case all @example blocks are processed.
+% The parameter WHAT contains a name on which to run tests.  It can be
+%   * a function;
+%   * a class;
+%   * a Texinfo file (only on Octave);
+%   * a directory/folder, whose immediate contents are tested
+%     (recursion into subfolders is currently not supported).
 % The parameter WHAT can also be a cell array of such items.
 %
 %
