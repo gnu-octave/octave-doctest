@@ -16,7 +16,7 @@ OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
-TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_ellipsis', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class', 'test_comments.texinfo', 'test_skip_comments.texinfo', 'test_skip_malformed.texinfo', 'test_xfail', 'test_xfail.texinfo', 'test_whitespace'}); exit(~success);
+TEST_CODE=success = doctest({'doctest', 'test/'}); exit(~success);
 
 
 .PHONY: help test test-interactive matlab_test matlab_pkg octave_pkg octave_html install
