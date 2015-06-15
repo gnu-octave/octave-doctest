@@ -13,14 +13,21 @@ function targets = doctest_collect(what)
 %   TARGETS(i).error:     Contains error string if extraction failed.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% TODO: methods('logical') octave/matlab differ: which behaviour do we want?
+% TODO: what about builtin "test" versus dir "test/"?  Do we prefer dir?
 
 % determine type of target
 if is_octave()
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texfile';
-  elseif exist(what, 'file') || exist(what, 'builtin');
-    type = 'function';
+  elseif (exist(what, 'file') && ~exist(what, 'dir')) || exist(what, 'builtin');
+    if (exist(['@' what], 'dir'))
+      % special case, e.g., @logical is class, logical is builtin
+      type = 'class';
+    else
+      type = 'function';
+    end
   elseif exist(what) == 2 || exist(what) == 103
     % Notes:
     %   * exist('@class', 'dir') only works if pwd is the parent of

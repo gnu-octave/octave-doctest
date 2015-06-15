@@ -16,7 +16,7 @@ OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
-TEST_CODE=success = doctest({'doctest', 'test_blank_match', 'test_compare_backspace', 'test_compare_hyperlinks', 'test_ellipsis', 'test_skip', 'test_skip_only_one', 'test_warning', 'test_class', 'test_comments.texinfo', 'test_skip_comments.texinfo', 'test_skip_malformed.texinfo', 'test_xfail', 'test_xfail.texinfo', 'test_whitespace'}); exit(~success);
+TEST_CODE=success = doctest({'doctest', 'test/'}); exit(~success);
 
 
 .PHONY: help test test-interactive matlab_test matlab_pkg octave_pkg octave_html install
@@ -53,10 +53,10 @@ ${OCT_COMPILED}: ${CC_SOURCES} | ${BUILD_DIR}
 
 
 test: ${OCT_COMPILED}
-	${OCTAVE} --path inst --path src --path test --eval "${TEST_CODE}"
+	${OCTAVE} --path ${PWD}/inst --path ${PWD}/src --eval "${TEST_CODE}"
 
 test-interactive: ${OCT_COMPILED}
-	script --quiet --command "${OCTAVE} --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
+	script --quiet --command "${OCTAVE} --path ${PWD}/inst --path ${PWD}/src --eval \"${TEST_CODE}\"" /dev/null
 
 
 matlab_test:
