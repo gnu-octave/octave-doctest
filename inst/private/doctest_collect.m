@@ -22,7 +22,12 @@ if is_octave()
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texfile';
   elseif (exist(what, 'file') && ~exist(what, 'dir')) || exist(what, 'builtin');
-    type = 'function';
+    if (exist(['@' what], 'dir'))
+      % special case, e.g., @logical is class, logical is builtin
+      type = 'class';
+    else
+      type = 'function';
+    end
   elseif exist(what) == 2 || exist(what) == 103
     % Notes:
     %   * exist('@class', 'dir') only works if pwd is the parent of
