@@ -53,10 +53,10 @@ ${OCT_COMPILED}: ${CC_SOURCES} | ${BUILD_DIR}
 
 
 test: ${OCT_COMPILED}
-	${OCTAVE} --path inst --path src --path test --eval "${TEST_CODE}"
+	${OCTAVE} --path ${PWD}/inst --path ${PWD}/src --eval "${TEST_CODE}"
 
 test-interactive: ${OCT_COMPILED}
-	script --quiet --command "${OCTAVE} --path inst --path src --path test --eval \"${TEST_CODE}\"" /dev/null
+	script --quiet --command "${OCTAVE} --path ${PWD}/inst --path ${PWD}/src --eval \"${TEST_CODE}\"" /dev/null
 
 
 matlab_test:
