@@ -9,7 +9,9 @@ fid = 1;
 
 
 if (exist(what, 'dir'))
-  disp(['** going into dir "' what '"']);
+  if (~ strcmp(what, '.'))
+    fprintf(fid, 'Descending into directory "%s"\n', what);
+  end
   oldcwd = chdir(what);
   files = dir('.');
   for i=1:numel(files)
