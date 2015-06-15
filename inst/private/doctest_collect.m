@@ -5,9 +5,6 @@ function targets = doctest_collect(what)
 % all methods are tested. When running Octave, it can also be the filename of
 % a Texinfo file.
 %
-% If WHAT is a directory, collect tests from the files within.  Currently
-% recursion is not supported.
-%
 % Returns a structure array with the following fields:
 %
 %   TARGETS(i).name       Human-readable name of test.
@@ -32,8 +29,6 @@ if is_octave()
     %     '@class', having it in the path is not sufficient.
     %   * Return 2 on Octave 3.8 and 103 on Octave 4.
     type = 'class';
-  elseif exist(what, 'dir')
-    type = 'dir';
   else
     type = false;
   end
@@ -42,8 +37,6 @@ else
     type = 'class';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
-  elseif exist(what, 'dir')
-    type = 'dir';
   else
     type = false;
   end
@@ -86,26 +79,6 @@ elseif strcmp(type, 'class')
     end
     [target.docstring, target.error] = extract_docstring(target.name);
     targets = [targets; target];
-  end
-
-elseif strcmp(type, 'dir')
-  targets = [];
-  %oldcwd = chdir(what); files = dir('.');
-  files = dir(what);
-  for i=1:numel(files)
-    f = files(i).name;
-    if strcmp(f, '.') || strcmp(f, '..') || strcmpi(f, 'private')
-      % skip ., .., and private folders
-      continue
-    end
-    if (f(1) == '@')
-      f = f(2:end);
-    elseif (exist(fullfile(what, f), 'dir'))
-      % skip directories (for now)
-      continue
-    end
-    newtargets = doctest_collect(f);
-    targets = [targets; newtargets];
   end
 
 else
