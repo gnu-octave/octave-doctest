@@ -1,4 +1,4 @@
-function summary = doctestdrv(what, directives, summary, recurse)
+function summary = doctestdrv(what, directives, summary, recursive)
 
 
 % for now, always print to stdout
@@ -21,11 +21,11 @@ if (exist(what, 'dir'))
     if (f(1) == '@')
       % strip the @, prevents processing as a directory
       f = f(2:end);
-    elseif (~ recurse && exist(f, 'dir'))
+    elseif (~ recursive && exist(f, 'dir'))
       % skip directories
       continue
     end
-    summary = doctestdrv(f, directives, summary);
+    summary = doctestdrv(f, directives, summary, recursive);
   end
   chdir(oldcwd);
   return

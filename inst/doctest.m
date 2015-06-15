@@ -226,6 +226,7 @@ if ~iscell(what)
 end
 
 % input parsing for options and directives
+recursive = false;
 directives = doctest_default_directives();
 for i = 1:(nargin-1)
   assert(ischar(varargin{i}))
@@ -234,7 +235,7 @@ for i = 1:(nargin-1)
   switch directive
     case 'recursive'
       assert(strcmp(pm, '-'))
-      error('recursion not implemented yet')
+      recursive = true;
     otherwise
       assert(strcmp(pm, '+') || strcmp(pm, '-'))
       enable = strcmp(varargin{i}(1), '+');
@@ -262,7 +263,7 @@ summary.num_tests_passed = 0;
 
 
 for i=1:numel(what)
-  summary = doctestdrv(what{i}, directives, summary, false);
+  summary = doctestdrv(what{i}, directives, summary, recursive);
 end
 
 
