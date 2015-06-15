@@ -252,10 +252,7 @@ fid = 1;
 fprintf(fid, 'Doctest v0.4.0-dev: this is Free Software without warranty, see source.\n\n');
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Run all doctests
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-summary = struct;
+summary = struct();
 summary.num_targets = 0;
 summary.num_targets_passed = 0;
 summary.num_targets_without_tests = 0;
@@ -264,9 +261,9 @@ summary.num_tests = 0;
 summary.num_tests_passed = 0;
 
 
-
-% helper
-summary = doctestdrv(what, directives, summary);
+for i=1:numel(what)
+  summary = doctestdrv(what{i}, directives, summary, false);
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

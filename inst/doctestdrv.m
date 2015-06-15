@@ -1,4 +1,5 @@
-function summary = doctestdrv(what, directives, summary)
+function summary = doctestdrv(what, directives, summary, recurse)
+
 
 % for now, always print to stdout
 fid = 1;
@@ -7,19 +8,36 @@ fid = 1;
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Collect all targets to be tested.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-targets = [];
-for i=1:numel(what)
-  targets = [targets; doctest_collect(what{i})];
+if (exist(what, 'dir'))
+  disp(['** going into dir "' what '"']);
+  oldcwd = chdir(what);
+  files = dir('.');
+  for i=1:numel(files)
+    f = files(i).name;
+    if strcmp(f, '.') || strcmp(f, '..') || strcmpi(f, 'private')
+      % skip ., .., and private folders (TODO)
+      continue
+    end
+    if (f(1) == '@')
+      % strip the @, prevents processing as a directory
+      f = f(2:end);
+    elseif (~ recurse && exist(f, 'dir'))
+      % skip directories
+      continue
+    end
+    summary = doctestdrv(f, directives, summary);
+  end
+  chdir(oldcwd);
+  return
 end
 
 
-summary.num_targets = summary.num_targets + length(targets);
+targets = doctest_collect(what);
+
+% update summary
+summary.num_targets = summary.num_targets + numel(targets);
 
 
-% run all tests
 for i=1:numel(targets)
   % run doctests for target and update statistics
   target = targets(i);
