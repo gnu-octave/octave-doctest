@@ -263,7 +263,7 @@ summary.num_tests_passed = 0;
 
 
 for i=1:numel(what)
-  summary = doctestdrv(what{i}, directives, summary, recursive);
+  summary = doctestdrv(what{i}, directives, summary, recursive, fid);
 end
 
 

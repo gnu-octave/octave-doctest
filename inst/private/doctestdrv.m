@@ -1,8 +1,4 @@
-function summary = doctestdrv(what, directives, summary, recursive)
-
-
-% for now, always print to stdout
-fid = 1;
+function summary = doctestdrv(what, directives, summary, recursive, fid)
 
 % get terminal color codes
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
@@ -27,7 +23,7 @@ if (exist(what, 'dir'))
       % skip directories
       continue
     end
-    summary = doctestdrv(f, directives, summary, recursive);
+    summary = doctestdrv(f, directives, summary, recursive, fid);
   end
   chdir(oldcwd);
   return
