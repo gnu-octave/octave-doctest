@@ -6,5 +6,10 @@
 % ans = 4
 % >> 3 + 3
 % ans = 6
+%
+%
+% Note: in Matlab, help('test_shadow.m') returns the help for
+% '@test_shadow' even when the .m if explicitly given.  So this
+% test will never run on Matlab.
 
 not_the_class = 42
