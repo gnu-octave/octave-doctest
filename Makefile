@@ -60,7 +60,7 @@ test-interactive: ${OCT_COMPILED}
 
 
 matlab_test:
-	${MATLAB} -nojvm -nodisplay -nosplash -r "addpath('inst'); addpath('test'); ${TEST_CODE}"
+	${MATLAB} -nojvm -nodisplay -nosplash -r "addpath('inst'); ${TEST_CODE}"
 
 ## Install in Octave (locally)
 install: ${INSTALLED_PACKAGE}
