@@ -9,9 +9,12 @@ function varargout = doctest(what, varargin)
 % [NUM_TESTS_PASSED, NUM_TESTS, SUMMARY] = doctest(...)
 %
 %
-% The parameter WHAT contains the name of the function or class for
-% which to run the doctests.  When running with Octave, WHAT can be the
-% filename of a Texinfo file, in which case all @example blocks are processed.
+% The parameter WHAT contains a name on which to run tests.  It can be
+%   * a function;
+%   * a class;
+%   * a Texinfo file (only on Octave);
+%   * a directory/folder, whose contents are tested (pass "-resursive"
+%     to descend into subfolders).
 % The parameter WHAT can also be a cell array of such items.
 %
 %
@@ -223,6 +226,7 @@ if ~iscell(what)
 end
 
 % input parsing for options and directives
+recursive = false;
 directives = doctest_default_directives();
 for i = 1:(nargin-1)
   assert(ischar(varargin{i}))
@@ -231,7 +235,7 @@ for i = 1:(nargin-1)
   switch directive
     case 'recursive'
       assert(strcmp(pm, '-'))
-      error('recursion not implemented yet')
+      recursive = true;
     otherwise
       assert(strcmp(pm, '+') || strcmp(pm, '-'))
       enable = strcmp(varargin{i}(1), '+');
@@ -249,78 +253,17 @@ fid = 1;
 fprintf(fid, 'Doctest v0.4.0-dev: this is Free Software without warranty, see source.\n\n');
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Collect all targets to be tested.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-targets = [];
-for i=1:numel(what)
-  targets = [targets; doctest_collect(what{i})];
-end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Run all doctests
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-summary = struct;
-summary.num_targets = length(targets);
+summary = struct();
+summary.num_targets = 0;
 summary.num_targets_passed = 0;
 summary.num_targets_without_tests = 0;
 summary.num_targets_with_extraction_errors = 0;
 summary.num_tests = 0;
 summary.num_tests_passed = 0;
 
-% run all tests
-for i=1:numel(targets)
-  % run doctests for target and update statistics
-  target = targets(i);
-  fprintf(fid, '%s %s ', target.name, repmat('.', 1, 55 - numel(target.name)));
 
-  % extraction error?
-  if target.error
-    summary.num_targets_with_extraction_errors = summary.num_targets_with_extraction_errors + 1;
-    fprintf(fid, [color_err  'EXTRACTION ERROR' reset '\n\n']);
-    fprintf(fid, '    %s\n\n', target.error);
-    continue;
-  end
-
-  % run doctest
-  results = doctest_run(target.docstring, directives);
-
-  % determine number of tests passed
-  num_tests = numel(results);
-  num_tests_passed = 0;
-  for j=1:num_tests
-    if results(j).passed
-      num_tests_passed = num_tests_passed + 1;
-    end
-  end
-
-  % update summary
-  summary.num_tests = summary.num_tests + num_tests;
-  summary.num_tests_passed = summary.num_tests_passed + num_tests_passed;
-  if num_tests_passed == num_tests
-    summary.num_targets_passed = summary.num_targets_passed + 1;
-  end
-  if num_tests == 0
-    summary.num_targets_without_tests = summary.num_targets_without_tests + 1;
-  end
-
-  % pretty print outcome
-  if num_tests == 0
-    fprintf(fid, 'NO TESTS\n');
-  elseif num_tests_passed == num_tests
-    fprintf(fid, [color_ok 'PASS %4d/%-4d' reset '\n'], num_tests_passed, num_tests);
-  else
-    fprintf(fid, [color_err 'FAIL %4d/%-4d' reset '\n\n'], num_tests - num_tests_passed, num_tests);
-    for j = 1:num_tests
-      if ~results(j).passed
-        fprintf(fid, '   >> %s\n\n', results(j).source);
-        fprintf(fid, [ '      expected: ' '%s' '\n' ], results(j).want);
-        fprintf(fid, [ '      got     : ' color_err '%s' reset '\n' ], results(j).got);
-        fprintf(fid, '\n');
-      end
-    end
-  end
+for i=1:numel(what)
+  summary = doctest_collect(what{i}, directives, summary, recursive, fid);
 end
 
 
