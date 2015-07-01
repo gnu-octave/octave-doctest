@@ -10,6 +10,8 @@ classdef test_classdef
 %   class name = "default", age = 42
 %
 %
+%   This general help text should be shown for "help test_classdef".
+%
 %   There are also tests in the methods below.
 
   properties
