@@ -5,7 +5,7 @@ doctest 0.4.0-dev
 
   * Change wildcard string from '***' to '...'.
 
-  * Doctests can be influences with directives:
+  * Doctests can be influenced with directives:
 
       - mark tests to be skipped by appending "% doctest: +SKIP".
 
@@ -14,6 +14,9 @@ doctest 0.4.0-dev
       - stricter whitespace matching: "% doctest: -NORMALIZE_WHITESPACE".
 
       - disable "..." wildcard matching with "% doctest: -ELLIPSIS".
+
+  * Support "doctest foldername" to run tests on the files/classes within
+    the folder/directory "foldername".  With optional recursion.
 
   * Improve evalc implementation on Octave.
 
