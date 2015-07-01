@@ -14,6 +14,7 @@ function summary = doctest_collect(what, directives, summary, recursive, fid)
 
 % determine type of target
 if is_octave()
+  % Note: ripe for refactoring once "exist(what, 'class')" works in Octave.
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texinfo';
@@ -33,7 +34,13 @@ if is_octave()
   elseif (exist(what, 'dir'))
     type = 'dir';
   else
-    type = 'unknown';
+    % classdef classes are not detected by any of the above
+    try
+      temp = methods(what);
+      type = 'class';
+    catch
+      type = 'unknown';
+    end
   end
 else
   if ~isempty(methods(what))
