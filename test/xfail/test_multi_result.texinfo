@@ -1,0 +1,65 @@
+Current approach works for this block because the last line before
+a @@result becomes a command:
+@example
+@group
+[a, b] = deal (1, 2)
+@result{}
+    a =  1
+    b =  2
+c = 3
+@result{} c =  3
+d = 4, e = 5
+@result{}
+    d =  4
+    e =  5
+@end group
+@end example
+
+
+But here we have trouble:
+@example
+@group
+[a, b] = deal (1, 2)
+@result{}
+    a =  1
+    b =  2
+c = 3        % I should be a command
+d = 4
+@result{}
+    c =  3
+    d =  4
+@end group
+@end example
+
+A reasonable solution would be to use the intending level to help
+detect/classify lines as input/output.
+
+Here are some challenges for that:
+@example
+@group
+  [a, b] = deal (1, 2)
+  @result{}
+       a =  1
+      b =  2
+  c = 3
+  d = 4
+  @result{}
+     c =  3
+         d =  4
+@end group
+@end example
+
+@example
+@group
+  [a, b] = deal (1, 2)
+  @result{}
+      a =  1
+      b =  2
+@comment don't mess up because of this outdented comment
+  c = 3
+  d = 4
+  @result{}
+      c =  3
+      d =  4
+@end group
+@end example
