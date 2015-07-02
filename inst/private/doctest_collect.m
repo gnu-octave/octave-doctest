@@ -14,6 +14,7 @@ function summary = doctest_collect(what, directives, summary, recursive, fid)
 
 % determine type of target
 if is_octave()
+  % Note: ripe for refactoring once "exist(what, 'class')" works in Octave.
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texinfo';
@@ -33,7 +34,13 @@ if is_octave()
   elseif (exist(what, 'dir'))
     type = 'dir';
   else
-    type = 'unknown';
+    % classdef classes are not detected by any of the above
+    try
+      temp = methods(what);
+      type = 'class';
+    catch
+      type = 'unknown';
+    end
   end
 else
   if ~isempty(methods(what))
@@ -179,9 +186,20 @@ end
 
 
 function targets = collect_targets_class(what)
-  % add target for all methods
+  % First, "help class".  For classdef, this differs from "help class.class"
+  % (general class help vs constructor help).  For old-style classes we will
+  % probably end up testing the constructor twice but... meh.
+  target.name = what;
+  if is_octave()
+    target.link = '';
+  else
+    target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
+  end
+  [target.docstring, target.error] = extract_docstring(target.name);
+  targets = target;
+
+  % Next, add targets for all class methods
   meths = methods(what);
-  targets = [];
   for i=1:numel(meths)
     target = struct();
     if is_octave()
