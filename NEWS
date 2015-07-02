@@ -1,5 +1,5 @@
-doctest 0.4.0-dev
-=================
+doctest 0.4.0 (2015-07-02)
+==========================
 
   * Change doctest interface to be closer to Octave's test function.
 
