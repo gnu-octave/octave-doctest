@@ -93,5 +93,3 @@ matlab_pkg: | ${BUILD_DIR}/${MATLAB_PKG_DIR}/private
 	cp -ra NEWS ${BUILD_DIR}/${MATLAB_PKG_DIR}/
 	cp -ra README.matlab.md ${BUILD_DIR}/${MATLAB_PKG_DIR}/
 	pushd ${BUILD_DIR}; zip -r ${MATLAB_PKG_DIR}.zip ${MATLAB_PKG_DIR}; popd
-	mv ${BUILD_DIR}/${MATLAB_PKG_DIR}.zip .
-
