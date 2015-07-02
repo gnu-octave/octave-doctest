@@ -13,7 +13,7 @@ function varargout = doctest(what, varargin)
 %   * a function;
 %   * a class;
 %   * a Texinfo file (only on Octave);
-%   * a directory/folder, whose contents are tested (pass "-resursive"
+%   * a directory/folder, whose contents are tested (pass "-recursive"
 %     to descend into subfolders).
 % The parameter WHAT can also be a cell array of such items.
 %
