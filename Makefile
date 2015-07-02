@@ -64,7 +64,7 @@ matlab_test:
 
 ## Install in Octave (locally)
 install: ${INSTALLED_PACKAGE}
-${INSTALLED_PACKAGE}: ${RELEASE_TARBALL_COMPRESSED}
+${INSTALLED_PACKAGE}: ${OCTAVE_RELEASE_TARBALL_COMPRESSED}
 	$(OCTAVE) --silent --eval "pkg install $<"
 
 ## Package release for Octave
