@@ -25,14 +25,14 @@ if is_octave()
     else
       type = 'function';
     end
+  elseif (exist(what, 'dir') && what(1) ~= '@')
+    type = 'dir';
   elseif exist(what) == 2 || exist(what) == 103
     % Notes:
     %   * exist('@class', 'dir') only works if pwd is the parent of
     %     '@class', having it in the path is not sufficient.
     %   * Return 2 on Octave 3.8 and 103 on Octave 4.
     type = 'class';
-  elseif (exist(what, 'dir'))
-    type = 'dir';
   else
     % classdef classes are not detected by any of the above
     try
