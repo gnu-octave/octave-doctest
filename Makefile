@@ -19,7 +19,7 @@ MATLAB ?= matlab
 TEST_CODE=success = doctest({'doctest', 'test/'}); exit(~success);
 
 
-.PHONY: help test test-interactive matlab_test matlab_pkg octave_pkg octave_html install
+.PHONY: help clean install test test-interactive matlab_test matlab_pkg octave_pkg octave_html
 
 help:
 	@echo Available rules:
