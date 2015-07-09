@@ -1,4 +1,4 @@
-DOCTEST [![Build Status](https://travis-ci.org/catch22/octave-doctest.svg?branch=master)](https://travis-ci.org/catch22/octave-doctest)
+Doctest [![Build Status](https://travis-ci.org/catch22/octave-doctest.svg?branch=master)](https://travis-ci.org/catch22/octave-doctest)
 =======
 
 The [Octave-Forge Doctest](http://octave.sourceforge.net/doctest/) package finds specially-formatted blocks of example code within documentation files.
@@ -34,4 +34,5 @@ Summary:
 
 Doctest also supports Texinfo markup, which is [quite popular](https://www.gnu.org/software/octave/doc/interpreter/Documentation-Tips.html) in the Octave world, and it provides various toggles and switches for customizing its behavior.
 The [documentation](http://octave.sourceforge.net/doctest/function/doctest.html) contains information on all this.
-Quite appropriately, Doctest can test its own documentation...
+Quite appropriately, Doctest can test its own documentation.
+We also maintain a [list of software](https://github.com/catch22/octave-doctest/wiki/WhoIsUsingDoctest) that is using Doctest.
