@@ -20,7 +20,7 @@ greeting = ['Hello, ' user '!'];
 end
 ~~~
 
-We can run it by invoking `doctest greet` on the command line, which gives the following output:
+We can test it by invoking `doctest greet` at the Octave prompt, which will give the following output:
 
 ~~~
 greet .................................................. PASS    1/1
