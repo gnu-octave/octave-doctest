@@ -33,6 +33,6 @@ Summary:
 ~~~
 
 Doctest also supports Texinfo markup, which is [quite popular](https://www.gnu.org/software/octave/doc/interpreter/Documentation-Tips.html) in the Octave world, and it provides various toggles and switches for customizing its behavior.
-The [documentation](http://octave.sourceforge.net/doctest/function/doctest.html) contains information on all this.
+The [Doctest documentation](http://octave.sourceforge.net/doctest/function/doctest.html) contains information on all this.
 Quite appropriately, Doctest can test its own documentation.
 We also maintain a [list of software](https://github.com/catch22/octave-doctest/wiki/WhoIsUsingDoctest) that is using Doctest.
