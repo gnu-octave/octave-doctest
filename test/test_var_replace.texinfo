@@ -1,0 +1,16 @@
+@example
+@group
+@var{ABC} = 6
+@result{} @var{ABC} = 6
+@end group
+@end example
+
+Different cases:
+@example
+@group
+@var{abc} = 7
+@result{} ABC = 7
+@var{aBc} = 8
+@result{} ABC = 8
+@end group
+@end example
