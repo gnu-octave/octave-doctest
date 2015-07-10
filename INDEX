@@ -1,0 +1,3 @@
+doctest >> Documentation tests
+testing
+ doctest
