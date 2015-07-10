@@ -30,9 +30,11 @@
 
 %% -*- texinfo -*-
 %% @documentencoding UTF-8
-%% @deftypefn  {Function File} {} doctest @var{what}
-%% @deftypefnx {Function File} {} doctest @var{what} -recursive
-%% @deftypefnx {Function File} {@var{success} =} doctest (@var{what}, @dots{})
+%% @deftypefn  {Function File} {} doctest @var{target}
+%% @deftypefnx {Function File} {} doctest @var{target} -recursive
+%% @deftypefnx {Function File} {} doctest @var{target} -DIRECTIVE
+%% @deftypefnx {Function File} {} doctest @var{target} +DIRECTIVE
+%% @deftypefnx {Function File} {@var{success} =} doctest (@var{target}, @dots{})
 %% @deftypefnx {Function File} {@var{numpass}, @var{numtests}, @var{summary} =} doctest (@dots{})
 %% Run examples embedded in documentation.
 %%
