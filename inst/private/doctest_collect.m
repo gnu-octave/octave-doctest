@@ -234,31 +234,49 @@ function [docstring, error] = parse_texinfo(str)
   docstring = '';
   error = '';
 
-  % strip @group, and escape sequences
-  str = regexprep(str, '^\s*@group\n', '\n', 'lineanchors');
-  str = regexprep(str, '@end group\n', '');
-  str = strrep(str, '@{', '{');
-  str = strrep(str, '@}', '}');
-  str = strrep(str, '@@', '@');
-
-  % special comments "@c doctest: cmd" are translated
-  re = [ '@c(?:omment)?'    ...  % @c or @comment, ?: means no token
-         '\s*(?:#|%|\s)\s*' ...  % at least one space or one of #,%
-         '(doctest:\s*.*\n)' ];  % want the doctest token
-  str = regexprep(str, re, '% $1', 'dotexceptnewline');
-
-  % texinfo comments: drop remainder of line
-  str = regexprep(str, '@c(omment)?\s+.*\n', '\n', 'dotexceptnewline');
-
   % no example blocks? not an error, but nothing to do
   if (isempty(strfind(str, '@example')))
     % error = 'no @example blocks';
     return
   end
 
-  % leave the @example lines in, may need them later
-  T = regexp(str, '(@example.*?@end example)', 'tokens');
-  if (isempty(T))
+  % Mark the occurrence of “@example” and “@end example” to be able to find
+  % example blocks after conversion from texi to plain text.  Also consider
+  % indentation, so we can later correctly unindent the example's content.
+  % There seems to be a bug with substitute replacement in the first line and
+  % the second pattern could fail if the file doesn't end with a newline.  Thus
+  % we prepend and append a newline.
+  str = regexprep (cstrcat (char (10), str, char (10)), ...
+                   '^([ \t]*)(@example)(.*)(\r?\n)', ...
+                   [ '$1$2$3$4', ... % retain original line
+                     '$1###### EXAMPLE START ######$4'], ...
+                   'lineanchors', 'dotexceptnewline');
+  str = regexprep (str, ...
+                   '^([ \t]*)(@end example)(.*)(\r?\n)', ...
+                   [ '$1###### EXAMPLE STOP ######$4', ...
+                     '$1$2$3$4'], ... % retain original lipne
+                   'lineanchors', 'dotexceptnewline');
+
+  % special comments "@c doctest: cmd" are translated
+  % the translated comment is moved to a dedicated line (otherwise it might
+  % get lost during texi conversion, e. g. when in the same line as @example)
+  % FIXME the expression would also match @@c doctest: ...
+  re = [ '(?:\n\s*)?'         ... % compensate for \n added during translation 
+         '(?:@c(?:omment)?\s' ... % @c or @comment, ?: means no token
+            '|[#%])\s*'       ... % or one of #,%
+         '(doctest:\s*.*)' ];     % want the doctest token
+  str = regexprep (str, re, '\n% $1', 'dotexceptnewline');
+
+  [str, err] = __makeinfo__ (str, 'plain text');
+  if (err ~= 0)
+    error = '__makeinfo__ returned with error code'
+    return
+  end
+
+  T = regexp (str, ...
+              '(###### EXAMPLE START ######.*?###### EXAMPLE STOP ######)', ...
+              'tokens');
+  if (isempty (T))
     error = 'malformed @example blocks';
     return
   else
@@ -284,7 +302,7 @@ function [docstring, error] = parse_texinfo(str)
     L = strsplit (str, '\n');
 
     % mask for lines with @result in them
-    S = regexp(L, '@result\s*{}');
+    S = regexp(L, '⇒|=>');
     Ires = ~cellfun(@isempty, S);
     if (nnz(Ires) == 0)
       if (isempty(regexp(str, '% doctest: \+SKIP\n')))
@@ -309,8 +327,8 @@ function [docstring, error] = parse_texinfo(str)
     end
 
     % mask for lines with @example in them
-    Iex_start = ~cellfun(@isempty, regexp(L, '@example'));
-    Iex_end = ~cellfun(@isempty, regexp(L, '@end example'));
+    Iex_start = ~cellfun(@isempty, regexp(L, '###### EXAMPLE START ######'));
+    Iex_end = ~cellfun(@isempty, regexp(L, '###### EXAMPLE STOP ######'));
 
     % build a new mask for lines which we think are commands
     I = false(size(Ires));
@@ -345,9 +363,11 @@ function [docstring, error] = parse_texinfo(str)
     str = strjoin(L, '\n');
     str = [str sprintf('\n')];
   end
-  str = regexprep(str, '^\s*@example\n', '', 'lineanchors');
-  str = regexprep(str, '^\s*@end example\n', '', 'lineanchors');
-  str = regexprep(str, '@result\s*{}', '');
+  str = regexprep (str, ...
+                   '^[ \t]*###### EXAMPLE ST(?:ART|OP) ######\r?\n', ...
+                   '', ...
+                   'lineanchors');
+  str = regexprep (str, '⇒|=>', '');
 
   docstring = str;
 end
