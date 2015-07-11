@@ -273,101 +273,100 @@ function [docstring, error] = parse_texinfo(str)
     return
   end
 
+  % extract examples and discard everything else
   T = regexp (str, ...
-              '(###### EXAMPLE START ######.*?###### EXAMPLE STOP ######)', ...
-              'tokens');
+              '(^\s*###### EXAMPLE START ######.*?###### EXAMPLE STOP ######$)', ...
+              'tokens', 'lineanchors');
   if (isempty (T))
     error = 'malformed @example blocks';
     return
-  else
+  end
+
+  % post-process each example block
+  for i = 1 : length (T)
     % flatten
-    for i=1:length(T)
-      assert(length(T{i}) == 1)
-      T{i} = T{i}{1};
+    assert (numel (T{i}), 1);
+    T{i} = T{i}{1};
+
+    % unindent
+    indent = regexp (T{i}, '#', 'once') - 1;
+    T{i} = regexprep (T{i}, ['^', ' '(ones (1, indent))], '', 'lineanchors');
+
+    % remove EXAMPLE markers
+    T{i} = regexprep (T{i}, ...
+                      '^[ \t]*###### EXAMPLE ST(?:ART|OP) ######\r?\n?', ...
+                      '', ...
+                      'lineanchors');
+
+    if (regexp (T{i}, '^\s*$', 'once'))
+      error = 'empty @example blocks';
+      return
     end
-    str = strjoin(T, '\n');
-  end
 
-  if (isempty(str) || ~isempty(regexp(str, '^\s*$')))
-    error = 'empty @example blocks';
-    return
-  end
-
-  if (~isempty(strfind(str, '>>')))
-    %% Has '>>' indicators
-    % err = 1;  msg = 'used >>';
-  else
-    %% No '>>', split on @result
-    % err = 2;  msg = 'used @result splitting';
-    L = strsplit (str, '\n');
-
-    % mask for lines with @result in them
-    S = regexp(L, '⇒|=>');
-    Ires = ~cellfun(@isempty, S);
-    if (nnz(Ires) == 0)
-      if (isempty(regexp(str, '% doctest: \+SKIP\n')))
-        error = 'has @example blocks but neither ">>" nor "@result{}"';
-        return
-      else
-        % PR #72: special case if no >>, no @result, but +SKIP is present.
-        % Don't raise extraction error; workaround could mask later errors
-        % but low risk (as someone has deliberately marked +SKIP).
-        return
-      end
+    if (regexp (T{i}, '^[ \t]*>>', 'once'))
+      %% Has '>>' input indicator in first line
+      continue
     end
-    if Ires(1)
+
+    % Categorize input and output lines in the example using
+    % @result and @print macros.  Everything else, including comment lines and
+    % empty lines, is categorized as input (for now).
+    L = strsplit (T{i}, {'\r', '\n'});
+    Linput = cellfun ('isempty', regexp (L, '^\s*(⇒|=>|-\|)', 'once'));
+
+    if (not (Linput (1)))
       error = 'no command: @result on first line?';
       return
     end
-    for i=1:length(L)
-      if (length(S{i}) > 1)
-        error = 'more than one @result on one line';
-        return
+
+    % Output lines may be wrapped or output goes over several lines and not
+    % every line is preceded by “=>”.
+    indent = regexp(L, '[^ \t]', 'once');
+    indent(cellfun ('isempty', indent)) = inf;
+    indent = [indent{:}] - 1;
+    row = 1;
+    while (row < numel (L))
+      begin_of_input = row;
+      begin_of_output = row + find (not (Linput(row + 1 : end)), 1);
+      if (isempty (begin_of_output))
+        begin_of_output = numel (L) + 1;
       end
+      end_of_input = begin_of_output - 1;
+
+      % determine minimum indentation of input lines
+      min_indent = min (indent(begin_of_input : end_of_input));
+
+      % Find next input line with an equal or less indentation to determine the
+      % end of the output.
+      row = begin_of_output ...
+          + find (Linput(begin_of_output + 1: end) ...
+                  & (indent(begin_of_output + 1: end) <= min_indent), ...
+                  1);
+      if (isempty (row))
+        row = numel (L) + 1;
+      end
+      end_of_output = row - 1;
+
+      if (end_of_output <= numel (L))
+        Linput (begin_of_output : end_of_output) = false;
+      end
+
+      % Mark verified input lines as such
+      L{begin_of_input} = ['>> ' L{begin_of_input}];
+      L(begin_of_input + 1 : end_of_input) = ...
+        cellfun (@(s) ['.. ' s], L(begin_of_input + 1 : end_of_input), ...
+                 'UniformOutput', false);
     end
 
-    % mask for lines with @example in them
-    Iex_start = ~cellfun(@isempty, regexp(L, '###### EXAMPLE START ######'));
-    Iex_end = ~cellfun(@isempty, regexp(L, '###### EXAMPLE STOP ######'));
+    % strip @result and @print macro output
+    Loutput = not (Linput);
+    L(Loutput) = regexprep (L(Loutput), ...
+                            '^(\s*)(?:⇒|=>|-\|)', ...
+                            '$1', ...
+                            'once', 'lineanchors');
 
-    % build a new mask for lines which we think are commands
-    I = false(size(Ires));
-    start_of_block = false;
-    for i=1:length(L)-1
-      if Iex_start(i)
-        start_of_block = true;
-      end
-      if (start_of_block)
-        I(i) = true;
-      end
-      if Ires(i+1)
-        % Next line has an @result so mark this line with '>>'
-        I(i) = true;
-        start_of_block = false;
-      end
-    end
-    % remove @example/@end lines from commands
-    I(Iex_start) = false;
-    I(Iex_end) = false;
-
-    starts = [0 diff(I)] == 1;
-    for i=1:length(L)
-      if (I(i) && ~isempty(L{i}) && isempty(regexp(L{i}, '^\s+$', 'match')))
-        if (starts(i))
-          L{i} = ['>> ' L{i}];
-        else
-          L{i} = ['.. ' L{i}];
-        end
-      end
-    end
-    str = strjoin(L, '\n');
-    str = [str sprintf('\n')];
+    T{i} = strjoin (L, '\n');
   end
-  str = regexprep (str, ...
-                   '^[ \t]*###### EXAMPLE ST(?:ART|OP) ######\r?\n', ...
-                   '', ...
-                   'lineanchors');
-  str = regexprep (str, '⇒|=>', '');
 
-  docstring = str;
+  docstring = strjoin (T, '\n');
 end
