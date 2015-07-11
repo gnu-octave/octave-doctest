@@ -270,6 +270,9 @@ function [docstring, error] = parse_texinfo(str)
     str = strjoin(T, '\n');
   end
 
+  % replace @var{abc} with abc
+  str = regexprep(str, '\@var\{(\w+)\}', '$1');
+
   if (isempty(str) || ~isempty(regexp(str, '^\s*$')))
     error = 'empty @example blocks';
     return
