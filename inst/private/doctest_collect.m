@@ -310,7 +310,7 @@ function [docstring, error] = parse_texinfo(str)
     % @result and @print macros.  Everything else, including comment lines and
     % empty lines, is categorized as input (for now).
     L = strsplit (T{i}, {'\r', '\n'});
-    Linput = cellfun ('isempty', regexp (L, '^\s*(⇒|=>|-\|)', 'once'));
+    Linput = cellfun ('isempty', regexp (L, '^\s*(⇒|=>|⊣|-\|)', 'once'));
 
     if (not (Linput (1)))
       error = 'no command: @result on first line?';
@@ -359,7 +359,7 @@ function [docstring, error] = parse_texinfo(str)
     % strip @result and @print macro output
     Loutput = not (Linput);
     L(Loutput) = regexprep (L(Loutput), ...
-                            '^(\s*)(?:⇒|=>|-\|)', ...
+                            '^(\s*)(?:⇒|=>|⊣|-\|)', ...
                             '$1', ...
                             'once', 'lineanchors');
 
