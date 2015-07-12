@@ -1,0 +1,40 @@
+One is allowed to put diary-style tests within texinfo:
+
+@example
+@group
+>> a = 6
+a = 6
+@end group
+@end example
+
+
+@example
+@group
+>> % comments should
+>> # not interfere
+>> a = 7
+   a = 7
+@end group
+@end example
+
+
+@example
+@group
+@c even these comments
+>> a = 7
+   a = 7
+@end group
+@end example
+
+
+Blank lines ok:
+
+@example
+@group
+
+>> a = 7
+
+   a = 7
+
+@end group
+@end example
