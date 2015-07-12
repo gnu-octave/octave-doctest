@@ -257,14 +257,11 @@ function [docstring, error] = parse_texinfo(str)
                    'lineanchors', 'dotexceptnewline', 'emptymatch');
 
   % special comments "@c doctest: cmd" are translated
-  % the translated comment is moved to a dedicated line (otherwise it might
-  % get lost during texi conversion, e. g. when in the same line as @example)
   % FIXME the expression would also match @@c doctest: ...
-  re = [ '(?:\n\s*)?'         ... % compensate for \n added during translation 
-         '(?:@c(?:omment)?\s' ... % @c or @comment, ?: means no token
-            '|[#%])\s*'       ... % or one of #,%
+  re = [ '(?:@c(?:omment)?\s' ... % @c or @comment, ?: means no token
+            '|#|%)\s*'        ... % or one of #,%
          '(doctest:\s*.*)' ];     % want the doctest token
-  str = regexprep (str, re, '\n% $1', 'dotexceptnewline');
+  str = regexprep (str, re, '% $1', 'dotexceptnewline');
 
   [str, err] = __makeinfo__ (str, 'plain text');
   if (err ~= 0)
