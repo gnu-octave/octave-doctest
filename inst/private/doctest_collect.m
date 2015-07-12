@@ -301,15 +301,20 @@ function [docstring, error] = parse_texinfo(str)
       return
     end
 
+    % split into lines
+    L = strsplit (T{i}, {'\r', '\n'});
+
     if (regexp (T{i}, '^\s*>>', 'once'))
-      %% Has '>>' input indicator in first line
+      % First nonblank line starts with '>>': assume diary style.  However,
+      % we strip @result and @print macros (TODO: perhaps unwisely?)
+      L = regexprep (L, '^(\s*)(?:⇒|=>|⊣|-\|)', '$1', 'once', 'lineanchors');
+      T{i} = strjoin (L, '\n');
       continue
     end
 
     % Categorize input and output lines in the example using
     % @result and @print macros.  Everything else, including comment lines and
     % empty lines, is categorized as input (for now).
-    L = strsplit (T{i}, {'\r', '\n'});
     Linput = cellfun ('isempty', regexp (L, '^\s*(⇒|=>|⊣|-\|)', 'once'));
 
     if (not (Linput (1)))

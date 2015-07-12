@@ -1,0 +1,11 @@
+Mixed, with print and result macros (do we want to allow this?)
+
+@example
+@group
+>> x = 8
+   @result{} x = 8
+>> disp('abc'), s = disp('xyz')
+   @print{} abc
+   @result{} s = xyz
+@end group
+@end example
