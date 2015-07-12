@@ -76,10 +76,13 @@ for i = 1:length(examples)
   examples{i}{1} = s;
 end
 
+% do not split long rows (TODO: how to do this on MATLAB?)
+if is_octave()
+  split_long_rows(0, 'local')
+end
 
 % run tests
 all_outputs = DOCTEST__evalc(examples);
-
 
 % deal with whitespace in inputs and outputs
 for i = 1:length(examples)
@@ -92,7 +95,6 @@ for i = 1:length(examples)
     all_outputs{i} = strtrim_lines_discard_empties(all_outputs{i});
   end
 end
-
 
 % store results
 results = [];
