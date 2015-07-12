@@ -24,7 +24,7 @@ Here the warning is not part of the result:
 
 @example
 inv (0)
-@print{} warning: inverse: matrix singular to machine precision, rcond = 0
+@print{} warning: ...matrix singular to machine precision...
 @result{} ans = Inf
 @end example
 
