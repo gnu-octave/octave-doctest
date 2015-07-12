@@ -38,14 +38,14 @@
 %% @deftypefnx {Function File} {@var{numpass}, @var{numtests}, @var{summary} =} doctest (@dots{})
 %% Run examples embedded in documentation.
 %%
-%% Doctest finds and runs code found in @var{target}, which can be:
+%% Doctest finds and runs code found in @var{target}, which can be a:
 %% @itemize
-%% @item a function;
-%% @item a class;
-%% @item a Texinfo file;
-%% @item a directory/folder, whose contents are tested (pass
-%%       @code{-recursive} to descend into subfolders);
-%% @item a cell array of such items.
+%% @item function;
+%% @item class;
+%% @item Texinfo file;
+%% @item directory/folder (pass @code{-recursive} to descend
+%%       into subfolders);
+%% @item cell array of such items.
 %% @end itemize
 %% When called with a single return value, return whether all tests have
 %% succeeded (SUCCESS).
@@ -182,7 +182,7 @@
 %%
 %% The default directives can be overridden on the command line using, for
 %% example, @code{doctest target -NORMALIZE_WHITESPACE +ELLIPSIS}.  Note that
-%% directives local to a test still take precident of these.
+%% directives local to a test still take precident over these.
 %%
 %%
 %% @strong{Plaintext documentation}
