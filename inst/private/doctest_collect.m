@@ -301,7 +301,7 @@ function [docstring, error] = parse_texinfo(str)
       return
     end
 
-    if (regexp (T{i}, '^[ \t]*>>', 'once'))
+    if (regexp (T{i}, '^\s*>>', 'once'))
       %% Has '>>' input indicator in first line
       continue
     end
