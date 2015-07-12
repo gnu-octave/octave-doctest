@@ -263,7 +263,7 @@ function [docstring, error] = parse_texinfo(str)
          '(doctest:\s*.*)' ];     % want the doctest token
   str = regexprep (str, re, '% $1', 'dotexceptnewline');
 
-  [str, err] = __makeinfo__ (str, 'plain text');
+  [str, err] = eval('__makeinfo__ (str, ''plain text'')');
   if (err ~= 0)
     error = '__makeinfo__ returned with error code'
     return
