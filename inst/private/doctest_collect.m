@@ -243,19 +243,18 @@ function [docstring, error] = parse_texinfo(str)
   % Mark the occurrence of “@example” and “@end example” to be able to find
   % example blocks after conversion from texi to plain text.  Also consider
   % indentation, so we can later correctly unindent the example's content.
-  % There seems to be a bug with substitute replacement in the first line and
-  % the second pattern could fail if the file doesn't end with a newline.  Thus
-  % we prepend and append a newline.
-  str = regexprep (cstrcat (char (10), str, char (10)), ...
-                   '^([ \t]*)(@example)(.*)(\r?\n)', ...
+  % There seems to be a bug with substitute replacement in the first line, thus
+  % we prepend a newline.
+  str = regexprep (cstrcat (sprintf ('\n'), str), ...
+                   '^([ \t]*)(@example)(.*)(\r?\n?)', ...
                    [ '$1$2$3$4', ... % retain original line
                      '$1###### EXAMPLE START ######$4'], ...
-                   'lineanchors', 'dotexceptnewline');
+                   'lineanchors', 'dotexceptnewline', 'emptymatch');
   str = regexprep (str, ...
-                   '^([ \t]*)(@end example)(.*)(\r?\n)', ...
+                   '^([ \t]*)(@end example)(.*)(\r?\n?)', ...
                    [ '$1###### EXAMPLE STOP ######$4', ...
                      '$1$2$3$4'], ... % retain original lipne
-                   'lineanchors', 'dotexceptnewline');
+                   'lineanchors', 'dotexceptnewline', 'emptymatch');
 
   % special comments "@c doctest: cmd" are translated
   % the translated comment is moved to a dedicated line (otherwise it might
@@ -292,7 +291,7 @@ function [docstring, error] = parse_texinfo(str)
 
     % unindent
     indent = regexp (T{i}, '#', 'once') - 1;
-    T{i} = regexprep (T{i}, ['^', ' '(ones (1, indent))], '', 'lineanchors');
+    T{i} = regexprep (T{i}, sprintf ('^[ \t]{%d}', indent), '', 'lineanchors');
 
     % remove EXAMPLE markers
     T{i} = regexprep (T{i}, ...
@@ -300,7 +299,7 @@ function [docstring, error] = parse_texinfo(str)
                       '', ...
                       'lineanchors');
 
-    if (regexp (T{i}, '^\s*$', 'once'))
+    if (regexp (T{i}, '^\s*$', 'once', 'emptymatch'))
       error = 'empty @example blocks';
       return
     end
