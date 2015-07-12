@@ -1,6 +1,19 @@
 doctest 0.4.1-dev
 =================
 
+  * Improved handling of example code in TexInfo documentation.
+
+      - Added support for @print{} macros, which may be used for output that
+        is not part of a returned value.
+
+      - Examples without ">>" markers use code indentation together with
+        @result{} / @print{} macros to classify input and output lines in a
+        natural way.  It is no longer necessary to split code into several
+        @example / @group blocks.
+
+      - Allow arbitrary TexInfo macros.  The documentation is interpreted
+        by makeinfo before running the code examples.
+
 
 
 doctest 0.4.0 (2015-07-02)
