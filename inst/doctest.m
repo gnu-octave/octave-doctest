@@ -185,27 +185,22 @@
 %% directives local to a test still take precident over these.
 %%
 %%
-%% @strong{Plaintext documentation}
+%% @strong{Diary Style}
 %% When the m-file contains plaintext documentation, doctest finds tests
 %% by searching for lines that begin with @code{>>}.  It then finds the
-%% expected output starting on the line after @code{>>} and looking for
-%% the next @code{>>}, the end of the documentation, or two blank lines
-%% (which signify the end of the example).
+%% expected output by searching for the next @code{>>} or two blank lines.
 %%
-%% @strong{Texinfo documentation}
-%% Octave m-files are commonly documented using Texinfo.  If your m-file
-%% contains Texinfo markup, then doctest finds code inside
+%% @strong{Octave/Texinfo Style}
+%% If your m-file contains Texinfo markup, then doctest finds code inside
 %% @code{@@example @dots{} @@end example} blocks.  Some comments:
 %% @itemize
 %% @item The two-blank-lines convention is not required.
-%% @item A minor amount of reformatting is done
-%% (e.g., stripping the pagination hints @code{@@group}).
 %% @item The use of @code{>>} is not required as Octave documentation
-%% conventionally indicates output with @code{@@result@{@}} (which renders
-%% to an arrow '@result{}').  Thus, if the example contains no @code{>>}
-%% prompts, some simple heuristics are used to split around
-%% @code{@@result@{@}}.  This works for simple examples, but it may be
-%% necessary to add @code{>>} in some cases.
+%%       conventionally indicates output with @code{@@print} and
+%%       @code{@@result}.  Ambiguities are resolving by assuming output
+%%       is indented further than input.
+%% @item You are free to use diary-style doctests inside
+%%       @code{@@example} blocks.
 %% @end itemize
 %%
 %% @seealso{test}

@@ -1,0 +1,46 @@
+Here we have no return value but only output:
+
+@example
+disp ('abc')
+@print{} abc
+@end example
+
+Here it is an return value:
+
+@example
+x = disp ('abc')
+@result{} x = abc
+@end example
+
+Here we have a combination of both:
+
+@example
+disp ('abc'); x = disp ('def')
+@print{} abc
+@result{} x = def
+@end example
+
+Here the warning is not part of the result:
+
+@example
+inv (0)
+@print{} warning: ...matrix singular to machine precision...
+@result{} ans = Inf
+@end example
+
+Here we have two results:
+
+@example
+[m, n] = size (zeros (1, 2))
+@result{} m =  1
+@result{} n =  2
+@end example
+
+Intermediate results and printing:
+
+@example
+[m, n] = size (zeros (1, 2)), disp ('abc')
+@result{} m =  1
+@result{} n =  2
+@print{} abc
+@end example

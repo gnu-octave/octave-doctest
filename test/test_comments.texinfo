@@ -16,7 +16,7 @@ A = 6
 
 @example
 @group
-A = 7             @c I just don't think my
+A = 7           @*@c I just don't think my
 @result{} A = 7   @c test would understand
 @end group
 @end example

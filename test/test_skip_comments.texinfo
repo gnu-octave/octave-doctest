@@ -10,11 +10,7 @@ A = 10   # doctest: +SKIP
 @end example
 
 @example
-A = 10       @c # doctest: +SKIP
-@result{}
 A = 10       @c doctest: +SKIP
-@result{}
-A = 10       @c# doctest: +SKIP
 @result{}
 A = 10       @comment doctest: +SKIP
 @result{}
