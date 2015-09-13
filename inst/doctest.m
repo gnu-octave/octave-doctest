@@ -160,6 +160,19 @@
 %% @end group
 %% @end example
 %%
+%% You can also mark tests depending on runtime conditions, such as the
+%% platform, operating systems, or installed packages:
+%%
+%% @example
+%% @group
+%% >> "some shiny octave feature"         % doctest: +XFAIL_IF(MATLAB)
+%% ans = some shiny octave feature
+%% @end group
+%% @end example
+%%
+%% Doctest provides the default flags OCTAVE and MATLAB, but you can
+%% access arbitrary variables or functions.
+%%
 %%
 %% By default, all adjacent white space is collapsed into a single space
 %% before comparison.  A stricter mode where ``internal whitespace'' must
