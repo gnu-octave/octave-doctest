@@ -15,128 +15,101 @@ function results = doctest_run(docstring, defaults)
 %       doctest_compare.
 %
 
-% loosely based on Python 2.6 doctest.py, line 510
-example_re = [
+% extract tests from docstring
+TEST_RE = [                               % loosely based on Python 2.6 doctest.py, line 510
     '(?m)(?-s)'                          ... % options
     '(?:^ *>> )'                         ... % ">> "
     '(.*(?:\n *\.\. .*)*)\n'             ... % rest of line + ".. " lines
     '((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)'];  % the output
-examples = regexp(docstring, example_re, 'tokens');
 
-% default options
-skip = false(size(examples));
-xfail = false(size(examples));
-normalize_whitespace = defaults.normalize_whitespace .* true(size(examples));
-ellipsis = defaults.ellipsis .* true(size(examples));
+tests = [];
+test_matches = regexp(docstring, TEST_RE, 'tokens');
+for i=1:length(test_matches)
+  % each block should be split into source and desired output
+  source = test_matches{i}{1};
+  tests(i).want = test_matches{i}{2};
 
-% parse directives
-for i = 1:length(examples)
-  % each block should be split into input/output by the regex
-  assert (length(examples{i}) == 2);
+  % replace initial '..' by '  ' in subsequent lines
+  lines = strsplit(source, '\n');
+  source = lines{1};
+  for j = 2:length(lines)
+    T = regexp(lines{j}, '^\s*(\.\.)(.*)$', 'tokens');
+    assert(length(T) == 1);
+    T = T{1};
+    assert(length(T) == 2);
+    source = sprintf('%s\n   %s', source, T{2});
+  end
+  tests(i).source = source;
 
-  % find doctest directives
-  t = regexp(examples{i}{1}, '(?:#|%)\s*doctest:\s+(\+|\-)([\w]+)', 'tokens');
+  % set default options
+  tests(i).normalize_whitespace = defaults.normalize_whitespace;
+  tests(i).ellipsis = defaults.ellipsis;
+  tests(i).skip = false;
+  tests(i).xfail = false;
 
-  % process directives
-  for j = 1:length(t)
-    directive = t{j}{2};
-    enable = strcmp(t{j}{1}, '+');
+  % find and process directives
+  directive_matches = regexp(tests(i).source, '(?:#|%)\s*doctest:\s+([(\+|\-)][\w]+)', 'tokens');
+  for j = 1:length(directive_matches)
+    directive = directive_matches{j}{1};
 
-    if strcmp(directive, 'SKIP')
-      skip(i) = enable;
-    elseif strcmp(directive, 'XFAIL')
-      xfail(i) = enable;
-    elseif strcmp(directive, 'NORMALIZE_WHITESPACE')
-      normalize_whitespace(i) = enable;
-    elseif strcmp(directive, 'ELLIPSIS')
-      ellipsis(i) = enable;
+    if strcmp('NORMALIZE_WHITESPACE', directive(2:end))
+      tests(i).normalize_whitespace = strcmp(directive(1), '+');
+    elseif strcmp('ELLIPSIS', directive(2:end))
+      tests(i).ellipsis = strcmp(directive(1), '+');
+    elseif strcmp('+SKIP', directive)
+      tests(i).skip = true;
+    elseif strcmp('+XFAIL', directive)
+      tests(i).xfail = true;
     else
-      error('doctest: internal error: unexpected directive %s', directive);
+      error('doctest: unexpected directive %s', directive);
     end
   end
 end
 
-% remove skipped tests
-examples = examples(~skip);
-xfail = xfail(~skip);
-normalize_whitespace = normalize_whitespace(~skip);
-ellipsis = ellipsis(~skip);
+% run tests in local namespace
+results = doctest_run_impl(tests);
 
-% replace initial '..' by '  ' in subsequent lines
-for i = 1:length(examples)
-  lines = strsplit(examples{i}{1}, '\n');
-  s = lines{1};
-  for j = 2:length(lines)
-    T = regexp(lines{j}, '^\s*(\.\.)(.*)$', 'tokens');
-    assert(length(T) == 1)
-    T = T{1};
-    assert(length(T) == 2)
-    s = sprintf('%s\n   %s', s, T{2});
-  end
-  examples{i}{1} = s;
 end
+
+
+% the following function is used to evaluate all lines of code in same
+% namespace (the one of this invocation of doctest_run_impl)
+function DOCTEST__results = doctest_run_impl(DOCTEST__tests)
 
 % do not split long rows (TODO: how to do this on MATLAB?)
 if is_octave()
   split_long_rows(0, 'local')
 end
 
-% run tests
-all_outputs = DOCTEST__evalc(examples);
-
-% deal with whitespace in inputs and outputs
-for i = 1:length(examples)
-  if (normalize_whitespace(i))
-    % collapse multiple spaces to one
-    examples{i}{2} = strtrim(regexprep(examples{i}{2}, '\s+', ' '));
-    all_outputs{i} = strtrim(regexprep(all_outputs{i}, '\s+', ' '));
-  else
-    examples{i}{2} = strtrim_lines_discard_empties(examples{i}{2});
-    all_outputs{i} = strtrim_lines_discard_empties(all_outputs{i});
-  end
-end
-
-% store results
-results = [];
-for i = 1:length(examples)
-  want = examples{i}{2};
-  got = all_outputs{i};
-  results(i).source = examples{i}{1};
-  results(i).want = want;
-  results(i).got = got;
-  passed = doctest_compare(want, got, ellipsis(i));
-  if xfail(i)
-    passed = ~passed;
-  end
-  results(i).passed = passed;
-end
-
-end
-
-
-% the following function is used to evaluate all lines of code in same
-% namespace (the one of this invocation of DOCTEST__evalc)
-function DOCTEST__results = DOCTEST__evalc(DOCTEST__examples_to_run)
-
-% Octave has [no evalc command](https://savannah.gnu.org/patch/?8033).
+% Octave has [no evalc command](https://savannah.gnu.org/patch/?8033)
 DOCTEST__has_builtin_evalc = exist('evalc', 'builtin');
 
-% structure adapted from a StackOverflow answer by user Amro, see
-% http://stackoverflow.com/questions/3283586 and
-% http://stackoverflow.com/users/97160/amro
-DOCTEST__results = cell(size(DOCTEST__examples_to_run));
-for DOCTEST__i = 1:numel(DOCTEST__examples_to_run)
+DOCTEST__results = [];
+for DOCTEST__i = 1:numel(DOCTEST__tests)
+  % skip test?
+  if DOCTEST__tests(DOCTEST__i).skip
+    continue
+  end
+
+  % evaluate input (structure adapted from a StackOverflow answer by user Amro, see http://stackoverflow.com/questions/3283586 and http://stackoverflow.com/users/97160/amro)
+  DOCTEST__result = DOCTEST__tests(DOCTEST__i);
   try
     if (DOCTEST__has_builtin_evalc)
-      DOCTEST__results{DOCTEST__i} = evalc( ...
-          DOCTEST__examples_to_run{DOCTEST__i}{1});
+      DOCTEST__result.got = evalc(DOCTEST__result.source);
     else
-      DOCTEST__results{DOCTEST__i} = doctest_evalc( ...
-          DOCTEST__examples_to_run{DOCTEST__i}{1});
+      DOCTEST__result.got = doctest_evalc(DOCTEST__result.source);
     end
   catch DOCTEST__exception
-    DOCTEST__results{DOCTEST__i} = DOCTEST__format_exception(DOCTEST__exception);
+    DOCTEST__result.got = DOCTEST__format_exception(DOCTEST__exception);
   end
+
+  % determine if test has passed
+  DOCTEST__result.passed = doctest_compare(DOCTEST__result.want, DOCTEST__result.got, DOCTEST__result.normalize_whitespace, DOCTEST__result.ellipsis);
+  if DOCTEST__result.xfail
+    DOCTEST__result.passed = ~DOCTEST__result.passed;
+  end
+
+  DOCTEST__results = [DOCTEST__results; DOCTEST__result];
 end
 
 end
@@ -149,7 +122,7 @@ function formatted = DOCTEST__format_exception(ex)
     return
   end
 
-  if strcmp(ex.stack(1).name, 'DOCTEST__evalc')
+  if strcmp(ex.stack(1).name, 'doctest_run_impl')
     % we don't want the report, we just want the message
     % otherwise it'll talk about evalc, which is not what the user got on
     % the command line.
@@ -157,19 +130,4 @@ function formatted = DOCTEST__format_exception(ex)
   else
     formatted = ['??? ' ex.getReport('basic')];
   end
-end
-
-
-function r = strtrim_lines_discard_empties(s)
-  lines = strsplit(s, '\n');
-
-  keep = true(size(lines));
-  for j = 1:length(lines)
-    lines{j} = strtrim(lines{j});
-    if (isempty(lines{j}))
-      keep(j) = false;
-    end
-  end
-  lines = lines(keep);
-  r = strjoin(lines, '');
 end
