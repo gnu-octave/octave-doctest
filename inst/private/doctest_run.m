@@ -48,11 +48,15 @@ for i=1:length(test_matches)
   tests(i).xfail = false;
 
   % find and process directives
-  directive_matches = regexp(tests(i).source, '(?:#|%)\s*doctest:\s+([(\+|\-)][\w]+)(?:\(([\w]+)\))?', 'tokens');
+  directive_matches = regexp(tests(i).source, '(?:#|%)\s*doctest:\s+([(\+|\-)][\w]+)(\([\w]+\))?', 'tokens');
   for j = 1:length(directive_matches)
     directive = directive_matches{j}{1};
-    if (strfind(directive, '_IF') || strfind(directive, '_UNLESS')) && length(directive_matches{j}) == 1
-      error('doctest: syntax error, expected %s(varname)', directive);
+    if (strcmp('+SKIP_IF', directive) || strcmp('+SKIP_UNLESS', directive) || strcmp('+XFAIL_IF', directive) || strcmp('+XFAIL_UNLESS', directive))
+      if length(directive_matches{j}) == 2
+        condition = directive_matches{j}{2}(2:end - 1);
+      else
+        error('doctest: syntax error, expected %s(varname)', directive);
+      end
     end
 
     if strcmp('NORMALIZE_WHITESPACE', directive(2:end))
@@ -62,15 +66,15 @@ for i=1:length(test_matches)
     elseif strcmp('+SKIP', directive)
       tests(i).skip = true;
     elseif strcmp('+SKIP_IF', directive)
-      tests(i).skip = directive_matches{j}{2};
+      tests(i).skip = condition;
     elseif strcmp('+SKIP_UNLESS', directive)
-      tests(i).skip = sprintf('~(%s)', directive_matches{j}{2});
+      tests(i).skip = sprintf('~(%s)', condition);
     elseif strcmp('+XFAIL', directive)
       tests(i).xfail = true;
     elseif strcmp('+XFAIL_IF', directive)
-      tests(i).xfail = directive_matches{j}{2};
+      tests(i).xfail = condition;
     elseif strcmp('+XFAIL_UNLESS', directive)
-      tests(i).xfail = sprintf('~(%s)', directive_matches{j}{2});
+      tests(i).xfail = sprintf('~(%s)', condition);
     else
       error('doctest: unexpected directive %s', directive);
     end
