@@ -160,6 +160,21 @@
 %% @end group
 %% @end example
 %%
+%% Both the +SKIP and the +XFAIL directive also have conditional variants
+%% (e.g., +SKIP_IF and +SKIP_UNLESS) that allow to control test execution
+%% and expectations based on runtime conditions, such as the platform,
+%% operating systems, or installed packages:
+%%
+%% @example
+%% @group
+%% >> "some shiny octave feature"         % doctest: +XFAIL_IF(DOCTEST_MATLAB)
+%% ans = some shiny octave feature
+%% @end group
+%% @end example
+%%
+%% Doctest provides the default flags DOCTEST_OCTAVE and DOCTEST_MATLAB,
+%% but you can access arbitrary variables and (nullary) functions.
+%%
 %%
 %% By default, all adjacent white space is collapsed into a single space
 %% before comparison.  A stricter mode where ``internal whitespace'' must

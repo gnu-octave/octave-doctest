@@ -44,55 +44,89 @@ for i=1:length(test_matches)
   % set default options
   tests(i).normalize_whitespace = defaults.normalize_whitespace;
   tests(i).ellipsis = defaults.ellipsis;
-  tests(i).skip = false;
-  tests(i).xfail = false;
+  tests(i).skip = {};
+  tests(i).xfail = {};
 
   % find and process directives
-  directive_matches = regexp(tests(i).source, '(?:#|%)\s*doctest:\s+([(\+|\-)][\w]+)', 'tokens');
+  directive_matches = regexp(tests(i).source, '(?:#|%)\s*doctest:\s+([(\+|\-)][\w]+)(\([\w]+\))?', 'tokens');
   for j = 1:length(directive_matches)
     directive = directive_matches{j}{1};
+    if (strcmp('+SKIP_IF', directive) || strcmp('+SKIP_UNLESS', directive) || strcmp('+XFAIL_IF', directive) || strcmp('+XFAIL_UNLESS', directive))
+      if length(directive_matches{j}) == 2
+        condition = directive_matches{j}{2}(2:end - 1);
+      else
+        error('doctest: syntax error, expected %s(varname)', directive);
+      end
+    end
 
     if strcmp('NORMALIZE_WHITESPACE', directive(2:end))
       tests(i).normalize_whitespace = strcmp(directive(1), '+');
     elseif strcmp('ELLIPSIS', directive(2:end))
       tests(i).ellipsis = strcmp(directive(1), '+');
     elseif strcmp('+SKIP', directive)
-      tests(i).skip = true;
+      tests(i).skip{end + 1} = 'true';
+    elseif strcmp('+SKIP_IF', directive)
+      tests(i).skip{end + 1} = condition;
+    elseif strcmp('+SKIP_UNLESS', directive)
+      tests(i).skip{end + 1} = sprintf('~(%s)', condition);
     elseif strcmp('+XFAIL', directive)
-      tests(i).xfail = true;
+      tests(i).xfail{end + 1} = 'true';
+    elseif strcmp('+XFAIL_IF', directive)
+      tests(i).xfail{end + 1} = condition;
+    elseif strcmp('+XFAIL_UNLESS', directive)
+      tests(i).xfail{end + 1} = sprintf('~(%s)', condition);
     else
       error('doctest: unexpected directive %s', directive);
     end
   end
 end
 
-% run tests in local namespace
-results = doctest_run_impl(tests);
+% run tests in a local namespace
+results = DOCTEST__run_impl(tests);
 
 end
 
 
+% given a cell array of conditions (represented as strings to be eval'ed),
+% return the string that corresponds to their logical "or".
+function result = DOCTEST__join_conditions(conditions)
+  if isempty(conditions)
+    result = 'false';
+  else
+    result = strcat('(', strjoin(conditions, ') || ('), ')');
+  end
+end
+
 % the following function is used to evaluate all lines of code in same
-% namespace (the one of this invocation of doctest_run_impl)
-function DOCTEST__results = doctest_run_impl(DOCTEST__tests)
+% namespace (the one of this invocation of DOCTEST__run_impl)
+function DOCTEST__results = DOCTEST__run_impl(DOCTEST__tests)
 
 % do not split long rows (TODO: how to do this on MATLAB?)
 if is_octave()
   split_long_rows(0, 'local')
 end
 
+% define test-global constants
+DOCTEST_OCTAVE = is_octave();
+DOCTEST_MATLAB = ~DOCTEST_OCTAVE;
+
 % Octave has [no evalc command](https://savannah.gnu.org/patch/?8033)
 DOCTEST__has_builtin_evalc = exist('evalc', 'builtin');
 
 DOCTEST__results = [];
 for DOCTEST__i = 1:numel(DOCTEST__tests)
-  % skip test?
-  if DOCTEST__tests(DOCTEST__i).skip
-    continue
+  DOCTEST__result = DOCTEST__tests(DOCTEST__i);
+
+  % determine whether test should be skipped
+  DOCTEST__result.skip = eval(DOCTEST__join_conditions(DOCTEST__result.skip));
+  if DOCTEST__result.skip
+     continue
   end
 
+  % determine whether test is expected to fail
+  DOCTEST__result.xfail = eval(DOCTEST__join_conditions(DOCTEST__result.xfail));
+
   % evaluate input (structure adapted from a StackOverflow answer by user Amro, see http://stackoverflow.com/questions/3283586 and http://stackoverflow.com/users/97160/amro)
-  DOCTEST__result = DOCTEST__tests(DOCTEST__i);
   try
     if (DOCTEST__has_builtin_evalc)
       DOCTEST__result.got = evalc(DOCTEST__result.source);
@@ -122,7 +156,7 @@ function formatted = DOCTEST__format_exception(ex)
     return
   end
 
-  if strcmp(ex.stack(1).name, 'doctest_run_impl')
+  if strcmp(ex.stack(1).name, 'DOCTEST__run_impl')
     % we don't want the report, we just want the message
     % otherwise it'll talk about evalc, which is not what the user got on
     % the command line.

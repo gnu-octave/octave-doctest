@@ -1,4 +1,4 @@
-function y = test_skip()
+function test_skip()
 % This file should have 3 passed tests
 %
 % A test that would fail:

@@ -163,6 +163,9 @@ for i=1:numel(targets)
         fprintf(fid, '   >> %s\n\n', results(j).source);
         fprintf(fid, [ '      expected: ' '%s' '\n' ], results(j).want);
         fprintf(fid, [ '      got     : ' color_err '%s' reset '\n' ], results(j).got);
+        if results(j).xfail
+          fprintf(fid, '      expected failure, but test succeeded!');
+        end
         fprintf(fid, '\n');
       end
     end
