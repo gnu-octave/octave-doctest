@@ -1,4 +1,4 @@
-function y = test_skip_if()
+function test_skip_if()
 % This test should have 4 passing tests.
 %
 % Set up flags that determine test skipping.

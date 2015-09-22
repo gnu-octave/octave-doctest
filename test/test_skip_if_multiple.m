@@ -1,4 +1,4 @@
-function y = test_skip_if_multiple()
+function test_skip_if_multiple()
 % Set up flags that determine test skipping.
 % >> false_flag = 0;
 % >> true_flag = 1;
