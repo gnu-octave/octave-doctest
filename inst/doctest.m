@@ -160,8 +160,10 @@
 %% @end group
 %% @end example
 %%
-%% You can also mark tests depending on runtime conditions, such as the
-%% platform, operating systems, or installed packages:
+%% Both the +SKIP and the +XFAIL directive also have conditional variants
+%% (e.g., +SKIP_IF and +SKIP_UNLESS) that allow to control test execution
+%% and expectations based on runtime conditions, such as the platform,
+%% operating systems, or installed packages:
 %%
 %% @example
 %% @group
