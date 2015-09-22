@@ -97,8 +97,8 @@ if is_octave()
 end
 
 % define test-global constants
-OCTAVE = is_octave;
-MATLAB = ~OCTAVE;
+DOCTEST_OCTAVE = is_octave();
+DOCTEST_MATLAB = ~DOCTEST_OCTAVE;
 
 % Octave has [no evalc command](https://savannah.gnu.org/patch/?8033)
 DOCTEST__has_builtin_evalc = exist('evalc', 'builtin');

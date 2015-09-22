@@ -165,13 +165,13 @@
 %%
 %% @example
 %% @group
-%% >> "some shiny octave feature"         % doctest: +XFAIL_IF(MATLAB)
+%% >> "some shiny octave feature"         % doctest: +XFAIL_IF(DOCTEST_MATLAB)
 %% ans = some shiny octave feature
 %% @end group
 %% @end example
 %%
-%% Doctest provides the default flags OCTAVE and MATLAB, but you can
-%% access arbitrary variables or functions.
+%% Doctest provides the default flags DOCTEST_OCTAVE and DOCTEST_MATLAB,
+%% but you can access arbitrary variables or functions.
 %%
 %%
 %% By default, all adjacent white space is collapsed into a single space
