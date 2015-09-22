@@ -1,6 +1,17 @@
 doctest 0.4.1-dev
 =================
 
+  * Added conditional variants of SKIP and XFAIL directives to control test
+    execution based on runtime conditions:
+
+      - "% doctest: +SKIP_IF(condition)"
+      - "% doctest: +SKIP_UNLESS(condition)"
+      - "% doctest: +XFAIL_IF(condition)"
+      - "% doctest: +XFAIL_UNLESS(condition)"
+
+  * Added constants DOCTEST_OCTAVE and DOCTEST_MATLAB that can be used as
+    conditions in SKIP_IF etc.
+
   * Improved handling of example code in TexInfo documentation.
 
       - Added support for @print{} macros, which may be used for output that
