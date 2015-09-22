@@ -44,8 +44,8 @@ for i=1:length(test_matches)
   % set default options
   tests(i).normalize_whitespace = defaults.normalize_whitespace;
   tests(i).ellipsis = defaults.ellipsis;
-  tests(i).skip = false;
-  tests(i).xfail = false;
+  tests(i).skip = {};
+  tests(i).xfail = {};
 
   % find and process directives
   directive_matches = regexp(tests(i).source, '(?:#|%)\s*doctest:\s+([(\+|\-)][\w]+)(\([\w]+\))?', 'tokens');
@@ -64,17 +64,17 @@ for i=1:length(test_matches)
     elseif strcmp('ELLIPSIS', directive(2:end))
       tests(i).ellipsis = strcmp(directive(1), '+');
     elseif strcmp('+SKIP', directive)
-      tests(i).skip = true;
+      tests(i).skip{end + 1} = 'true';
     elseif strcmp('+SKIP_IF', directive)
-      tests(i).skip = condition;
+      tests(i).skip{end + 1} = condition;
     elseif strcmp('+SKIP_UNLESS', directive)
-      tests(i).skip = sprintf('~(%s)', condition);
+      tests(i).skip{end + 1} = sprintf('~(%s)', condition);
     elseif strcmp('+XFAIL', directive)
-      tests(i).xfail = true;
+      tests(i).xfail{end + 1} = 'true';
     elseif strcmp('+XFAIL_IF', directive)
-      tests(i).xfail = condition;
+      tests(i).xfail{end + 1} = condition;
     elseif strcmp('+XFAIL_UNLESS', directive)
-      tests(i).xfail = sprintf('~(%s)', condition);
+      tests(i).xfail{end + 1} = sprintf('~(%s)', condition);
     else
       error('doctest: unexpected directive %s', directive);
     end
@@ -86,6 +86,16 @@ results = DOCTEST__run_impl(tests);
 
 end
 
+
+% given a cell array of conditions (represented as strings to be eval'ed),
+% return the string that corresponds to their logical "or".
+function result = DOCTEST__join_conditions(conditions)
+  if isempty(conditions)
+    result = 'false';
+  else
+    result = strcat('(', strjoin(conditions, ') || ('), ')');
+  end
+end
 
 % the following function is used to evaluate all lines of code in same
 % namespace (the one of this invocation of DOCTEST__run_impl)
@@ -107,18 +117,14 @@ DOCTEST__results = [];
 for DOCTEST__i = 1:numel(DOCTEST__tests)
   DOCTEST__result = DOCTEST__tests(DOCTEST__i);
 
-  % determine whether test should be skippped
-  if ~islogical(DOCTEST__result.skip)
-    DOCTEST__result.skip = eval(DOCTEST__result.skip);
-  end
+  % determine whether test should be skipped
+  DOCTEST__result.skip = eval(DOCTEST__join_conditions(DOCTEST__result.skip));
   if DOCTEST__result.skip
      continue
   end
 
   % determine whether test is expected to fail
-  if ~islogical(DOCTEST__tests(DOCTEST__i).xfail)
-    DOCTEST__result.xfail = eval(DOCTEST__result.xfail);
-  end
+  DOCTEST__result.xfail = eval(DOCTEST__join_conditions(DOCTEST__result.xfail));
 
   % evaluate input (structure adapted from a StackOverflow answer by user Amro, see http://stackoverflow.com/questions/3283586 and http://stackoverflow.com/users/97160/amro)
   try
