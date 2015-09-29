@@ -48,7 +48,7 @@
 %% @item cell array of such items.
 %% @end itemize
 %% When called with a single return value, return whether all tests have
-%% succeeded (SUCCESS).
+%% succeeded (@var{success}).
 %%
 %% When called with two or more return values, return the number of tests
 %% passed (@var{numpass}), the total number of tests (@var{numtests}) and a
@@ -94,7 +94,7 @@
 %% @end example
 %%
 %% @strong{Expecting an error}
-%% Doctest can deal with errors, a little bit.  For instance, this case is
+%% Doctest can deal with errors, to some extent.  For instance, this case is
 %% handled correctly:
 %%
 %% @example
