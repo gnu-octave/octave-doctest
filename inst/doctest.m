@@ -35,7 +35,7 @@
 %% @deftypefnx {Function File} {} doctest @var{target} -DIRECTIVE
 %% @deftypefnx {Function File} {} doctest @var{target} +DIRECTIVE
 %% @deftypefnx {Function File} {@var{success} =} doctest (@var{target}, @dots{})
-%% @deftypefnx {Function File} {@var{numpass}, @var{numtests}, @var{summary} =} doctest (@dots{})
+%% @deftypefnx {Function File} {[@var{numpass}, @var{numtests}, @var{summary]} =} doctest (@dots{})
 %% Run examples embedded in documentation.
 %%
 %% Doctest finds and runs code found in @var{target}, which can be a:
