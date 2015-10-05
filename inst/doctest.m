@@ -66,9 +66,6 @@
 %%      4
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
 %%
 %% If there's no output, just put the next line right after the one with
 %% no output.  If the line does produce output (for instance, an error),
@@ -82,9 +79,6 @@
 %%    7
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
 %%
 %%
 %% @strong{Wildcards}
@@ -98,10 +92,6 @@
 %% 2...
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
-%%
 %%
 %% @strong{Expecting an error}
 %% Doctest can deal with errors, a little bit.  For instance, this case is
@@ -113,10 +103,6 @@
 %% ??? ...ndefined ...
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
-%%
 %% (Note use of wildcards here; MATLAB spells this 'Undefined', while Octave
 %% uses 'undefined').
 %%
@@ -139,10 +125,6 @@
 %% i = 3
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
-%%
 %% (But note this is not required when writing texinfo documentation,
 %% see below).
 %%
@@ -166,9 +148,7 @@
 %% >> plot(...)     % doctest: +SKIP
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
+%%
 %%
 %% These special comments act as directives for modifying test behaviour.
 %% You can also mark tests that you expect to fail:
@@ -179,9 +159,6 @@
 %% b = 42
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
 %%
 %% Both the +SKIP and the +XFAIL directive also have conditional variants
 %% (e.g., +SKIP_IF and +SKIP_UNLESS) that allow to control test execution
@@ -194,9 +171,6 @@
 %% ans = some shiny octave feature
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
 %%
 %% Doctest provides the default flags DOCTEST_OCTAVE and DOCTEST_MATLAB,
 %% but you can access arbitrary variables and (nullary) functions.
@@ -217,9 +191,7 @@
 %% c d
 %% @end group
 %% @end example
-%% @ifinfo
-%% @*
-%% @end ifinfo
+%%
 %%
 %% To disable the @code{...} wildcard, use the -ELLIPSIS directive.
 %%
