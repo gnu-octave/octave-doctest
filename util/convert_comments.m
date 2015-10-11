@@ -155,15 +155,20 @@ function success = convert_oct_2_ml (fname, foutname)
   end
 
 
-  %% actual help, then format
+  %% get the texinfo source, and format it
   [text, form] = get_help_text(fname);
   if ~strcmp(form, 'texinfo')
     text
     form
     error('formatted incorrectly, help text not texinfo')
   end
-  usestr = __makeinfo__(text, 'plain text')
 
+  % Doctest diary-mode compatibility: force two blank lines after example.
+  % Final "\n\n" is incase text immediately follows "@end example".
+  text = regexprep(text, '(^\s*)(@end example\n)', '$1$2 @*\n\n',
+                   'lineanchors')
+
+  usestr = __makeinfo__(text, 'plain text');
 
 
   %% remove the lookforstr from the text
