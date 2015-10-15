@@ -31,10 +31,6 @@ function convert_comments (basedir, subdir, dirout)
 % b/c I must "chdir" into base, but get_first_help_sentence() must
 % not be in the class dir...
 
-  disp(char('_' * ones(1,78)))
-  disp('')
-  fprintf('****** OCTAVE PROCESSING DIRECTORY %s\n', [basedir subdir])
-
   %basedir, subdir, dirout
   files = dir([basedir subdir]);
   chdir(basedir)
@@ -48,19 +44,18 @@ function convert_comments (basedir, subdir, dirout)
         else
           octname = [subdir '/' name ext];
         end
-        fprintf('**** Processing %s ****\n', octname)
+        fprintf('Converting texinfo to Matlab-style documentation: %s\n', octname)
         r = convert_oct_2_ml (octname, [dirout octname]);
         if ~r
           [status, msg, msgid] = copyfile (octname, [dirout octname], 'f');
           if (status ~= 1)
             error(msg)
           end
-          fprintf('******* COPYING %s UNMODIFIED ****\n', octname)
+          fprintf('**** COPYING %s UNMODIFIED ****\n', octname)
         end
       end
     end
   end
-  disp(char('_' * ones(1,78)))
 end
 
 
