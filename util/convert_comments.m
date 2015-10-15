@@ -166,7 +166,7 @@ function success = convert_oct_2_ml (fname, foutname)
   % Doctest diary-mode compatibility: force two blank lines after example.
   % Final "\n\n" is incase text immediately follows "@end example".
   text = regexprep(text, '(^\s*)(@end example\n)', '$1$2 @*\n\n',
-                   'lineanchors')
+                   'lineanchors');
 
   usestr = __makeinfo__(text, 'plain text');
 
