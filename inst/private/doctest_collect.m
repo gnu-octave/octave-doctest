@@ -64,16 +64,23 @@ if (strcmp(type, 'dir'))
   files = dir('.');
   for i=1:numel(files)
     f = files(i).name;
-    if strcmp(f, '.') || strcmp(f, '..') || strcmpi(f, 'private')
-      % skip ., .., and private folders (TODO)
-      continue
-    end
-    if (f(1) == '@')
-      % strip the @, prevents processing as a directory
-      f = f(2:end);
-    elseif (~ recursive && exist(f, 'dir'))
-      % skip directories
-      continue
+    if (exist(f, 'dir'))
+      if strcmp(f, '.') || strcmp(f, '..') || strcmpi(f, 'private')
+        % skip ., .., and private folders (TODO)
+        continue
+      elseif (f(1) == '@')
+        % strip @ to prevent processing as a directory
+        f = f(2:end);
+      elseif (~ recursive)
+        % skip all directories
+        continue
+      end
+    else
+      [~, ~, ext] = fileparts(f);
+      if (~ any(strcmpi(ext, {'.m' '.texinfo' '.texi' '.txi' '.tex'})))
+        %fprintf(fid, 'Debug: ignoring file "%s"\n', f)
+        continue
+      end
     end
     summary = doctest_collect(f, directives, summary, recursive, fid);
   end
