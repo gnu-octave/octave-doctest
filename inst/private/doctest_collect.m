@@ -230,7 +230,23 @@ function [docstring, error] = extract_docstring(name)
     [docstring, format] = get_help_text(name);
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);
+    elseif strcmp(format, 'plain text')
+      error = '';
+    elseif strcmp(format, 'Not documented')
+      assert (isempty (docstring))
+      error = '';
+    elseif strcmp(format, 'Not found')
+      % looks like "doctest test_no_docs.m" gets us here: octave bug?
+      if (regexp(name,'\.m$'))
+        assert (isempty (docstring))
+        error = '';
+      else
+        assert (isempty (docstring))
+        error = 'Not an m file.';
+      end
     else
+      format
+      warning('Unexpected format in that file/function');
       error = '';
     end
   else
