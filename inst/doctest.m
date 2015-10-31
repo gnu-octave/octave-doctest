@@ -32,6 +32,7 @@
 %% @documentencoding UTF-8
 %% @deftypefn  {Function File} {} doctest @var{target}
 %% @deftypefnx {Function File} {} doctest @var{target} -recursive
+%% @deftypefnx {Function File} {} doctest @var{target} -nonrecursive
 %% @deftypefnx {Function File} {} doctest @var{target} -DIRECTIVE
 %% @deftypefnx {Function File} {} doctest @var{target} +DIRECTIVE
 %% @deftypefnx {Function File} {@var{success} =} doctest (@var{target}, @dots{})
@@ -248,6 +249,9 @@ for i = 1:(nargin-1)
     case 'recursive'
       assert(strcmp(pm, '-'))
       recursive = true;
+    case 'nonrecursive'
+      assert(strcmp(pm, '-'))
+      recursive = false;
     otherwise
       assert(strcmp(pm, '+') || strcmp(pm, '-'))
       enable = strcmp(varargin{i}(1), '+');
