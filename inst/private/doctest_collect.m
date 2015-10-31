@@ -74,6 +74,9 @@ if (strcmp(type, 'dir'))
       elseif (~ recursive)
         % skip all directories
         continue
+      elseif (strcmp(f(1), '.'))
+        fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
+        continue
       end
     else
       [~, ~, ext] = fileparts(f);
