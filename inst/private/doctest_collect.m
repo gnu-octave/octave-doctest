@@ -65,8 +65,8 @@ if (strcmp(type, 'dir'))
   for i=1:numel(files)
     f = files(i).name;
     if (exist(f, 'dir'))
-      if strcmp(f, '.') || strcmp(f, '..') || strcmpi(f, 'private')
-        % skip ., .., and private folders (TODO)
+      if (strcmp(f, '.') || strcmp(f, '..'))
+        % skip "." and ".."
         continue
       elseif (strcmp(f(1), '@'))
         % strip @ to prevent processing as a directory
@@ -76,6 +76,10 @@ if (strcmp(type, 'dir'))
         continue
       elseif (strcmp(f(1), '.'))
         fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
+        continue
+      elseif (strcmpi(f, 'private'))
+        % running code in private dirs may need mucking around with path
+        fprintf(fid, 'Ignoring directory "%s"\n', f)
         continue
       end
     else
