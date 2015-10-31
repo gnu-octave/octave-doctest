@@ -7,6 +7,7 @@ function d = doctest_default_directives(varargin)
 %   See source/documentation for valid directives.
 
   defaults.normalize_whitespace = true;
+  defaults.ignore_blocks_wo_output = false;
   defaults.ellipsis = true;
 
   if (nargin == 0)
@@ -29,6 +30,8 @@ function d = doctest_default_directives(varargin)
       d.ellipsis = enable;
     case 'NORMALIZE_WHITESPACE'
       d.normalize_whitespace = enable;
+    case 'IGNORE_BLOCKS_WO_OUTPUT'
+      d.ignore_blocks_wo_output = enable;
     otherwise
       error('invalid directive "%s"', directive)
   end
