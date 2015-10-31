@@ -68,7 +68,7 @@ if (strcmp(type, 'dir'))
       if strcmp(f, '.') || strcmp(f, '..') || strcmpi(f, 'private')
         % skip ., .., and private folders (TODO)
         continue
-      elseif (f(1) == '@')
+      elseif (strcmp(f(1), '@'))
         % strip @ to prevent processing as a directory
         f = f(2:end);
       elseif (~ recursive)
