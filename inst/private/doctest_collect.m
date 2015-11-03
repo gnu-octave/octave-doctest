@@ -25,7 +25,7 @@ if is_octave()
     else
       type = 'function';
     end
-  elseif (exist(what, 'dir') && what(1) ~= '@')
+  elseif (exist(what, 'dir') && ~strcmp(what(1), '@'))
     type = 'dir';
   elseif exist(what) == 2 || exist(what) == 103
     % Notes:
