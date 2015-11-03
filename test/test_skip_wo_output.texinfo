@@ -10,6 +10,7 @@ assert(false);
   +-----------------+
 @end example
 
+This one should not be skipped as it does have output
 @example
 a = 5;        @c doctest: +SKIP_BLOCKS_WO_OUTPUT
 a = 6
