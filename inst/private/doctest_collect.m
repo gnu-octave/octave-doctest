@@ -1,4 +1,4 @@
-function summary = doctest_collect(what, directives, summary, recursive, fid)
+function summary = doctest_collect(what, directives, summary, recursive, depth, fid)
 % Find and run doctests.
 %
 % The parameter WHAT is the name of a class, directory, function or filename:
@@ -60,9 +60,10 @@ end
 
 % Deal with directories
 if (strcmp(type, 'dir'))
-  %if (~ strcmp(what, '.'))
-  %  fprintf(fid, 'Descending into directory "%s"\n', what);
-  %end
+  if (~ strcmp(what, '.'))
+    spaces = repmat(' ', 1, 2*depth);
+    fprintf(fid, '%s%s%s\n', spaces, what, filesep());
+  end
   oldcwd = chdir(what);
   files = dir('.');
   for i=1:numel(files)
@@ -91,7 +92,7 @@ if (strcmp(type, 'dir'))
         continue
       end
     end
-    summary = doctest_collect(f, directives, summary, recursive, fid);
+    summary = doctest_collect(f, directives, summary, recursive, depth + 1, fid);
   end
   chdir(oldcwd);
   return
@@ -104,21 +105,26 @@ end
 %   TARGETS(i).link       Hyperlink to test for use in Matlab.
 %   TARGETS(i).docstring  Associated docstring.
 %   TARGETS(i).error:     Contains error string if extraction failed.
+%   TARGETS(i).depth      How "deep" in a recursive traversal are we
 
 if strcmp(type, 'function')
-  targets = collect_targets_function(what);
+  target = collect_targets_function(what);
+  target.depth = depth;
+  targets = [target];
 elseif strcmp(type, 'class')
-  targets = collect_targets_class(what);
+  targets = collect_targets_class(what, depth);
 elseif strcmp(type, 'texinfo')
   target = struct();
   target.name = what;
   target.link = '';
+  target.depth = depth;
   [target.docstring, target.error] = parse_texinfo(fileread(what));
   targets = [target];
 else
   target = struct();
   target.name = what;
   target.link = '';
+  target.depth = depth;
   target.docstring = '';
   target.error = 'Function or class not found.';
   targets = [target];
@@ -135,7 +141,9 @@ summary.num_targets = summary.num_targets + numel(targets);
 for i=1:numel(targets)
   % run doctests for target and update statistics
   target = targets(i);
-  fprintf(fid, '%s %s ', target.name, repmat('.', 1, 55 - numel(target.name)));
+  spaces = repmat(' ', 1, 2*target.depth);
+  dots = repmat('.', 1, 55 - numel(target.name) - 2*target.depth);
+  fprintf(fid, '%s%s %s ', spaces, target.name, dots);
 
   % extraction error?
   if target.error
@@ -204,7 +212,7 @@ function target = collect_targets_function(what)
 end
 
 
-function targets = collect_targets_class(what)
+function targets = collect_targets_class(what, depth)
   if (strcmp(what(1), '@'))
     % Octave methods('@foo') gives java error, Matlab just says "No methods"
     what = what(2:end);
@@ -218,6 +226,7 @@ function targets = collect_targets_class(what)
   else
     target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
   end
+  target.depth = depth;
   [target.docstring, target.error] = extract_docstring(target.name);
   targets = target;
 
@@ -232,6 +241,7 @@ function targets = collect_targets_class(what)
       target.name = sprintf('%s.%s', what, meths{i});
       target.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', which(what), meths{i}, target.name);
     end
+    target.depth = depth;
     [target.docstring, target.error] = extract_docstring(target.name);
     targets = [targets; target];
   end
