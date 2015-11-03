@@ -57,9 +57,9 @@ end
 
 % Deal with directories
 if (strcmp(type, 'dir'))
-  if (~ strcmp(what, '.'))
-    fprintf(fid, 'Descending into directory "%s"\n', what);
-  end
+  %if (~ strcmp(what, '.'))
+  %  fprintf(fid, 'Descending into directory "%s"\n', what);
+  %end
   oldcwd = chdir(what);
   files = dir('.');
   for i=1:numel(files)
@@ -75,11 +75,11 @@ if (strcmp(type, 'dir'))
         % skip all directories
         continue
       elseif (strcmp(f(1), '.'))
-        fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
+        %fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
         continue
       elseif (strcmpi(f, 'private'))
         % running code in private dirs may need mucking around with path
-        fprintf(fid, 'Ignoring directory "%s"\n', f)
+        %fprintf(fid, 'Ignoring directory "%s"\n', f)
         continue
       end
     else
