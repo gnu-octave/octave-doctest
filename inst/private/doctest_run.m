@@ -43,7 +43,7 @@ for i=1:length(test_matches)
 
   % set default options
   tests(i).normalize_whitespace = defaults.normalize_whitespace;
-  tests(i).ignore_blocks_wo_output = defaults.ignore_blocks_wo_output;
+  tests(i).skip_blocks_wo_output = defaults.skip_blocks_wo_output;
   tests(i).ellipsis = defaults.ellipsis;
   tests(i).skip = {};
   tests(i).xfail = {};
@@ -64,8 +64,8 @@ for i=1:length(test_matches)
       tests(i).normalize_whitespace = strcmp(directive(1), '+');
     elseif strcmp('ELLIPSIS', directive(2:end))
       tests(i).ellipsis = strcmp(directive(1), '+');
-    elseif strcmp('IGNORE_BLOCKS_WO_OUTPUT', directive(2:end))
-      tests(i).ignore_blocks_wo_output = strcmp(directive(1), '+');
+    elseif strcmp('SKIP_BLOCKS_WO_OUTPUT', directive(2:end))
+      tests(i).skip_blocks_wo_output = strcmp(directive(1), '+');
     elseif strcmp('+SKIP', directive)
       tests(i).skip{end + 1} = 'true';
     elseif strcmp('+SKIP_IF', directive)
@@ -125,7 +125,7 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
   if DOCTEST__result.skip
      continue
   end
-  if DOCTEST__result.ignore_blocks_wo_output && isempty(DOCTEST__result.want)
+  if DOCTEST__result.skip_blocks_wo_output && isempty(DOCTEST__result.want)
     continue
   end
 

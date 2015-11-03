@@ -1,17 +1,17 @@
 No output here, this code should be skipped:
 @example
-a = 5;          @c doctest: +IGNORE_BLOCKS_WO_OUTPUT
+a = 5;          @c doctest: +SKIP_BLOCKS_WO_OUTPUT
 assert(false);
 @end example
 
 @example
   +-----------------+
-  |  ASCII ART ;-)  |      @c doctest: +IGNORE_BLOCKS_WO_OUTPUT
+  |  ASCII ART ;-)  |      @c doctest: +SKIP_BLOCKS_WO_OUTPUT
   +-----------------+
 @end example
 
 @example
-a = 5;        @c doctest: +IGNORE_BLOCKS_WO_OUTPUT
+a = 5;        @c doctest: +SKIP_BLOCKS_WO_OUTPUT
 a = 6
 @result{} a = 6
 @end example
