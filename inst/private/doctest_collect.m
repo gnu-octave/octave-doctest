@@ -60,7 +60,12 @@ end
 
 % Deal with directories
 if (strcmp(type, 'dir'))
-  if (~ strcmp(what, '.'))
+  if (strcmp(what, '.'))
+    if (depth == 0)
+      % cheap hack to not indent when calling "doctest ."
+      depth = -1;
+    end
+  else
     spaces = repmat(' ', 1, 2*depth);
     fprintf(fid, '%s%s%s\n', spaces, what, filesep());
   end
