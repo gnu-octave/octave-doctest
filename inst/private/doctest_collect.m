@@ -25,7 +25,10 @@ if is_octave()
     else
       type = 'function';
     end
-  elseif (exist(what, 'dir') && ~strcmp(what(1), '@'))
+  elseif (strcmp(what(1), '@'))
+    % comes after 'file' above for "doctest @class/method"
+    type = 'class';
+  elseif (exist(what, 'dir'))
     type = 'dir';
   elseif exist(what) == 2 || exist(what) == 103
     % Notes:
@@ -69,8 +72,7 @@ if (strcmp(type, 'dir'))
         % skip "." and ".."
         continue
       elseif (strcmp(f(1), '@'))
-        % strip @ to prevent processing as a directory
-        f = f(2:end);
+        % class, don't skip if nonrecursive
       elseif (~ recursive)
         % skip all directories
         continue
@@ -203,6 +205,10 @@ end
 
 
 function targets = collect_targets_class(what)
+  if (strcmp(what(1), '@'))
+    % Octave methods('@foo') gives java error, Matlab just says "No methods"
+    what = what(2:end);
+  end
   % First, "help class".  For classdef, this differs from "help class.class"
   % (general class help vs constructor help).  For old-style classes we will
   % probably end up testing the constructor twice but... meh.
