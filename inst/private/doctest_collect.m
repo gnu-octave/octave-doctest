@@ -56,9 +56,15 @@ else % Matlab
     type = 'dir';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
+  elseif ~isempty(help(what))
+    % covers "doctest class.method" and "doctest class/method"
+    type = 'function'
   else
     type = 'unknown';
   end
+  % Note: ambiguous what happens for "doctest @class/method"... as is
+  % "help @class/method", e.g., "help @class/class" does not give the
+  % constructors
 end
 
 
