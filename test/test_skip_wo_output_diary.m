@@ -10,3 +10,7 @@ function test_skip_wo_output_diary()
 % .. a = 6
 % a = 6
 %
+%
+% check that previous was not skipped
+% >> a
+% a = 6

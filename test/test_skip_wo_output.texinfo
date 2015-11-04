@@ -16,3 +16,9 @@ a = 5;        @c doctest: +SKIP_BLOCKS_WO_OUTPUT
 a = 6
 @result{} a = 6
 @end example
+
+And check it was not skipped:
+@example
+a = 6
+@result{} a = 6
+@end example
