@@ -45,8 +45,12 @@ if is_octave()
       type = 'unknown';
     end
   end
-else
-  if ~isempty(methods(what))
+else % Matlab
+  if (strcmp(what(1), '@')) && ~isempty(methods(what(2:end)))
+    % covers "doctest @class", but not "doctest @class/method"
+    type = 'class';
+  elseif ~isempty(methods(what))
+    % covers "doctest class"
     type = 'class';
   elseif (exist(what, 'dir'))
     type = 'dir';
