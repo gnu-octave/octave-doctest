@@ -67,7 +67,12 @@ if (strcmp(type, 'dir'))
     end
   else
     spaces = repmat(' ', 1, 2*depth);
-    fprintf(fid, '%s%s%s\n', spaces, what, filesep());
+    if (strcmp(what(end), filesep()))
+      slashchar = '';
+    else
+      slashchar = filesep();
+    end
+    fprintf(fid, '%s%s%s\n', spaces, what, slashchar);
   end
   oldcwd = chdir(what);
   files = dir('.');
