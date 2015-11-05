@@ -62,9 +62,9 @@ else % Matlab
   else
     type = 'unknown';
   end
-  % Note: ambiguous what happens for "doctest @class/method"... as is
-  % "help @class/method", e.g., "help @class/class" does not give the
-  % constructors
+  % Note: ambiguous what happens for "doctest @class/method"... as it is
+  % for "help @class/method", e.g., "help @class/class" does not give the
+  % constructor's help.
 end
 
 
@@ -90,7 +90,8 @@ if (strcmp(type, 'dir'))
         %fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
         continue
       elseif (strcmpi(f, 'private'))
-        % running code in private dirs may need mucking around with path
+        % running code in private dirs may need mucking around with path,
+        % see related: https://savannah.gnu.org/bugs/?38776
         %fprintf(fid, 'Ignoring directory "%s"\n', f)
         continue
       end
