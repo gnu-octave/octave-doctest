@@ -206,7 +206,7 @@ function targets = collect_targets_class(what)
   for i=1:numel(meths)
     target = struct();
     if is_octave()
-      target.name = sprintf('@%s/%s', what, meths{i});
+      target.name = sprintf('@%s%s%s', what, filesep(), meths{i});
       target.link = '';
     else
       target.name = sprintf('%s.%s', what, meths{i});
