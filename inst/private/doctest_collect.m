@@ -221,7 +221,6 @@ end
 function [docstring, error] = extract_docstring(name)
   if is_octave()
     [docstring, format] = get_help_text(name);
-    docstring = strrep (docstring, sprintf ('\r\n'), sprintf ('\n'));
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);
     else
@@ -243,6 +242,9 @@ function [docstring, error] = parse_texinfo(str)
     % error = 'no @example blocks';
     return
   end
+
+  % Normalize line endings in files that have been edited in Windows
+  str = strrep (str, sprintf ('\r\n'), sprintf ('\n'));
 
   % The subsequent regexprep would fail if the example block is located right
   % at the beginning of the file. This is probably a bug in regexprep and is
