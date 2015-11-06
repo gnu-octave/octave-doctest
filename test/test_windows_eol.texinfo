@@ -1,0 +1,13 @@
+@example
+@group
+A = 5
+@result{} A = 5
+@end group
+@end example
+
+@example
+@group
+A = 6
+@result{} A = 6
+@end group
+@end example
