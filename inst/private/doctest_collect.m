@@ -221,6 +221,7 @@ end
 function [docstring, error] = extract_docstring(name)
   if is_octave()
     [docstring, format] = get_help_text(name);
+    docstring = strrep (docstring, sprintf ('\r\n'), sprintf ('\n'));
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);
     else
@@ -271,6 +272,11 @@ function [docstring, error] = parse_texinfo(str)
     error = '__makeinfo__ returned with error code'
     return
   end
+  
+  % Normalize end of line characters from windows to unix
+  if (ispc ())
+    str = strrep (str, sprintf ('\r\n'), sprintf ('\n'));
+  end
 
   % extract examples and discard everything else
   T = regexp (str, ...
@@ -305,7 +311,7 @@ function [docstring, error] = parse_texinfo(str)
     end
 
     % split into lines
-    L = strsplit (T{i}, {'\r', '\n'});
+    L = strsplit (T{i}, '\n');
 
     if (regexp (T{i}, '^\s*>>', 'once'))
       % First nonblank line starts with '>>': assume diary style.  However,
