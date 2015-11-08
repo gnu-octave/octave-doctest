@@ -243,7 +243,8 @@ function [docstring, error] = parse_texinfo(str)
     return
   end
 
-  % Normalize line endings in files that have been edited in Windows
+  % Normalize line endings in files which have been edited in Windows
+  % This simplifies the regular expressions below.
   str = strrep (str, sprintf ('\r\n'), sprintf ('\n'));
 
   % The subsequent regexprep would fail if the example block is located right
@@ -274,13 +275,17 @@ function [docstring, error] = parse_texinfo(str)
          '(doctest:\s*.*)' ];     % want the doctest token
   str = regexprep (str, re, '% $1', 'dotexceptnewline');
 
+  % We use eval to not produce compile errors in Matlab,
+  % the __makeinfo__ function exists in Octave only.
   [str, err] = eval('__makeinfo__ (str, ''plain text'')');
   if (err ~= 0)
     error = '__makeinfo__ returned with error code'
     return
   end
-  
-  % Normalize end of line characters from windows to unix
+
+  % Normalize end of line characters again.  __makeinfo__ returns end of line
+  % characters depending on the current OS.  Since we want Unix line endings,
+  % the conversion is only required under Windows.
   if (ispc ())
     str = strrep (str, sprintf ('\r\n'), sprintf ('\n'));
   end
