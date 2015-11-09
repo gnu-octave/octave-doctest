@@ -118,13 +118,19 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
   DOCTEST__result = DOCTEST__tests(DOCTEST__i);
 
   % determine whether test should be skipped
-  DOCTEST__result.skip = eval(DOCTEST__join_conditions(DOCTEST__result.skip));
-  if DOCTEST__result.skip
+  % (careful about Octave bug #46397 to not change the current value of “ans”)
+  eval (strcat ('DOCTEST__result.skip = ', ...
+                 DOCTEST__join_conditions (DOCTEST__result.skip), ...
+                ';'));
+  if (DOCTEST__result.skip)
      continue
   end
 
   % determine whether test is expected to fail
-  DOCTEST__result.xfail = eval(DOCTEST__join_conditions(DOCTEST__result.xfail));
+  % (careful about Octave bug #46397 to not change the current value of “ans”)
+  eval (strcat ('DOCTEST__result.xfail = ', ...
+                 DOCTEST__join_conditions (DOCTEST__result.xfail), ...
+                ';'));
 
   % evaluate input (structure adapted from a StackOverflow answer by user Amro, see http://stackoverflow.com/questions/3283586 and http://stackoverflow.com/users/97160/amro)
   try
