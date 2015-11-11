@@ -25,9 +25,12 @@ doctest 0.4.1-dev
       - Allow arbitrary TexInfo macros.  The documentation is interpreted
         by makeinfo before running the code examples.
 
+      - Fixed handling of TexInfo files with Windows line endings.
+
   * Improved folder/directory traversals:
 
       - Ignore hidden (dot) directories.
+
       - Ignore files that are neither m-files nor texinfo.
 
 

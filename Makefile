@@ -86,7 +86,8 @@ ${HTML_TARBALL_COMPRESSED}: ${INSTALLED_PACKAGE} | ${BUILD_DIR}
 	tar --create --auto-compress --transform="s!^${BUILD_DIR}/!!" --file "$@" "${HTML_DIR}"
 
 matlab_pkg: | ${BUILD_DIR}/${MATLAB_PKG_DIR}/private
-	cp -ra inst/doctest.m ${BUILD_DIR}/${MATLAB_PKG_DIR}/
+	$(OCTAVE) --path ${PWD}/util --silent --eval \
+		"convert_comments('inst/', '', '../${BUILD_DIR}/${MATLAB_PKG_DIR}/')"
 	cp -ra inst/private/*.m ${BUILD_DIR}/${MATLAB_PKG_DIR}/private/
 	cp -ra COPYING ${BUILD_DIR}/${MATLAB_PKG_DIR}/
 	cp -ra CONTRIBUTORS ${BUILD_DIR}/${MATLAB_PKG_DIR}/

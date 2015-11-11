@@ -45,16 +45,26 @@ if is_octave()
       type = 'unknown';
     end
   end
-else
-  if ~isempty(methods(what))
+else % Matlab
+  if (strcmp(what(1), '@')) && ~isempty(methods(what(2:end)))
+    % covers "doctest @class", but not "doctest @class/method"
+    type = 'class';
+  elseif ~isempty(methods(what))
+    % covers "doctest class"
     type = 'class';
   elseif (exist(what, 'dir'))
     type = 'dir';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
+  elseif ~isempty(help(what))
+    % covers "doctest class.method" and "doctest class/method"
+    type = 'function'
   else
     type = 'unknown';
   end
+  % Note: ambiguous what happens for "doctest @class/method"... as it is
+  % for "help @class/method", e.g., "help @class/class" does not give the
+  % constructor's help.
 end
 
 
@@ -89,10 +99,6 @@ if (strcmp(type, 'dir'))
         continue
       elseif (strcmp(f(1), '.'))
         %fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
-        continue
-      elseif (strcmpi(f, 'private'))
-        % running code in private dirs may need mucking around with path
-        %fprintf(fid, 'Ignoring directory "%s"\n', f)
         continue
       end
     else
@@ -245,7 +251,7 @@ function targets = collect_targets_class(what, depth)
   for i=1:numel(meths)
     target = struct();
     if is_octave()
-      target.name = sprintf('@%s/%s', what, meths{i});
+      target.name = sprintf('@%s%s%s', what, filesep(), meths{i});
       target.link = '';
     else
       target.name = sprintf('%s.%s', what, meths{i});
@@ -299,18 +305,27 @@ function [docstring, error] = parse_texinfo(str)
     return
   end
 
+  % Normalize line endings in files which have been edited in Windows
+  % This simplifies the regular expressions below.
+  str = strrep (str, sprintf ('\r\n'), sprintf ('\n'));
+
+  % The subsequent regexprep would fail if the example block is located right
+  % at the beginning of the file. This is probably a bug in regexprep and is
+  % only possible inside included texinfo files.
+  if (isempty (regexp (str, '^\s', 'once')))
+    str = cstrcat (sprintf ('\n'), str);
+  end
+
   % Mark the occurrence of “@example” and “@end example” to be able to find
   % example blocks after conversion from texi to plain text.  Also consider
   % indentation, so we can later correctly unindent the example's content.
-  % There seems to be a bug with substitute replacement in the first line, thus
-  % we prepend a newline.
-  str = regexprep (cstrcat (sprintf ('\n'), str), ...
-                   '^(\s*)(@example)(.*)$', ...
+  str = regexprep (str, ...
+                   '^([ \t]*)(@example)(.*)$', ...
                    [ '$1$2$3\n', ... % retain original line
                      '$1###### EXAMPLE START ######'], ...
                    'lineanchors', 'dotexceptnewline', 'emptymatch');
   str = regexprep (str, ...
-                   '^(\s*)(@end example)(.*)$', ...
+                   '^([ \t]*)(@end example)(.*)$', ...
                    [ '$1###### EXAMPLE STOP ######\n', ...
                      '$1$2$3'], ... % retain original line
                    'lineanchors', 'dotexceptnewline', 'emptymatch');
@@ -322,10 +337,19 @@ function [docstring, error] = parse_texinfo(str)
          '(doctest:\s*.*)' ];     % want the doctest token
   str = regexprep (str, re, '% $1', 'dotexceptnewline');
 
+  % We use eval to not produce compile errors in Matlab,
+  % the __makeinfo__ function exists in Octave only.
   [str, err] = eval('__makeinfo__ (str, ''plain text'')');
   if (err ~= 0)
     error = '__makeinfo__ returned with error code'
     return
+  end
+
+  % Normalize end of line characters again.  __makeinfo__ returns end of line
+  % characters depending on the current OS.  Since we want Unix line endings,
+  % the conversion is only required under Windows.
+  if (ispc ())
+    str = strrep (str, sprintf ('\r\n'), sprintf ('\n'));
   end
 
   % extract examples and discard everything else
@@ -351,9 +375,8 @@ function [docstring, error] = parse_texinfo(str)
 
     % remove EXAMPLE markers
     T{i} = regexprep (T{i}, ...
-                      '^\s*###### EXAMPLE ST(?:ART|OP) ######$', ...
-                      '', ...
-                      'lineanchors');
+                      '[ \t]*###### EXAMPLE ST(?:ART|OP) ######(?:\n|$)', ...
+                      '');
 
     if (regexp (T{i}, '^\s*$', 'once', 'emptymatch'))
       error = 'empty @example blocks';
@@ -361,7 +384,7 @@ function [docstring, error] = parse_texinfo(str)
     end
 
     % split into lines
-    L = strsplit (T{i}, {'\r', '\n'});
+    L = strsplit (T{i}, '\n');
 
     if (regexp (T{i}, '^\s*>>', 'once'))
       % First nonblank line starts with '>>': assume diary style.  However,
