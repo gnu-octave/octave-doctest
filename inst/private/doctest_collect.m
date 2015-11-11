@@ -89,11 +89,6 @@ if (strcmp(type, 'dir'))
       elseif (strcmp(f(1), '.'))
         %fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
         continue
-      elseif (strcmpi(f, 'private'))
-        % running code in private dirs may need mucking around with path,
-        % see related: https://savannah.gnu.org/bugs/?38776
-        %fprintf(fid, 'Ignoring directory "%s"\n', f)
-        continue
       end
     else
       [~, ~, ext] = fileparts(f);
