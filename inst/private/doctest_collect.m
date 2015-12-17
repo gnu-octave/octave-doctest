@@ -25,7 +25,10 @@ if is_octave()
     else
       type = 'function';
     end
-  elseif (exist(what, 'dir') && what(1) ~= '@')
+  elseif (strcmp(what(1), '@'))
+    % comes after 'file' above for "doctest @class/method"
+    type = 'class';
+  elseif (exist(what, 'dir'))
     type = 'dir';
   elseif exist(what) == 2 || exist(what) == 103
     % Notes:
@@ -42,38 +45,57 @@ if is_octave()
       type = 'unknown';
     end
   end
-else
-  if ~isempty(methods(what))
+else % Matlab
+  if (strcmp(what(1), '@')) && ~isempty(methods(what(2:end)))
+    % covers "doctest @class", but not "doctest @class/method"
+    type = 'class';
+  elseif ~isempty(methods(what))
+    % covers "doctest class"
     type = 'class';
   elseif (exist(what, 'dir'))
     type = 'dir';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
+  elseif ~isempty(help(what))
+    % covers "doctest class.method" and "doctest class/method"
+    type = 'function'
   else
     type = 'unknown';
   end
+  % Note: ambiguous what happens for "doctest @class/method"... as it is
+  % for "help @class/method", e.g., "help @class/class" does not give the
+  % constructor's help.
 end
 
 
 % Deal with directories
 if (strcmp(type, 'dir'))
-  if (~ strcmp(what, '.'))
-    fprintf(fid, 'Descending into directory "%s"\n', what);
-  end
+  %if (~ strcmp(what, '.'))
+  %  fprintf(fid, 'Descending into directory "%s"\n', what);
+  %end
   oldcwd = chdir(what);
   files = dir('.');
   for i=1:numel(files)
     f = files(i).name;
-    if strcmp(f, '.') || strcmp(f, '..') || strcmpi(f, 'private')
-      % skip ., .., and private folders (TODO)
-      continue
-    end
-    if (f(1) == '@')
-      % strip the @, prevents processing as a directory
-      f = f(2:end);
-    elseif (~ recursive && exist(f, 'dir'))
-      % skip directories
-      continue
+    if (exist(f, 'dir'))
+      if (strcmp(f, '.') || strcmp(f, '..'))
+        % skip "." and ".."
+        continue
+      elseif (strcmp(f(1), '@'))
+        % class, don't skip if nonrecursive
+      elseif (~ recursive)
+        % skip all directories
+        continue
+      elseif (strcmp(f(1), '.'))
+        %fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
+        continue
+      end
+    else
+      [~, ~, ext] = fileparts(f);
+      if (~ any(strcmpi(ext, {'.m' '.texinfo' '.texi' '.txi' '.tex'})))
+        %fprintf(fid, 'Debug: ignoring file "%s"\n', f)
+        continue
+      end
     end
     summary = doctest_collect(f, directives, summary, recursive, fid);
   end
@@ -189,6 +211,10 @@ end
 
 
 function targets = collect_targets_class(what)
+  if (strcmp(what(1), '@'))
+    % Octave methods('@foo') gives java error, Matlab just says "No methods"
+    what = what(2:end);
+  end
   % First, "help class".  For classdef, this differs from "help class.class"
   % (general class help vs constructor help).  For old-style classes we will
   % probably end up testing the constructor twice but... meh.
@@ -223,7 +249,23 @@ function [docstring, error] = extract_docstring(name)
     [docstring, format] = get_help_text(name);
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);
+    elseif strcmp(format, 'plain text')
+      error = '';
+    elseif strcmp(format, 'Not documented')
+      assert (isempty (docstring))
+      error = '';
+    elseif strcmp(format, 'Not found')
+      % looks like "doctest test_no_docs.m" gets us here: octave bug?
+      if (regexp(name,'\.m$'))
+        assert (isempty (docstring))
+        error = '';
+      else
+        assert (isempty (docstring))
+        error = 'Not an m file.';
+      end
     else
+      format
+      warning('Unexpected format in that file/function');
       error = '';
     end
   else
