@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+  <id>octave-doctest</id>
+  <extends>www.octave.org-octave.desktop</extends>
+  <name>Doctest</name>
+  <summary>Finds and tests example code within documentation</summary>
+  <url type="homepage">http://octave.sourceforge.net/doctest</url>
+  <url type="bugtracker">https://github.com/catch22/octave-doctest/issues/new</url>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>BSD-3-Clause</project_license>
+</component>
