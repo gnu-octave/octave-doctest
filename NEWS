@@ -1,5 +1,5 @@
-doctest 0.4.1-dev
-=================
+doctest 0.4.1 (2016-01-04)
+==========================
 
   * Added conditional variants of SKIP and XFAIL directives to control test
     execution based on runtime conditions:
