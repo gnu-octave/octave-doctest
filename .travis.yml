@@ -7,14 +7,19 @@ language: python
 matrix:
   include:
     - env: OCT_PPA=no
+      addons:
+        apt:
+          packages:
+            - octave
+            - liboctave-dev
     - env: OCT_PPA=yes
 
 install:
   - export
   - if [ "x$OCT_PPA" = "xyes" ]; then
         sudo apt-add-repository -y ppa:octave/stable;
+        sudo apt-get update -qq;
+        sudo apt-get install -qq -y octave liboctave-dev;
     fi
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq octave liboctave-dev
 
 script: make test test-interactive
