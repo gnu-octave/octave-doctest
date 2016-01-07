@@ -1,9 +1,19 @@
+sudo: required
+dist: trusty
+
 # travis-ci does not have first-class support for octave
 language: python
 
+matrix:
+  include:
+    - env: OCT_PPA=no
+    - env: OCT_PPA=yes
+
 install:
   - export
-  - sudo add-apt-repository ppa:octave/stable -y
+  - if [ "x$OCT_PPA" = "xyes" ]; then
+        sudo apt-add-repository -y ppa:octave/stable;
+    fi
   - sudo apt-get update -qq
   - sudo apt-get install -qq octave liboctave-dev
 
