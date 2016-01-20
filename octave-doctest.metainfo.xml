@@ -8,4 +8,5 @@
   <url type="bugtracker">https://github.com/catch22/octave-doctest/issues/new</url>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>BSD-3-Clause</project_license>
+  <update_contact>octave-maintainers_AT_gnu.org</update_contact>
 </component>
