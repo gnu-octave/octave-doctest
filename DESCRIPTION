@@ -9,5 +9,6 @@ Description: The Octave-Forge Doctest package finds specially-formatted
  the code and confirms the output is correct.  This can be useful as part of
  a testing framework or simply to ensure that documentation stays up-to-date
  during software development.
+Depends: octave (>= 3.8)
 Url: https://github.com/catch22/octave-doctest
 License: modified BSD
