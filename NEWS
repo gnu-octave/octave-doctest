@@ -1,6 +1,8 @@
 doctest 0.4.2-dev
 =================
 
+  * Workaround regex bug on ARM architecture.
+
 
 
 doctest 0.4.1 (2016-01-04)
