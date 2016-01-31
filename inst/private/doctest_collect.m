@@ -299,6 +299,7 @@ function [docstring, error] = parse_texinfo(str)
   % Mark the occurrence of “@example” and “@end example” to be able to find
   % example blocks after conversion from texi to plain text.  Also consider
   % indentation, so we can later correctly unindent the example's content.
+  % Note: uses “@example” instead of “$2” to avoid ARM-specific bug #130.
   str = regexprep (str, ...
                    '^([ \t]*)(\@example)(.*)$', ...
                    [ '$1\@example$3\n', ... % retain original line
