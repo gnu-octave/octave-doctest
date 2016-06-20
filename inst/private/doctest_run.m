@@ -49,7 +49,7 @@ for i=1:length(test_matches)
 
   % find and process directives
   re = ['(?:#|%)\s*doctest:\s+'      ... % e.g., "# doctest: "
-        '([(\+|\-)][\w]+)'           ... % token for cmd, eg "+XSKIP_IF"
+        '((?:\+|\-)\w+)'             ... % token for cmd, eg "+XSKIP_IF"
         '(\('                        ... % token for paren code, eg "(isfoo(7))"
           '(?:(?!doctest:)(?!\n).)+' ... % any code, no \n, no "doctest:"
         '\))?'];                         % end paren code
