@@ -1,4 +1,4 @@
-doctest 0.4.2-dev
+doctest 0.5.0-dev
 =================
 
   * Workaround regex bug on ARM architecture.
