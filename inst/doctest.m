@@ -32,8 +32,6 @@
 %% @documentencoding UTF-8
 %% @deftypefn  {Function File} {} doctest @var{target}
 %% @deftypefnx {Function File} {} doctest @var{target} -recursive
-%% @deftypefnx {Function File} {} doctest @var{target} -DIRECTIVE
-%% @deftypefnx {Function File} {} doctest @var{target} +DIRECTIVE
 %% @deftypefnx {Function File} {@var{success} =} doctest (@var{target}, @dots{})
 %% @deftypefnx {Function File} {[@var{numpass}, @var{numtests}, @var{summary]} =} doctest (@dots{})
 %% Run examples embedded in documentation.
@@ -43,8 +41,7 @@
 %% @item function;
 %% @item class;
 %% @item Texinfo file;
-%% @item directory/folder (pass @code{-recursive} to descend
-%%       into subfolders);
+%% @item directory/folder (pass @code{-recursive} to descend into subfolders);
 %% @item cell array of such items.
 %% @end itemize
 %% When called with a single return value, return whether all tests have
@@ -194,11 +191,6 @@
 %%
 %% To disable the @code{...} wildcard, use the @code{-ELLIPSIS} directive.
 %%
-%% The default directives can be overridden on the command line using, for
-%% example, @code{doctest target -NORMALIZE_WHITESPACE +ELLIPSIS}.  Note that
-%% directives local to a test still take precident over these.
-%%
-%%
 %% @strong{Diary Style}
 %% When the m-file contains plaintext documentation, doctest finds tests
 %% by searching for lines that begin with @code{>>}.  It then finds the
@@ -250,6 +242,7 @@ for i = 1:(nargin-1)
       recursive = true;
     otherwise
       assert(strcmp(pm, '+') || strcmp(pm, '-'))
+      warning('Support for specifying directives on the command line is deprecated and will be removed in the next major version (see https://github.com/catch22/octave-doctest/issues/127 for discussion).');
       enable = strcmp(varargin{i}(1), '+');
       directives = doctest_default_directives(directives, directive, enable);
   end
