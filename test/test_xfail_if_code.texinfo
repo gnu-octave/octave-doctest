@@ -1,0 +1,18 @@
+Dummy variable:
+@example
+a = 3
+  @result{} a = 3
+@end example
+
+The following test will fail:
+@example
+@c doctest: +XFAIL_IF(6 + 0*now () >= 0)
+a = 5
+  @result{} b = 7
+@end example
+
+value is changed (b/c xfail, not skip)
+@example
+a
+  @result{} a = 5
+@end example

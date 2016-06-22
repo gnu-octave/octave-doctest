@@ -1,0 +1,36 @@
+Dummy variable:
+@example
+a = 3
+  @result{} a = 3
+@end example
+
+The regex for SKIP_IF argument should not cross newlines!  First, note its ok
+to have syntax errors in skipped tests:
+@example
+@c doctest: +SKIP
+a = 5*(5+1))
+  @result{} b = 0
+@end example
+
+But next we have a syntax error, combined with SKIP_IF code.  The IF code
+should not glob the @code{a = } bit: might result in a syntax error if it did.
+@example
+@c doctest: +SKIP_IF(6 + 0*now () >= 0)
+a = 3*(4+1))
+  @result{} a = 15
+@end example
+
+As above, but two SKIP_IF's
+@example
+@c doctest: +SKIP_IF(6 + 0*now () >= 0)
+@c doctest: +SKIP_IF(7 + 0*now () >= 0)
+a = 3*(4+1))
+  @result{} a = 15
+@end example
+
+
+Finally, a is still 3
+@example
+a
+  @result{} a = 3
+@end example
