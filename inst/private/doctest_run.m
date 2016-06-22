@@ -50,7 +50,7 @@ for i=1:length(test_matches)
   % find and process directives
   re = ['(?:#|%)\s*doctest:\s+'      ... % e.g., "# doctest: "
         '((?:\+|\-)\w+)'             ... % token for cmd, eg "+XSKIP_IF"
-        '(\('                        ... % token for paren code, eg "(isfoo(7))"
+        '(\s*\('                     ... % token for paren code, eg " (isfoo(7))"
           '(?:(?!doctest:)(?!\n).)+' ... % any code, no \n, no "doctest:"
         '\))?'];                         % end paren code
   directive_matches = regexp(tests(i).source, re, 'tokens');
@@ -58,7 +58,7 @@ for i=1:length(test_matches)
     directive = directive_matches{j}{1};
     if (strcmp('+SKIP_IF', directive) || strcmp('+SKIP_UNLESS', directive) || strcmp('+XFAIL_IF', directive) || strcmp('+XFAIL_UNLESS', directive))
       if length(directive_matches{j}) == 2
-        condition = directive_matches{j}{2}(2:end - 1);
+        condition = directive_matches{j}{2};
       else
         error('doctest: syntax error, expected %s(varname)', directive);
       end
