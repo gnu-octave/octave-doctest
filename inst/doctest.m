@@ -31,7 +31,6 @@
 %% -*- texinfo -*-
 %% @documentencoding UTF-8
 %% @deftypefn  {Function File} {} doctest @var{target}
-%% @deftypefnx {Function File} {} doctest @var{target} -recursive
 %% @deftypefnx {Function File} {} doctest @var{target} -nonrecursive
 %% @deftypefnx {Function File} {@var{success} =} doctest (@var{target}, @dots{})
 %% @deftypefnx {Function File} {[@var{numpass}, @var{numtests}, @var{summary]} =} doctest (@dots{})
@@ -42,7 +41,7 @@
 %% @item function;
 %% @item class;
 %% @item Texinfo file;
-%% @item directory/folder (pass @code{-recursive} to descend into subfolders);
+%% @item directory/folder (pass @code{-nonrecursive} to skip subfolders);
 %% @item cell array of such items.
 %% @end itemize
 %% When called with a single return value, return whether all tests have
@@ -231,7 +230,7 @@ if ~iscell(what)
 end
 
 % input parsing for options and directives
-recursive = false;
+recursive = true;
 directives = doctest_default_directives();
 for i = 1:(nargin-1)
   assert(ischar(varargin{i}))
@@ -239,6 +238,7 @@ for i = 1:(nargin-1)
   directive = varargin{i}(2:end);
   switch directive
     case 'recursive'
+      % weakly deprecated, not mentioned in help text
       assert(strcmp(pm, '-'))
       recursive = true;
     case 'nonrecursive'

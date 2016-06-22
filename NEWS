@@ -6,6 +6,9 @@ doctest 0.5.0-dev
 
       - "% doctest: +SKIP_IF(foo() && bar(42))"
 
+  * Recursion into subdirectories is now the default; pass "-nonrecursive"
+    for the previous default behaviour.
+
   * Workaround regex bug on ARM architecture.
 
 
