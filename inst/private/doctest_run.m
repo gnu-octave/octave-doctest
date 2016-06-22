@@ -48,7 +48,12 @@ for i=1:length(test_matches)
   tests(i).xfail = {};
 
   % find and process directives
-  directive_matches = regexp(tests(i).source, '(?:#|%)\s*doctest:\s+([(\+|\-)][\w]+)(\([\w]+\))?', 'tokens');
+  re = ['(?:#|%)\s*doctest:\s+'      ... % e.g., "# doctest: "
+        '((?:\+|\-)\w+)'             ... % token for cmd, eg "+XSKIP_IF"
+        '(\('                        ... % token for paren code, eg "(isfoo(7))"
+          '(?:(?!doctest:)(?!\n).)+' ... % any code, no \n, no "doctest:"
+        '\))?'];                         % end paren code
+  directive_matches = regexp(tests(i).source, re, 'tokens');
   for j = 1:length(directive_matches)
     directive = directive_matches{j}{1};
     if (strcmp('+SKIP_IF', directive) || strcmp('+SKIP_UNLESS', directive) || strcmp('+XFAIL_IF', directive) || strcmp('+XFAIL_UNLESS', directive))
@@ -118,13 +123,19 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
   DOCTEST__result = DOCTEST__tests(DOCTEST__i);
 
   % determine whether test should be skipped
-  DOCTEST__result.skip = eval(DOCTEST__join_conditions(DOCTEST__result.skip));
-  if DOCTEST__result.skip
+  % (careful about Octave bug #46397 to not change the current value of “ans”)
+  eval (strcat ('DOCTEST__result.skip = ', ...
+                 DOCTEST__join_conditions (DOCTEST__result.skip), ...
+                ';'));
+  if (DOCTEST__result.skip)
      continue
   end
 
   % determine whether test is expected to fail
-  DOCTEST__result.xfail = eval(DOCTEST__join_conditions(DOCTEST__result.xfail));
+  % (careful about Octave bug #46397 to not change the current value of “ans”)
+  eval (strcat ('DOCTEST__result.xfail = ', ...
+                 DOCTEST__join_conditions (DOCTEST__result.xfail), ...
+                ';'));
 
   % evaluate input (structure adapted from a StackOverflow answer by user Amro, see http://stackoverflow.com/questions/3283586 and http://stackoverflow.com/users/97160/amro)
   try

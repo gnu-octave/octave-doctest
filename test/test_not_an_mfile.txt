@@ -1,0 +1,9 @@
+% hello, I am not an m-file so I should not be doctested
+%
+% >> a = 6
+% a = 7
+%
+%
+% This test would fail if doctest finds it when traversing
+% a directory.  If you run doctest on it directly, you should
+% get an error.

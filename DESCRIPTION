@@ -1,6 +1,6 @@
 Name: doctest
-Version: 0.4.0
-Date: 2015-07-02
+Version: 0.4.1
+Date: 2016-01-04
 Author: various authors
 Maintainer: Colin B. Macdonald <cbm@m.fsf.org>, Michael Walter <michael.walter@gmail.com>
 Title: Documentation tests
@@ -9,5 +9,6 @@ Description: The Octave-Forge Doctest package finds specially-formatted
  the code and confirms the output is correct.  This can be useful as part of
  a testing framework or simply to ensure that documentation stays up-to-date
  during software development.
+Depends: octave (>= 4.0.0)
 Url: https://github.com/catch22/octave-doctest
-License: modified BSD
+License: BSD-3-Clause
