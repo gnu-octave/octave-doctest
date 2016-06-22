@@ -30,10 +30,10 @@
 
 %% -*- texinfo -*-
 %% @documentencoding UTF-8
-%% @deftypefn  {Function File} {} doctest @var{target}
-%% @deftypefnx {Function File} {} doctest @var{target} -nonrecursive
-%% @deftypefnx {Function File} {@var{success} =} doctest (@var{target}, @dots{})
-%% @deftypefnx {Function File} {[@var{numpass}, @var{numtests}, @var{summary]} =} doctest (@dots{})
+%% @deftypefn  {} {} doctest @var{target}
+%% @deftypefnx {} {} doctest @var{target} -nonrecursive
+%% @deftypefnx {} {@var{success} =} doctest (@var{target}, @dots{})
+%% @deftypefnx {} {[@var{numpass}, @var{numtests}, @var{summary}] =} doctest (@dots{})
 %% Run examples embedded in documentation.
 %%
 %% Doctest finds and runs code found in @var{target}, which can be a:
