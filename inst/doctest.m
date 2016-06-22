@@ -168,8 +168,8 @@
 %% @end example
 %%
 %% Doctest provides the default flags @code{DOCTEST_OCTAVE} and
-%% @code{DOCTEST_MATLAB}, but you can access arbitrary variables and
-%% (nullary) functions.
+%% @code{DOCTEST_MATLAB}, but you can call functions and access arbitrary
+%% variables (including those defined by previous tests).
 %%
 %%
 %% By default, all adjacent white space is collapsed into a single space
