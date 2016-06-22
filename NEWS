@@ -1,6 +1,11 @@
 doctest 0.5.0-dev
 =================
 
+  * SKIP_IF and other conditional directives can include small single-line
+    blocks of code.  For example:
+
+      - "% doctest: +SKIP_IF(foo() && bar(42))"
+
   * Workaround regex bug on ARM architecture.
 
 
