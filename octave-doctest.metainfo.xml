@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2016 Colin B. Macdonald
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.  This file is offered as-is,
+without any warranty.
+-->
+<component type="addon">
+  <id>octave-doctest</id>
+  <extends>www.octave.org-octave.desktop</extends>
+  <name>Doctest</name>
+  <summary>Finds and tests example code within documentation</summary>
+  <description>
+    <p>Finds specially-formatted blocks of example code within
+    documentation files.  Then execute that code and confirm the
+    output is correct.  This can be useful as part of a testing
+    framework or simply to ensure that documentation stays up-to-date
+    during software development.</p>
+  </description>
+  <keywords>
+    <keyword>development</keyword>
+    <keyword>software testing</keyword>
+    <keyword>testing</keyword>
+    <keyword>documentation</keyword>
+  </keywords>
+  <translation/>
+  <url type="homepage">http://octave.sourceforge.net/doctest</url>
+  <url type="bugtracker">https://github.com/catch22/octave-doctest/issues/new</url>
+  <metadata_license>FSFAP</metadata_license>-->
+  <project_license>BSD-3-Clause</project_license>
+  <developer_name>Octave-Forge Community</developer_name>
+  <update_contact>octave-maintainers@gnu.org</update_contact>
+</component>

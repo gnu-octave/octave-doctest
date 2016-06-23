@@ -1,6 +1,6 @@
 %% Copyright (c) 2010 Thomas Grenfell Smith
 %% Copyright (c) 2011, 2013-2015 Michael Walter
-%% Copyright (c) 2015 Colin B. Macdonald
+%% Copyright (c) 2015-2016 Colin B. Macdonald
 %%
 %% Redistribution and use in source and binary forms, with or without
 %% modification, are permitted provided that the following conditions are met:
@@ -30,12 +30,10 @@
 
 %% -*- texinfo -*-
 %% @documentencoding UTF-8
-%% @deftypefn  {Function File} {} doctest @var{target}
-%% @deftypefnx {Function File} {} doctest @var{target} -recursive
-%% @deftypefnx {Function File} {} doctest @var{target} -DIRECTIVE
-%% @deftypefnx {Function File} {} doctest @var{target} +DIRECTIVE
-%% @deftypefnx {Function File} {@var{success} =} doctest (@var{target}, @dots{})
-%% @deftypefnx {Function File} {[@var{numpass}, @var{numtests}, @var{summary]} =} doctest (@dots{})
+%% @deftypefn  {} {} doctest @var{target}
+%% @deftypefnx {} {} doctest @var{target} -nonrecursive
+%% @deftypefnx {} {@var{success} =} doctest (@var{target}, @dots{})
+%% @deftypefnx {} {[@var{numpass}, @var{numtests}, @var{summary}] =} doctest (@dots{})
 %% Run examples embedded in documentation.
 %%
 %% Doctest finds and runs code found in @var{target}, which can be a:
@@ -43,8 +41,7 @@
 %% @item function;
 %% @item class;
 %% @item Texinfo file;
-%% @item directory/folder (pass @code{-recursive} to descend
-%%       into subfolders);
+%% @item directory/folder (pass @code{-nonrecursive} to skip subfolders);
 %% @item cell array of such items.
 %% @end itemize
 %% When called with a single return value, return whether all tests have
@@ -171,8 +168,8 @@
 %% @end example
 %%
 %% Doctest provides the default flags @code{DOCTEST_OCTAVE} and
-%% @code{DOCTEST_MATLAB}, but you can access arbitrary variables and
-%% (nullary) functions.
+%% @code{DOCTEST_MATLAB}, but you can call functions and access arbitrary
+%% variables (including those defined by previous tests).
 %%
 %%
 %% By default, all adjacent white space is collapsed into a single space
@@ -193,11 +190,6 @@
 %%
 %%
 %% To disable the @code{...} wildcard, use the @code{-ELLIPSIS} directive.
-%%
-%% The default directives can be overridden on the command line using, for
-%% example, @code{doctest target -NORMALIZE_WHITESPACE +ELLIPSIS}.  Note that
-%% directives local to a test still take precident over these.
-%%
 %%
 %% @strong{Diary Style}
 %% When the m-file contains plaintext documentation, doctest finds tests
@@ -238,7 +230,7 @@ if ~iscell(what)
 end
 
 % input parsing for options and directives
-recursive = false;
+recursive = true;
 directives = doctest_default_directives();
 for i = 1:(nargin-1)
   assert(ischar(varargin{i}))
@@ -246,10 +238,15 @@ for i = 1:(nargin-1)
   directive = varargin{i}(2:end);
   switch directive
     case 'recursive'
+      % weakly deprecated, not mentioned in help text
       assert(strcmp(pm, '-'))
       recursive = true;
+    case 'nonrecursive'
+      assert(strcmp(pm, '-'))
+      recursive = false;
     otherwise
       assert(strcmp(pm, '+') || strcmp(pm, '-'))
+      warning('Support for specifying directives on the command line is deprecated and will be removed in a future version (see https://github.com/catch22/octave-doctest/issues/127 for discussion).');
       enable = strcmp(varargin{i}(1), '+');
       directives = doctest_default_directives(directives, directive, enable);
   end
@@ -262,7 +259,7 @@ fid = 1;
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
 
 % print banner
-fprintf(fid, 'Doctest v0.4.1-dev: this is Free Software without warranty, see source.\n\n');
+fprintf(fid, 'Doctest v0.5.0-dev: this is Free Software without warranty, see source.\n\n');
 
 
 summary = struct();
@@ -275,7 +272,7 @@ summary.num_tests_passed = 0;
 
 
 for i=1:numel(what)
-  summary = doctest_collect(what{i}, directives, summary, recursive, fid);
+  summary = doctest_collect(what{i}, directives, summary, recursive, 0, fid);
 end
 
 

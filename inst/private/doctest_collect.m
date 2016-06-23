@@ -1,4 +1,4 @@
-function summary = doctest_collect(what, directives, summary, recursive, fid)
+function summary = doctest_collect(what, directives, summary, recursive, depth, fid)
 % Find and run doctests.
 %
 % The parameter WHAT is the name of a class, directory, function or filename:
@@ -25,7 +25,10 @@ if is_octave()
     else
       type = 'function';
     end
-  elseif (exist(what, 'dir') && what(1) ~= '@')
+  elseif (strcmp(what(1), '@'))
+    % comes after 'file' above for "doctest @class/method"
+    type = 'class';
+  elseif (exist(what, 'dir'))
     type = 'dir';
   elseif exist(what) == 2 || exist(what) == 103
     % Notes:
@@ -42,40 +45,70 @@ if is_octave()
       type = 'unknown';
     end
   end
-else
-  if ~isempty(methods(what))
+else % Matlab
+  if (strcmp(what(1), '@')) && ~isempty(methods(what(2:end)))
+    % covers "doctest @class", but not "doctest @class/method"
+    type = 'class';
+  elseif ~isempty(methods(what))
+    % covers "doctest class"
     type = 'class';
   elseif (exist(what, 'dir'))
     type = 'dir';
   elseif exist(what, 'file') || exist(what, 'builtin');
     type = 'function';
+  elseif ~isempty(help(what))
+    % covers "doctest class.method" and "doctest class/method"
+    type = 'function'
   else
     type = 'unknown';
   end
+  % Note: ambiguous what happens for "doctest @class/method"... as it is
+  % for "help @class/method", e.g., "help @class/class" does not give the
+  % constructor's help.
 end
 
 
 % Deal with directories
 if (strcmp(type, 'dir'))
-  if (~ strcmp(what, '.'))
-    fprintf(fid, 'Descending into directory "%s"\n', what);
+  if (strcmp(what, '.'))
+    if (depth == 0)
+      % cheap hack to not indent when calling "doctest ."
+      depth = -1;
+    end
+  else
+    spaces = repmat(' ', 1, 2*depth);
+    if (strcmp(what(end), filesep()))
+      slashchar = '';
+    else
+      slashchar = filesep();
+    end
+    fprintf(fid, '%s%s%s\n', spaces, what, slashchar);
   end
   oldcwd = chdir(what);
   files = dir('.');
   for i=1:numel(files)
     f = files(i).name;
-    if strcmp(f, '.') || strcmp(f, '..') || strcmpi(f, 'private')
-      % skip ., .., and private folders (TODO)
-      continue
+    if (exist(f, 'dir'))
+      if (strcmp(f, '.') || strcmp(f, '..'))
+        % skip "." and ".."
+        continue
+      elseif (strcmp(f(1), '@'))
+        % class, don't skip if nonrecursive
+      elseif (~ recursive)
+        % skip all directories
+        continue
+      elseif (strcmp(f(1), '.'))
+        %fprintf(fid, 'Ignoring hidden directory "%s"\n', f)
+        continue
+      end
+    else
+      [~, ~, ext] = fileparts(f);
+      if (~ any(strcmpi(ext, {'.m' '.texinfo' '.texi' '.txi' '.tex'})))
+        %fprintf(fid, 'Debug: ignoring file "%s"\n', f)
+        continue
+      end
     end
-    if (f(1) == '@')
-      % strip the @, prevents processing as a directory
-      f = f(2:end);
-    elseif (~ recursive && exist(f, 'dir'))
-      % skip directories
-      continue
-    end
-    summary = doctest_collect(f, directives, summary, recursive, fid);
+    summary = doctest_collect(f, directives, summary, recursive, depth + 1, fid);
   end
   chdir(oldcwd);
   return
@@ -88,21 +121,26 @@ end
 %   TARGETS(i).link       Hyperlink to test for use in Matlab.
 %   TARGETS(i).docstring  Associated docstring.
 %   TARGETS(i).error:     Contains error string if extraction failed.
+%   TARGETS(i).depth      How "deep" in a recursive traversal are we
 
 if strcmp(type, 'function')
-  targets = collect_targets_function(what);
+  target = collect_targets_function(what);
+  target.depth = depth;
+  targets = [target];
 elseif strcmp(type, 'class')
-  targets = collect_targets_class(what);
+  targets = collect_targets_class(what, depth);
 elseif strcmp(type, 'texinfo')
   target = struct();
   target.name = what;
   target.link = '';
+  target.depth = depth;
   [target.docstring, target.error] = parse_texinfo(fileread(what));
   targets = [target];
 else
   target = struct();
   target.name = what;
   target.link = '';
+  target.depth = depth;
   target.docstring = '';
   target.error = 'Function or class not found.';
   targets = [target];
@@ -119,7 +157,9 @@ summary.num_targets = summary.num_targets + numel(targets);
 for i=1:numel(targets)
   % run doctests for target and update statistics
   target = targets(i);
-  fprintf(fid, '%s %s ', target.name, repmat('.', 1, 55 - numel(target.name)));
+  spaces = repmat(' ', 1, 2*target.depth);
+  dots = repmat('.', 1, 55 - numel(target.name) - 2*target.depth);
+  fprintf(fid, '%s%s %s ', spaces, target.name, dots);
 
   % extraction error?
   if target.error
@@ -188,7 +228,11 @@ function target = collect_targets_function(what)
 end
 
 
-function targets = collect_targets_class(what)
+function targets = collect_targets_class(what, depth)
+  if (strcmp(what(1), '@'))
+    % Octave methods('@foo') gives java error, Matlab just says "No methods"
+    what = what(2:end);
+  end
   % First, "help class".  For classdef, this differs from "help class.class"
   % (general class help vs constructor help).  For old-style classes we will
   % probably end up testing the constructor twice but... meh.
@@ -198,6 +242,7 @@ function targets = collect_targets_class(what)
   else
     target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
   end
+  target.depth = depth;
   [target.docstring, target.error] = extract_docstring(target.name);
   targets = target;
 
@@ -206,12 +251,13 @@ function targets = collect_targets_class(what)
   for i=1:numel(meths)
     target = struct();
     if is_octave()
-      target.name = sprintf('@%s/%s', what, meths{i});
+      target.name = sprintf('@%s%s%s', what, filesep(), meths{i});
       target.link = '';
     else
       target.name = sprintf('%s.%s', what, meths{i});
       target.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', which(what), meths{i}, target.name);
     end
+    target.depth = depth;
     [target.docstring, target.error] = extract_docstring(target.name);
     targets = [targets; target];
   end
@@ -223,7 +269,23 @@ function [docstring, error] = extract_docstring(name)
     [docstring, format] = get_help_text(name);
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);
+    elseif strcmp(format, 'plain text')
+      error = '';
+    elseif strcmp(format, 'Not documented')
+      assert (isempty (docstring))
+      error = '';
+    elseif strcmp(format, 'Not found')
+      % looks like "doctest test_no_docs.m" gets us here: octave bug?
+      if (regexp(name,'\.m$'))
+        assert (isempty (docstring))
+        error = '';
+      else
+        assert (isempty (docstring))
+        error = 'Not an m file.';
+      end
     else
+      format
+      warning('Unexpected format in that file/function');
       error = '';
     end
   else
@@ -243,33 +305,52 @@ function [docstring, error] = parse_texinfo(str)
     return
   end
 
+  % Normalize line endings in files which have been edited in Windows
+  % This simplifies the regular expressions below.
+  str = strrep (str, sprintf ('\r\n'), sprintf ('\n'));
+
+  % The subsequent regexprep would fail if the example block is located right
+  % at the beginning of the file. This is probably a bug in regexprep and is
+  % only possible inside included texinfo files.
+  if (isempty (regexp (str, '^\s', 'once')))
+    str = cstrcat (sprintf ('\n'), str);
+  end
+
   % Mark the occurrence of “@example” and “@end example” to be able to find
   % example blocks after conversion from texi to plain text.  Also consider
   % indentation, so we can later correctly unindent the example's content.
-  % There seems to be a bug with substitute replacement in the first line, thus
-  % we prepend a newline.
-  str = regexprep (cstrcat (sprintf ('\n'), str), ...
-                   '^(\s*)(@example)(.*)$', ...
-                   [ '$1$2$3\n', ... % retain original line
+  % Note: uses “@example” instead of “$2” to avoid ARM-specific bug #130.
+  str = regexprep (str, ...
+                   '^([ \t]*)(\@example)(.*)$', ...
+                   [ '$1\@example$3\n', ... % retain original line
                      '$1###### EXAMPLE START ######'], ...
                    'lineanchors', 'dotexceptnewline', 'emptymatch');
   str = regexprep (str, ...
-                   '^(\s*)(@end example)(.*)$', ...
+                   '^([ \t]*)(\@end example)(.*)$', ...
                    [ '$1###### EXAMPLE STOP ######\n', ...
-                     '$1$2$3'], ... % retain original line
+                     '$1\@end example$3'], ... % retain original line
                    'lineanchors', 'dotexceptnewline', 'emptymatch');
 
   % special comments "@c doctest: cmd" are translated
   % FIXME the expression would also match @@c doctest: ...
-  re = [ '(?:@c(?:omment)?\s' ... % @c or @comment, ?: means no token
+  re = [ '(?:\@c(?:omment)?\s' ... % @c or @comment, ?: means no token
             '|#|%)\s*'        ... % or one of #,%
          '(doctest:\s*.*)' ];     % want the doctest token
   str = regexprep (str, re, '% $1', 'dotexceptnewline');
 
+  % We use eval to not produce compile errors in Matlab,
+  % the __makeinfo__ function exists in Octave only.
   [str, err] = eval('__makeinfo__ (str, ''plain text'')');
   if (err ~= 0)
     error = '__makeinfo__ returned with error code'
     return
+  end
+
+  % Normalize end of line characters again.  __makeinfo__ returns end of line
+  % characters depending on the current OS.  Since we want Unix line endings,
+  % the conversion is only required under Windows.
+  if (ispc ())
+    str = strrep (str, sprintf ('\r\n'), sprintf ('\n'));
   end
 
   % extract examples and discard everything else
@@ -295,9 +376,8 @@ function [docstring, error] = parse_texinfo(str)
 
     % remove EXAMPLE markers
     T{i} = regexprep (T{i}, ...
-                      '^\s*###### EXAMPLE ST(?:ART|OP) ######$', ...
-                      '', ...
-                      'lineanchors');
+                      '[ \t]*###### EXAMPLE ST(?:ART|OP) ######(?:\n|$)', ...
+                      '');
 
     if (regexp (T{i}, '^\s*$', 'once', 'emptymatch'))
       error = 'empty @example blocks';
@@ -305,7 +385,7 @@ function [docstring, error] = parse_texinfo(str)
     end
 
     % split into lines
-    L = strsplit (T{i}, {'\r', '\n'});
+    L = strsplit (T{i}, '\n');
 
     if (regexp (T{i}, '^\s*>>', 'once'))
       % First nonblank line starts with '>>': assume diary style.  However,

@@ -1,5 +1,20 @@
-doctest 0.4.1-dev
+doctest 0.5.0-dev
 =================
+
+  * SKIP_IF and other conditional directives can include small single-line
+    blocks of code.  For example:
+
+      - "% doctest: +SKIP_IF(foo() && bar(42))"
+
+  * Recursion into subdirectories is now the default; pass "-nonrecursive"
+    for the previous default behaviour.
+
+  * Workaround regex bug on ARM architecture.
+
+
+
+doctest 0.4.1 (2016-01-04)
+==========================
 
   * Added conditional variants of SKIP and XFAIL directives to control test
     execution based on runtime conditions:
@@ -24,6 +39,14 @@ doctest 0.4.1-dev
 
       - Allow arbitrary TexInfo macros.  The documentation is interpreted
         by makeinfo before running the code examples.
+
+      - Fixed handling of TexInfo files with Windows line endings.
+
+  * Improved folder/directory traversals:
+
+      - Ignore hidden (dot) directories.
+
+      - Ignore files that are neither m-files nor texinfo.
 
 
 

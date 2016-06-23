@@ -1,0 +1,29 @@
+@example
+>> 4
+ans =  4
+@end example
+
+@example
+>> ans
+ans =  4
+@end example
+
+@example
+>> 5                @c doctest: +SKIP
+ans =  5
+@end example
+
+@example
+>> ans
+ans =  4
+@end example
+
+@example
+>> 6                @c doctest: +XFAIL
+ans =  7
+@end example
+
+@example
+>> ans
+ans =  6
+@end example
