@@ -1,0 +1,24 @@
+No output here, this code should be skipped:
+@example
+a = 5;          @c doctest: +SKIP_BLOCKS_WO_OUTPUT
+assert(false);
+@end example
+
+@example
+  +-----------------+
+  |  ASCII ART ;-)  |      @c doctest: +SKIP_BLOCKS_WO_OUTPUT
+  +-----------------+
+@end example
+
+This one should not be skipped as it does have output
+@example
+a = 5;        @c doctest: +SKIP_BLOCKS_WO_OUTPUT
+a = 6
+@result{} a = 6
+@end example
+
+And check it was not skipped:
+@example
+a = 6
+@result{} a = 6
+@end example
