@@ -1,16 +1,12 @@
 function test_skip_wo_output_diary()
 %
-% No output here, so this code block should be skipped:
-% >> a = 5;          % doctest: +SKIP_BLOCKS_WO_OUTPUT
-% .. assert(false);
-%
-%
-% this one should still happen
-% >> a = 5;          % doctest: +SKIP_BLOCKS_WO_OUTPUT
-% .. a = 6
-% a = 6
+% No output is specified here, so this code block would likely be
+% skipped if this was texinfo.  But its not texinfo so this test
+% is expected to fail (and its a bug if it does not).
+% >> a = 5;          % doctest: +XFAIL
+% .. disp('hi')
 %
 %
 % check that previous was not skipped
 % >> a
-% a = 6
+% a = 5

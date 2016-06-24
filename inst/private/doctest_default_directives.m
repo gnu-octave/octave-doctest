@@ -7,8 +7,12 @@ function d = doctest_default_directives(varargin)
 %   See source/documentation for valid directives.
 
   defaults.normalize_whitespace = true;
-  defaults.skip_blocks_wo_output = false;
   defaults.ellipsis = true;
+  % not exposed as part of the interface: only used with texinfo
+  defaults.skip_blocks_wo_output = true;
+  % pseudo-directive: will be detected per target
+  defaults.is_texinfo = [];
+
 
   if (nargin == 0)
     d = defaults;
@@ -32,6 +36,8 @@ function d = doctest_default_directives(varargin)
       d.normalize_whitespace = enable;
     case 'SKIP_BLOCKS_WO_OUTPUT'
       d.skip_blocks_wo_output = enable;
+    case 'IS_TEXINFO'
+      d.is_texinfo = enable;
     otherwise
       error('invalid directive "%s"', directive)
   end

@@ -135,6 +135,7 @@ elseif strcmp(type, 'texinfo')
   target.link = '';
   target.depth = depth;
   [target.docstring, target.error] = parse_texinfo(fileread(what));
+  target.istexinfo = true;
   targets = [target];
 else
   target = struct();
@@ -169,6 +170,10 @@ for i=1:numel(targets)
     continue;
   end
 
+  % The pseudo-directive IS_TEXINFO is not configurable, it will be true
+  % if this target was written in texinfo.  This allows possibly
+  % different behaviour for texinfo versus diary-style tests.
+  directives = doctest_default_directives(directives, 'IS_TEXINFO', target.istexinfo);
   % run doctest
   results = doctest_run(target.docstring, directives);
 
@@ -224,7 +229,7 @@ function target = collect_targets_function(what)
   else
     target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
   end
-  [target.docstring, target.error] = extract_docstring(target.name);
+  [target.docstring, target.error, target.istexinfo] = extract_docstring(target.name);
 end
 
 
@@ -243,7 +248,7 @@ function targets = collect_targets_class(what, depth)
     target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
   end
   target.depth = depth;
-  [target.docstring, target.error] = extract_docstring(target.name);
+  [target.docstring, target.error, target.istexinfo] = extract_docstring(target.name);
   targets = target;
 
   % Next, add targets for all class methods
@@ -258,17 +263,19 @@ function targets = collect_targets_class(what, depth)
       target.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', which(what), meths{i}, target.name);
     end
     target.depth = depth;
-    [target.docstring, target.error] = extract_docstring(target.name);
+    [target.docstring, target.error, target.istexinfo] = extract_docstring(target.name);
     targets = [targets; target];
   end
 end
 
 
-function [docstring, error] = extract_docstring(name)
+function [docstring, error, istexinfo] = extract_docstring(name)
+  istexinfo = false;
   if is_octave()
     [docstring, format] = get_help_text(name);
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);
+      istexinfo = true;
     elseif strcmp(format, 'plain text')
       error = '';
     elseif strcmp(format, 'Not documented')
