@@ -10,8 +10,9 @@ function d = doctest_default_directives(varargin)
   defaults.ellipsis = true;
   % not exposed as part of the interface: only used with texinfo
   defaults.skip_blocks_wo_output = true;
-  % pseudo-directive: will be detected per target
+  % pseudo-directives: will be detected per target
   defaults.is_texinfo = [];
+  defaults.is_diary = [];
 
 
   if (nargin == 0)
@@ -38,6 +39,8 @@ function d = doctest_default_directives(varargin)
       d.skip_blocks_wo_output = enable;
     case 'IS_TEXINFO'
       d.is_texinfo = enable;
+    case 'IS_DIARY'
+      d.is_diary = enable;
     otherwise
       error('invalid directive "%s"', directive)
   end

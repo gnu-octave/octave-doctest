@@ -1,0 +1,19 @@
+This file has diary-style within texinfo.  Potential bugs here because
+of SKIP_BLOCKS_WO_OUTPUT.  First, a block with no specified output: it
+should fail because it does have output:
+@example
+>> a = 5;
+>> disp('hi');     % doctest: +XFAIL
+@end example
+
+@example
+>> a
+a = 5
+@end example
+
+Next, the first command below should not invoke SKIP_BLOCKS_WO_OUTPUT.
+@example
+>> x = 5;
+>> y = x + 1
+y = 6
+@end example

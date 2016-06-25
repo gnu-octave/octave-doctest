@@ -46,6 +46,7 @@ for i=1:length(test_matches)
   tests(i).skip_blocks_wo_output = defaults.skip_blocks_wo_output;
   tests(i).ellipsis = defaults.ellipsis;
   tests(i).is_texinfo = defaults.is_texinfo;
+  tests(i).is_diary = defaults.is_diary;
   tests(i).skip = {};
   tests(i).xfail = {};
 
@@ -137,7 +138,7 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
   % Texinfo blocks with no output are often used (erroneously or at least
   % non-semantically) in Octave for ascii art, diagrams, mathematics, etc.
   % So by default we skip those blocks.
-  if (DOCTEST__result.is_texinfo && DOCTEST__result.skip_blocks_wo_output && isempty(DOCTEST__result.want))
+  if (DOCTEST__result.is_texinfo && (~ DOCTEST__result.is_diary) && DOCTEST__result.skip_blocks_wo_output && isempty(DOCTEST__result.want))
     continue
   end
 
