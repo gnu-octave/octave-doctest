@@ -197,17 +197,28 @@
 %% expected output by searching for the next @code{>>} or two blank lines.
 %%
 %% @strong{Octave/Texinfo Style}
-%% If your m-file contains Texinfo markup, then doctest finds code inside
-%% @code{@@example @dots{} @@end example} blocks.  Some comments:
+%% If your m-file contains Texinfo markup, then doctest finds code in
+%% @code{@@example @dots{} @@end example} blocks.  Note:
 %% @itemize
 %% @item The two-blank-lines convention is not required.
-%% @item The use of @code{>>} is not required as Octave documentation
-%%       conventionally indicates output with @code{@@print} and
-%%       @code{@@result}.  Ambiguities are resolving by assuming output
+%% @item The use of @code{>>} is neither required nor recommended as Octave
+%%       documentation conventionally indicates output with @code{@@result@{@}}
+%%       and @code{@@print@{@}}.  Ambiguities are resolving by assuming output
 %%       is indented further than input.
-%% @item You are free to use diary-style doctests inside
-%%       @code{@@example} blocks.
 %% @end itemize
+%%
+%% A typical Texinfo-style doctest looks like:
+%% @example
+%% a = 5;
+%% b = a + 1
+%%   @result{} b = 6
+%% disp("hello\nthere")
+%%   @print{} hello
+%%   @print{} there
+%% @end example
+%%
+%% The two styles are not mutually exclusive: this documentation is written
+%% in Texinfo using a hybrid approach.
 %%
 %% @seealso{test}
 %% @end deftypefn
