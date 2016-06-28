@@ -134,8 +134,7 @@ elseif strcmp(type, 'texinfo')
   target.name = what;
   target.link = '';
   target.depth = depth;
-  [target.docstring, target.error, target.isdiary] = parse_texinfo(fileread(what));
-  target.istexinfo = true;
+  [target.docstring, target.error] = parse_texinfo(fileread(what));
   targets = [target];
 else
   target = struct();
@@ -170,9 +169,6 @@ for i=1:numel(targets)
     continue;
   end
 
-  % non-configurable pseudo-directives: set based on the target
-  directives = doctest_default_directives(directives, 'IS_TEXINFO', target.istexinfo);
-  directives = doctest_default_directives(directives, 'IS_DIARY', target.isdiary);
   % run doctest
   results = doctest_run(target.docstring, directives);
 
@@ -228,8 +224,7 @@ function target = collect_targets_function(what)
   else
     target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
   end
-  [target.docstring, target.error, target.istexinfo, target.isdiary] = ...
-      extract_docstring(target.name);
+  [target.docstring, target.error] = extract_docstring(target.name);
 end
 
 
@@ -248,8 +243,7 @@ function targets = collect_targets_class(what, depth)
     target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
   end
   target.depth = depth;
-  [target.docstring, target.error, target.istexinfo, target.isdiary] = ...
-      extract_docstring(target.name);
+  [target.docstring, target.error] = extract_docstring(target.name);
   targets = target;
 
   % Next, add targets for all class methods
@@ -264,21 +258,17 @@ function targets = collect_targets_class(what, depth)
       target.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', which(what), meths{i}, target.name);
     end
     target.depth = depth;
-    [target.docstring, target.error, target.istexinfo, target.isdiary] = ...
-        extract_docstring(target.name);
+    [target.docstring, target.error] = extract_docstring(target.name);
     targets = [targets; target];
   end
 end
 
 
-function [docstring, error, istexinfo, isdiary] = extract_docstring(name)
-  istexinfo = false;
-  isdiary = true;
+function [docstring, error] = extract_docstring(name)
   if is_octave()
     [docstring, format] = get_help_text(name);
     if strcmp(format, 'texinfo')
-      [docstring, error, isdiary] = parse_texinfo(docstring);
-      istexinfo = true;
+      [docstring, error] = parse_texinfo(docstring);
     elseif strcmp(format, 'plain text')
       error = '';
     elseif strcmp(format, 'Not documented')
@@ -305,11 +295,9 @@ function [docstring, error, istexinfo, isdiary] = extract_docstring(name)
 end
 
 
-function [docstring, error, isdiary] = parse_texinfo(str)
+function [docstring, error] = parse_texinfo(str)
   docstring = '';
   error = '';
-  % texinfo could have diary-style, and that might be useful to know
-  isdiary = false;
 
   % no example blocks? not an error, but nothing to do
   if (isempty(strfind(str, '@example')))
@@ -402,7 +390,6 @@ function [docstring, error, isdiary] = parse_texinfo(str)
       L = strsplit (T{i}, '\n');
       L = regexprep (L, '^(\s*)(?:⇒|=>|⊣|-\|)', '$1', 'once', 'lineanchors');
       T{i} = strjoin (L, '\n');
-      isdiary = true;
       continue
     end
 
