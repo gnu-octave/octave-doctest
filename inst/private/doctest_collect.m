@@ -408,6 +408,16 @@ function [docstring, error, isdiary] = parse_texinfo(str)
       continue
     end
 
+
+    % Hack: the @example block is commonly mis-used to store non-examples such as
+    % diagrams or math.  Delete an example block that has no indicated output.
+    % (Hard to leave for "later" as we don't keep track of @example blocks.)
+    R1 = regexp (T{i}, '^\s*(⇒|=>|⊣|-\|)');
+    if (isempty(R1))
+      T{i} = '';
+      continue
+    end
+
     % Categorize input and output lines in the example using
     % @result and @print macros.  Everything else, including comment lines and
     % empty lines, is categorized as input (for now).
