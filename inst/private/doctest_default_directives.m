@@ -8,8 +8,6 @@ function d = doctest_default_directives(varargin)
 
   defaults.normalize_whitespace = true;
   defaults.ellipsis = true;
-  % not exposed as part of the interface: only used with texinfo
-  defaults.skip_blocks_wo_output = true;
   % pseudo-directives: will be detected per target
   defaults.is_texinfo = [];
   defaults.is_diary = [];
@@ -35,8 +33,6 @@ function d = doctest_default_directives(varargin)
       d.ellipsis = enable;
     case 'NORMALIZE_WHITESPACE'
       d.normalize_whitespace = enable;
-    case 'SKIP_BLOCKS_WO_OUTPUT'
-      d.skip_blocks_wo_output = enable;
     case 'IS_TEXINFO'
       d.is_texinfo = enable;
     case 'IS_DIARY'
