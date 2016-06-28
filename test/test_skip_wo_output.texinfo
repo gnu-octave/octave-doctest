@@ -38,21 +38,19 @@ for diagrams, etc.  Then patch doctest to remove this ``feature''.
 Done all that?  No?  Fine, well because we like you, there is
 a secret directive for you.  It could disappear without notice
 in any future versions (we don't like you @strong{that} much).
-Try this:
+Try these:
+@example
+@comment doctest: -SKIP_BLOCKS_WO_OUTPUT
+a = 5;
+@end example
+
 @example
 @comment doctest: +XFAIL
 @comment doctest: -SKIP_BLOCKS_WO_OUTPUT
-a = 5;
+b = 6;
 disp('do not skip me bro')
 @end example
-
-Or:
-@example
-@comment doctest: +XFAIL
-b = 6;           # doctest: -SKIP_BLOCKS_WO_OUTPUT
-disp('do not skip me bro')
-@end example
-(note those tests fail because they @strong{do} produce output).
+(note this test fails because it @strong{does} produce output).
 
 And indeed they were not skipped:
 @example
