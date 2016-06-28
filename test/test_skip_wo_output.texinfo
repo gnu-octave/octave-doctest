@@ -40,13 +40,13 @@ a secret directive for you.  It could disappear without notice
 in any future versions (we don't like you @strong{that} much).
 Try these:
 @example
-@comment doctest: -SKIP_BLOCKS_WO_OUTPUT
+@comment doctest: -TEXINFO_SKIP_BLOCKS_WO_OUTPUT
 a = 5;
 @end example
 
 @example
 @comment doctest: +XFAIL
-@comment doctest: -SKIP_BLOCKS_WO_OUTPUT
+@comment doctest: -TEXINFO_SKIP_BLOCKS_WO_OUTPUT
 b = 6;
 disp('do not skip me bro')
 @end example

@@ -1,5 +1,5 @@
 This file has diary-style within texinfo.  Potential bugs here because
-of SKIP_BLOCKS_WO_OUTPUT.  First, a block with no specified output: it
+of the empty block skipping feature.  First, a block with no specified output: it
 should fail because it does have output:
 @example
 >> a = 5;
@@ -11,7 +11,7 @@ should fail because it does have output:
 a = 5
 @end example
 
-Next, the first command below should not invoke SKIP_BLOCKS_WO_OUTPUT.
+The first command below should not invoke skipping:
 @example
 >> x = 5;
 >> y = x + 1

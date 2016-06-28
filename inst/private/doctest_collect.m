@@ -398,8 +398,8 @@ function [docstring, error] = parse_texinfo(str)
     % diagrams or math.  Delete an example block that has no indicated output.
     % (Hard to leave for "later" as we don't keep track of @example blocks.)
     R1 = regexp (T{i}, '^\s*(⇒|=>|⊣|-\|)', 'lineanchors');
-    R2 = regexp (T{i}, '(doctest:\s+-SKIP_BLOCKS_WO_OUTPUT)');
-    T{i} = regexprep (T{i}, '(doctest:\s+-SKIP_BLOCKS_WO_OUTPUT)', '');
+    R2 = regexp (T{i}, '(doctest:\s+-TEXINFO_SKIP_BLOCKS_WO_OUTPUT)');
+    T{i} = regexprep (T{i}, '(doctest:\s+-TEXINFO_SKIP_BLOCKS_WO_OUTPUT)', '');
     if (isempty (R1) && isempty (R2))
       T{i} = '';
       continue
