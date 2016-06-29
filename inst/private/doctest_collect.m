@@ -384,16 +384,29 @@ function [docstring, error] = parse_texinfo(str)
       return
     end
 
-    % split into lines
-    L = strsplit (T{i}, '\n');
-
     if (regexp (T{i}, '^\s*>>', 'once'))
       % First nonblank line starts with '>>': assume diary style.  However,
       % we strip @result and @print macros (TODO: perhaps unwisely?)
+      L = strsplit (T{i}, '\n');
       L = regexprep (L, '^(\s*)(?:⇒|=>|⊣|-\|)', '$1', 'once', 'lineanchors');
       T{i} = strjoin (L, '\n');
       continue
     end
+
+
+    % Hack: the @example block is commonly mis-used to store non-examples such as
+    % diagrams or math.  Delete an example block that has no indicated output.
+    % (Hard to leave for "later" as we don't keep track of @example blocks.)
+    R1 = regexp (T{i}, '^\s*(⇒|=>|⊣|-\|)', 'lineanchors');
+    R2 = regexp (T{i}, '(doctest:\s+-TEXINFO_SKIP_BLOCKS_WO_OUTPUT)');
+    T{i} = regexprep (T{i}, '(doctest:\s+-TEXINFO_SKIP_BLOCKS_WO_OUTPUT)', '');
+    if (isempty (R1) && isempty (R2))
+      T{i} = '';
+      continue
+    end
+
+    % split into lines
+    L = strsplit (T{i}, '\n');
 
     % Categorize input and output lines in the example using
     % @result and @print macros.  Everything else, including comment lines and
