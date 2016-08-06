@@ -32,7 +32,8 @@ end
 
 want_re = regexptranslate('escape', want);
 if ellipsis
-  want_re = regexprep(want_re, '(\\\.){3}', '.*');
+  % replace "..." and any adjacent whitespace with ".*"
+  want_re = regexprep(want_re, '\s*(\\\.){3}\s*', '.*');
 end
 
 % allow "ans = " to be missing
