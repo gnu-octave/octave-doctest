@@ -1,10 +1,13 @@
 function match = doctest_compare(want, got, normalize_whitespace, ellipsis)
-% Matches two strings together.  They should be identical, except:
+%DOCTEST_COMPARE check if two strings match
 %
+%   Returns true if string GOT matches the template string WANT.  Basically
+%   WANT and GOT should be identical, except:
+%
+%   * whitespace at the start/end of each line is trimmed;
 %   * multiple spaces are collapsed (if NORMALIZE_WHITESPACE is true);
-%   * the first one can contain '...', which matches anything in the
-%     second (if ELLIPSIS is true);
-%   * they might match after putting "ans = " on the first;
+%   * WANT can have "..."; matches anything in GOT (if ELLIPSIS is true);
+%   * WANT can omit "ans = ";
 %   * various other nonsense of unknown current relevance.
 %
 
@@ -16,33 +19,38 @@ got = regexprep(got, '</a>', '');
 % WHY do they need backspaces?  huh.
 got = regexprep(got, '.\x08', '');
 
-% collapse multiple spaces to one
-if normalize_whitespace
-    want = strtrim(regexprep(want, '\s+', ' '));
-    got = strtrim(regexprep(got, '\s+', ' '));
-else
-    want = strtrim(strtrim_lines_discard_empties(want));
-    got = strtrim(strtrim_lines_discard_empties(got));
-end
+  want = strtrim(want);
+  got = strtrim(got);
 
-if isempty(got) && (isempty(want) || (ellipsis && strcmp(want, '...')))
+  if (isempty(got) && (isempty(want) || (ellipsis && strcmp(want, '...'))))
     match = 1;
     return
-end
+  end
 
-want_re = regexptranslate('escape', want);
-if ellipsis
-  % replace "..." and any adjacent whitespace with ".*"
-  want_re = regexprep(want_re, '\s*(\\\.){3}\s*', '.*');
-end
+  want = regexptranslate('escape', want);
+  if normalize_whitespace
+    % collapse multiple spaces, then have each match many
+    if is_octave && compare_versions (OCTAVE_VERSION, '4.1', '<')
+      want = regexprep(want, '\s+', '\s+');
+    else
+      want = regexprep(want, '\s+', '\\s\+');
+    end
+  else
+    want = strtrim_lines_discard_empties(want);
+    got = strtrim_lines_discard_empties(got);
+  end
 
-% allow "ans = " to be missing
-want_re = ['^(ans\s*=\s*)?' want_re '$'];
+  if ellipsis
+    want = regexprep(want, '(\\\.){3}', '.*');
+  end
+
+  % allow "ans = " to be missing
+  want = ['^(ans\s*=\s*)?' want '$'];
 
 
-result = regexp(got, want_re, 'once');
+  result = regexp(got, want, 'once');
 
-match = ~ isempty(result);
+  match = ~ isempty(result);
 
 end
 
