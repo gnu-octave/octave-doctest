@@ -6,7 +6,9 @@ language: generic
 
 env:
 - OCT_PPA=octave/stable
-- OCT_PPA=dac922/octave-unstable
+
+# not on trusty: http://ppa.launchpad.net/dac922/octave-unstable/ubuntu/pool/main/o/octave/
+#- OCT_PPA=dac922/octave-unstable
 
 install:
   - export
