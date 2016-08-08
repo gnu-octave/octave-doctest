@@ -4,16 +4,9 @@ dist: trusty
 # travis-ci does not have first-class support for octave
 language: generic
 
-matrix:
-  include:
-    - env: OCT_PPA=
-      addons:
-        apt:
-          packages:
-            - octave
-            - liboctave-dev
-    - env: OCT_PPA=octave/octave-stable
-    - env: OCT_PPA=dac922/octave-unstable
+env:
+- OCT_PPA=octave/octave-stable
+- OCT_PPA=dac922/octave-unstable
 
 install:
   - export
