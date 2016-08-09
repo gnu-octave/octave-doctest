@@ -342,7 +342,7 @@ function [docstring, error] = parse_texinfo(str)
   % the __makeinfo__ function exists in Octave only.
   [str, err] = eval('__makeinfo__ (str, ''plain text'')');
   if (err ~= 0)
-    error = '__makeinfo__ returned with error code'
+    error = sprintf('__makeinfo__ returned error code %d', err);
     return
   end
 
