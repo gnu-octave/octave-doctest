@@ -11,6 +11,8 @@ doctest 0.5.0-dev
 
   * Workaround regex bug on ARM architecture.
 
+  * Minimum supported Octave version is now 4.0.0.
+
 
 
 doctest 0.4.1 (2016-01-04)
