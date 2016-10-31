@@ -1,5 +1,5 @@
 %% Copyright (c) 2010 Thomas Grenfell Smith
-%% Copyright (c) 2011, 2013-2015 Michael Walter
+%% Copyright (c) 2011, 2013-2016 Michael Walter
 %% Copyright (c) 2015-2016 Colin B. Macdonald
 %%
 %% Redistribution and use in source and binary forms, with or without
