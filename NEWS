@@ -9,6 +9,10 @@ doctest 0.5.0-dev
   * Recursion into subdirectories is now the default; pass "-nonrecursive"
     for the previous default behaviour.
 
+  * In Texinfo mode, skip tests without output by default.  This is an
+    experimental change to help test the GNU Octave project; the feature
+    might disappear without warning in a future version.
+
   * Workaround regex bug on ARM architecture.
 
   * Minimum supported Octave version is now 4.0.0.
