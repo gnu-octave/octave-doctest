@@ -285,7 +285,7 @@ function [docstring, error] = extract_docstring(name)
       end
     else
       format
-      warning('Unexpected format in that file/function');
+      warning('Doctest:unexpected-format', 'Unexpected format in that file/function');
       error = '';
     end
   else
