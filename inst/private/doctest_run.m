@@ -82,7 +82,7 @@ for i=1:length(test_matches)
     elseif strcmp('+XFAIL_UNLESS', directive)
       tests(i).xfail{end + 1} = sprintf('~(%s)', condition);
     else
-      error('doctest: unexpected directive %s', directive);
+      warning('Doctest:unexpected-directive', 'doctest: ignoring unexpected directive %s', directive);
     end
   end
 end
