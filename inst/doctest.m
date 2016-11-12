@@ -257,7 +257,10 @@ for i = 1:(nargin-1)
       recursive = false;
     otherwise
       assert(strcmp(pm, '+') || strcmp(pm, '-'))
-      warning('Support for specifying directives on the command line is deprecated and will be removed in a future version (see https://github.com/catch22/octave-doctest/issues/127 for discussion).');
+      warning('Doctest:deprecated', ...
+              ['Support for specifying directives on the command line is deprecated\n' ...
+               '         and will be removed in a future version (for discussion, see\n' ...
+               '         https://github.com/catch22/octave-doctest/issues/127).']);
       enable = strcmp(varargin{i}(1), '+');
       directives = doctest_default_directives(directives, directive, enable);
   end
