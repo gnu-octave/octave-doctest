@@ -1,5 +1,5 @@
-doctest 0.5.0-dev
-=================
+doctest 0.5.0 (2016-11-13)
+==========================
 
   * SKIP_IF and other conditional directives can include small single-line
     blocks of code.  For example:
