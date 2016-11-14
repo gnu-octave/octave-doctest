@@ -16,10 +16,10 @@ function test_xfail_if_code()
 %
 %
 % This test succeeds and should not fail:
-% >> a    % doctest: +XFAIL_IF(str2num("17") > 20)
+% >> a    % doctest: +XFAIL_IF(str2num('17') > 20)
 % a = 5
 %
 %
 % There can be a space before the parenthesis
-% >> a    % doctest: +XFAIL_IF (str2num("17") > 20)
+% >> a    % doctest: +XFAIL_IF (str2num('17') > 20)
 % a = 5

@@ -51,9 +51,9 @@ for i=1:length(test_matches)
   re = [ ...
     '[#%]\s*doctest:\s+' ... % e.g., "# doctest: "
     '([\+\-]\w+)'        ... % token for cmd, e.g., "+XSKIP_IF"
-    '(?:\s*\('           ... % open paren for code
-      '([^#%\n]+)'       ... % token for code, no newlines no comments
-    '\))?'];                 % close paren of code, at most one of these
+    '(\s*\('             ... % token for code, starting with "("
+      '[^#%\n]+'         ... % no newlines, no comments in code
+    '\))?'];                 % ")" of code, at most one code arg
   directive_matches = regexp(tests(i).source, re, 'tokens');
   for j = 1:length(directive_matches)
     directive = directive_matches{j}{1};
