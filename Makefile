@@ -19,7 +19,7 @@ MATLAB ?= matlab
 TEST_CODE=success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
 
 
-.PHONY: help clean install test test-interactive matlab_test matlab_pkg octave_pkg octave_html
+.PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
 
 help:
 	@echo Available rules:
@@ -27,10 +27,10 @@ help:
 	@echo "  install            install package in Octave"
 	@echo "  test               run tests with Octave"
 	@echo "  test-interactive   run tests with Octave in interactive mode"
+	@echo "  dist               create Octave package (${OCTAVE_RELEASE_TARBALL_COMPRESSED})"
+	@echo "  html               create Octave Forge html (${HTML_TARBALL_COMPRESSED})"
 	@echo "  matlab_test        run tests with Matlab"
-	@echo "  matlab_pkg         create Matlab package (${MATLAB_PKG_DIR}.zip)"
-	@echo "  octave_pkg         create Octave package (${OCTAVE_RELEASE_TARBALL_COMPRESSED})"
-	@echo "  octave_html        create Octave Forge website"
+	@echo "  matlab_pkg         create Matlab package (${BUILD_DIR}/${MATLAB_PKG_DIR}.zip)"
 
 
 ${BUILD_DIR} ${BUILD_DIR}/${MATLAB_PKG_DIR}/private:
