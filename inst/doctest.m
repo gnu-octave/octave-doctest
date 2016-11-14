@@ -273,7 +273,7 @@ fid = 1;
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
 
 % print banner
-fprintf(fid, 'Doctest v0.5.0: this is Free Software without warranty, see source.\n\n');
+fprintf(fid, 'Doctest v0.5.1-dev: this is Free Software without warranty, see source.\n\n');
 
 
 summary = struct();
