@@ -170,7 +170,7 @@ for i=1:numel(targets)
   end
 
   % run doctest
-  results = doctest_docstring(target.docstring, directives);
+  results = doctest_run_docstring(target.docstring, directives);
 
   % determine number of tests passed
   num_tests = numel(results);

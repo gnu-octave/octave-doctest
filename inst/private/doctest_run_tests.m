@@ -1,8 +1,8 @@
-function DOCTEST__results = doctest_runtests(DOCTEST__tests)
-%DOCTEST_RUNTESTS - used internally by doctest
+function DOCTEST__results = doctest_run_tests(DOCTEST__tests)
+%DOCTEST_RUN_TESTS - used internally by doctest
 %
 % Usage:
-%   doctest_runtests(tests)
+%   doctest_run_tests(tests)
 %       Carefully evaluate each test in the "tests" structure in
 %       a common newly-created clean namespace (specifically, this
 %       functions workspace).
@@ -12,7 +12,7 @@ function DOCTEST__results = doctest_runtests(DOCTEST__tests)
 % other flags such as "tests.xfail" and "tests.ellipsis" effect how
 % the test is run and how the test output is compared.
 %
-% The return value is documented in "doctest_docstring".
+% The return value is documented in "doctest_run_docstring".
 
 % Implementation note: all variables should start with
 % "DOCTEST__" as these will be available to the tests.

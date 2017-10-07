@@ -1,8 +1,8 @@
-function results = doctest_docstring(docstring, defaults)
-%DOCTEST_DOCSTRING - used internally by doctest
+function results = doctest_run_docstring(docstring, defaults)
+%DOCTEST_RUN_DOCSTRING - used internally by doctest
 %
 % Usage:
-%   doctest_docstring(docstring)
+%   doctest_run_docstring(docstring)
 %       Extract all the examples in the input docstring into a
 %       structure.  Process various flags and directives that
 %       about each test.  Run the tests in a common namespace.
@@ -88,6 +88,6 @@ for i=1:length(test_matches)
   end
 end
 
-results = doctest_runtests(tests);
+results = doctest_run_tests(tests);
 
 end
