@@ -5,6 +5,8 @@ function test_clear()
 % >> clear a
 % >> b
 % b =  7
+% >> a
+% ??? ...ndefined ...
 %
 %
 % Harder:
