@@ -24,14 +24,14 @@ end
 
 DOCTEST__datastore('set_all', DOCTEST__tests)
 
-% define test-global constants (these are accessible by the tests)
-DOCTEST_OCTAVE = is_octave();
-DOCTEST_MATLAB = ~DOCTEST_OCTAVE;
-
 for DOCTEST__i = 1:numel(DOCTEST__tests)
   %DOCTEST__result = DOCTEST__tests(DOCTEST__i);
   DOCTEST__datastore('init_i', DOCTEST__i)
   DOCTEST__result = DOCTEST__datastore('get_ith');
+
+  % define test-global constants (these are accessible by the tests)
+  DOCTEST_OCTAVE = is_octave();
+  DOCTEST_MATLAB = ~DOCTEST_OCTAVE;
 
   % determine whether test should be skipped
   % (careful about Octave bug #46397 to not change the current value of “ans”)
