@@ -17,6 +17,14 @@ function DOCTEST__results = doctest_run_tests(DOCTEST__tests)
 % Implementation note: all variables should start with
 % "DOCTEST__" as these will be available to the tests.
 
+  % Call subfcns at least once, workaround for test doing early "clear all"
+  DOCTEST__join_conditions([]);
+  try
+    error('meh')
+  catch ex
+  end
+  DOCTEST__format_exception(ex);
+
 % do not split long rows (TODO: how to do this on MATLAB?)
 if is_octave()
   split_long_rows(0, 'local')
