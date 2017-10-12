@@ -1,13 +1,19 @@
 function summary = doctest_collect(what, directives, summary, recursive, depth, fid)
-% Find and run doctests.
+%DOCTEST_COLLECT  Find and run doctests.
 %
-% The parameter WHAT is the name of a class, directory, function or filename:
+%   The parameter WHAT is the name of a class, directory, function or filename:
 %   * For a directory, calls itself on the contents, recursively if
 %     RECURSIVE is true;
 %   * For a class, all methods are tested;
 %   * When running Octave, it can also be the filename of a Texinfo file.
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+% Copyright (c) 2010 Thomas Grenfell Smith
+% Copyright (c) 2015 Michael Walter
+% Copyright (c) 2015-2017 Colin B. Macdonald
+% Copyright (c) 2015 Oliver Heimlich
+% This is Free Software, BSD-3-Clause, see doctest.m for details.
+
 
 % TODO: methods('logical') octave/matlab differ: which behaviour do we want?
 % TODO: what about builtin "test" versus dir "test/"?  Do we prefer dir?

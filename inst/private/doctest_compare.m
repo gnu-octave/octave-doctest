@@ -1,5 +1,5 @@
 function match = doctest_compare(want, got, normalize_whitespace, ellipsis)
-%DOCTEST_COMPARE check if two strings match
+%DOCTEST_COMPARE  Check if two strings match.
 %
 %   Returns true if string GOT matches the template string WANT.  Basically
 %   WANT and GOT should be identical, except:
@@ -9,7 +9,13 @@ function match = doctest_compare(want, got, normalize_whitespace, ellipsis)
 %   * WANT can have "..."; matches anything in GOT (if ELLIPSIS is true);
 %   * WANT can omit "ans = ";
 %   * various other nonsense of unknown current relevance.
-%
+
+%%
+% Copyright (c) 2010 Thomas Grenfell Smith
+% Copyright (c) 2015 Michael Walter
+% Copyright (c) 2015-2016 Colin B. Macdonald
+% This is Free Software, BSD-3-Clause, see doctest.m for details.
+
 
 % This looks bad, like hardcoding for lower-case "a href"
 % and a double quote... but that's what MATLAB looks for too.
