@@ -1,6 +1,10 @@
 doctest 0.5.1-dev
 =================
 
+  * Tests can now call "clear" and "clear all".
+
+  * Fix for running on Octave development versions (upcoming 4.4.0).
+
 
 
 doctest 0.5.0 (2016-11-13)

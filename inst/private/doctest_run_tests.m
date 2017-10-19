@@ -14,80 +14,78 @@ function DOCTEST__results = doctest_run_tests(DOCTEST__tests)
 %
 % The return value is documented in "doctest_run_docstring".
 
-% Implementation note: all variables should start with
-% "DOCTEST__" as these will be available to the tests.
+% Implementation note: all internal variables should start with
+% "DOCTEST__" as (1) these will necessarily be exposed to the tests
+% and (2) should not overwrite variables used by ongoing tests.
 
 % do not split long rows (TODO: how to do this on MATLAB?)
 if is_octave()
-  split_long_rows(0, 'local')
+  split_long_rows(0, 'local');
 end
 
-% define test-global constants (these are accessible by the tests)
-DOCTEST_OCTAVE = is_octave();
-DOCTEST_MATLAB = ~DOCTEST_OCTAVE;
+% initialize data store (used to preserve state across iterations
+% in the presence of "clear" and "clear all"s in tests)
+doctest_datastore('set_tests', DOCTEST__tests);
 
-DOCTEST__results = [];
 for DOCTEST__i = 1:numel(DOCTEST__tests)
-  DOCTEST__result = DOCTEST__tests(DOCTEST__i);
+  % from the second iteration on, the only local variable that we can
+  % rely on being present is DOCTEST__i
+  doctest_datastore('set_current_index', DOCTEST__i);
+  DOCTEST__current_test = doctest_datastore('get_current_test');
+
+  % define test-global constants (these are accessible by the tests)
+  DOCTEST_OCTAVE = is_octave();
+  DOCTEST_MATLAB = ~DOCTEST_OCTAVE;
 
   % determine whether test should be skipped
   % (careful about Octave bug #46397 to not change the current value of “ans”)
-  eval (strcat ('DOCTEST__result.skip = ', ...
-                 DOCTEST__join_conditions (DOCTEST__result.skip), ...
+  eval (strcat ('DOCTEST__current_test.skip = ', ...
+                 doctest_join_conditions(DOCTEST__current_test.skip), ...
                 ';'));
-  if (DOCTEST__result.skip)
+  if (DOCTEST__current_test.skip)
+     doctest_datastore('set_current_test', DOCTEST__current_test);
      continue
   end
 
   % determine whether test is expected to fail
   % (careful about Octave bug #46397 to not change the current value of “ans”)
-  eval (strcat ('DOCTEST__result.xfail = ', ...
-                 DOCTEST__join_conditions (DOCTEST__result.xfail), ...
+  eval (strcat ('DOCTEST__current_test.xfail = ', ...
+                 doctest_join_conditions(DOCTEST__current_test.xfail), ...
                 ';'));
+  doctest_datastore('set_current_test', DOCTEST__current_test);
 
-  % evaluate input (structure adapted from a StackOverflow answer by user Amro, see http://stackoverflow.com/questions/3283586 and http://stackoverflow.com/users/97160/amro)
+  % run the test code
   try
-    DOCTEST__result.got = evalc(DOCTEST__result.source);
+    DOCTEST__got = evalc(DOCTEST__current_test.source);
   catch DOCTEST__exception
-    DOCTEST__result.got = DOCTEST__format_exception(DOCTEST__exception);
+    DOCTEST__got = doctest_format_exception(DOCTEST__exception);
   end
+
+  % at this point, we can only rely on the DOCTEST__got variable
+  % being available
+  DOCTEST__current_test = doctest_datastore('get_current_test');
+  DOCTEST__current_test.got = DOCTEST__got;
 
   % determine if test has passed
-  DOCTEST__result.passed = doctest_compare(DOCTEST__result.want, DOCTEST__result.got, DOCTEST__result.normalize_whitespace, DOCTEST__result.ellipsis);
-  if DOCTEST__result.xfail
-    DOCTEST__result.passed = ~DOCTEST__result.passed;
+  DOCTEST__current_test.passed = doctest_compare(DOCTEST__current_test.want, DOCTEST__current_test.got, DOCTEST__current_test.normalize_whitespace, DOCTEST__current_test.ellipsis);
+  if DOCTEST__current_test.xfail
+    DOCTEST__current_test.passed = ~DOCTEST__current_test.passed;
   end
 
-  DOCTEST__results = [DOCTEST__results; DOCTEST__result];
+  doctest_datastore('set_current_test', DOCTEST__current_test);
 end
 
-end
+% retrieve all tests from data store
+tests = doctest_datastore('get_tests');
+doctest_datastore('clear_and_munlock');
 
-
-function formatted = DOCTEST__format_exception(ex)
-
-  if is_octave()
-    formatted = ['??? ' ex.message];
-    return
-  end
-
-  if strcmp(ex.stack(1).name, 'doctest_run_tests')
-    % we don't want the report, we just want the message
-    % otherwise it'll talk about evalc, which is not what the user got on
-    % the command line.
-    formatted = ['??? ' ex.message];
-  else
-    formatted = ['??? ' ex.getReport('basic')];
+% unwrap from cell-array, discarding skips
+%DOCTEST__results = cell2mat(tests);  % fails b/c they have different fields
+DOCTEST__results = [];
+for j=1:numel(tests)
+  if ~any(tests{j}.skip)
+    DOCTEST__results = [DOCTEST__results tests{j}];
   end
 end
 
-
-% given a cell array of conditions (represented as strings to be eval'ed),
-% return the string that corresponds to their logical "or".
-function result = DOCTEST__join_conditions(conditions)
-  if isempty(conditions)
-    result = 'false';
-  else
-    result = strcat('(', strjoin(conditions, ') || ('), ')');
-  end
 end

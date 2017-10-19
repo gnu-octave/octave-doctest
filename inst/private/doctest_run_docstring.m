@@ -2,7 +2,7 @@ function results = doctest_run_docstring(docstring, defaults)
 %DOCTEST_RUN_DOCSTRING - used internally by doctest
 %
 % Usage:
-%   doctest_run_docstring(docstring)
+%   doctest_run_docstring(docstring, defaults)
 %       Extract all the examples in the input docstring into a
 %       structure.  Process various flags and directives that
 %       about each test.  Run the tests in a common namespace.
