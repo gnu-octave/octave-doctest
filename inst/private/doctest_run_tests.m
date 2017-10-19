@@ -14,27 +14,21 @@ function DOCTEST__results = doctest_run_tests(DOCTEST__tests)
 %
 % The return value is documented in "doctest_run_docstring".
 
-% Implementation note: all variables should start with
+% Implementation note: all internal variables should start with
 % "DOCTEST__" as these will be available to the tests.
-
-  % Call subfcns at least once, workaround for test doing early "clear all"
-  DOCTEST__join_conditions([]);
-  try
-    error('meh')
-  catch ex
-  end
-  DOCTEST__format_exception(ex);
 
 % do not split long rows (TODO: how to do this on MATLAB?)
 if is_octave()
-  split_long_rows(0, 'local')
+  split_long_rows(0, 'local');
 end
 
-DOCTEST__datastore('set_all', DOCTEST__tests)
+% initialize data store
+mlock();
+DOCTEST__datastore('set_all', DOCTEST__tests);
 
 for DOCTEST__i = 1:numel(DOCTEST__tests)
   %DOCTEST__result = DOCTEST__tests(DOCTEST__i);
-  DOCTEST__datastore('init_i', DOCTEST__i)
+  DOCTEST__datastore('init_i', DOCTEST__i);
   DOCTEST__result = DOCTEST__datastore('get_ith');
 
   % define test-global constants (these are accessible by the tests)
@@ -63,6 +57,7 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
   catch DOCTEST__exception
     DOCTEST__got = DOCTEST__format_exception(DOCTEST__exception);
   end
+  
   % pull from datastore (in case test did "clear")
   DOCTEST__result = DOCTEST__datastore('get_ith');
   DOCTEST__result.got = DOCTEST__got;
@@ -79,6 +74,7 @@ end
 
 DOCTEST__results = DOCTEST__datastore('get_all');
 DOCTEST__datastore('clear');
+munlock();
 end
 
 
@@ -87,7 +83,6 @@ function out = DOCTEST__datastore(action, var)
 
   % try to survive a test doing "clear" and "clear all"
   % https://github.com/catch22/octave-doctest/issues/149
-  mlock()
   persistent i results
 
   switch lower(action)
@@ -120,8 +115,6 @@ end
 
 
 function formatted = DOCTEST__format_exception(ex)
-  mlock()  % not clear why we need this
-
   if is_octave()
     formatted = ['??? ' ex.message];
     return
@@ -141,7 +134,6 @@ end
 % given a cell array of conditions (represented as strings to be eval'ed),
 % return the string that corresponds to their logical "or".
 function result = DOCTEST__join_conditions(conditions)
-  mlock()  % not clear why we need this
   if isempty(conditions)
     result = 'false';
   else
