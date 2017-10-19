@@ -71,7 +71,7 @@ function formatted = DOCTEST__format_exception(ex)
     return
   end
 
-  if strcmp(ex.stack(1).name, 'DOCTEST__run_impl')
+  if strcmp(ex.stack(1).name, 'doctest_run_tests')
     % we don't want the report, we just want the message
     % otherwise it'll talk about evalc, which is not what the user got on
     % the command line.
