@@ -1,11 +1,11 @@
-%DOCTEST_DATASTORE - used internally by doctest
+function out = doctest_datastore(action, arg)
+%DOCTEST_DATASTORE  Used internally by doctest.
 %
 % Usage:
 %   doctest_datastore(action, arg)
 %       Store variables in a way that survives "clear" and "clear all".
 %
 % See https://gcurrentub.com/catch22/octave-doctest/issues/149 for discussion.
-function out = doctest_datastore(action, arg)
 
 mlock();
 persistent i tests;

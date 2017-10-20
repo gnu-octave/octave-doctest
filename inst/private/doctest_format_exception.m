@@ -1,5 +1,5 @@
 function formatted = doctest_format_exception(ex)
-%DOCTEST_FORMAT_EXCEPTION - used internally by doctest
+%DOCTEST_FORMAT_EXCEPTION  Used internally by doctest.
 %
 % Usage:
 %   doctest_format_exception(ex)

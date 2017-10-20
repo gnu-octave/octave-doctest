@@ -1,5 +1,5 @@
 function result = doctest_join_conditions(conditions)
-%DOCTEST_JOIN_CONDITIONS - used internally by doctest
+%DOCTEST_JOIN_CONDITIONS  Used internally by doctest.
 %
 % Usage:
 %   doctest_join_conditions(conditions)
