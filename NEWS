@@ -1,9 +1,12 @@
-doctest 0.5.1-dev
+doctest 0.6.0-dev
 =================
 
   * Tests can now call "clear" and "clear all".
 
   * Fix for running on Octave development versions (upcoming 4.4.0).
+
+  * Minimum supported Octave version is now 4.2.0.  The package no longer
+    has any compiled code and does not include an "evalc" implementation.
 
 
 
