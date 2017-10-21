@@ -1,4 +1,4 @@
-%% Copyright (c) 2015 Colin B. Macdonald
+%% Copyright (c) 2015, 2017 Colin B. Macdonald
 %%
 %% Redistribution and use in source and binary forms, with or without
 %% modification, are permitted provided that the following conditions are met:
@@ -195,16 +195,16 @@ function success = convert_oct_2_ml (fname, foutname)
 
   use = strsplit(usestr, newl, 'CollapseDelimiters', false);
 
-  %% remove this string
-  % and make sure these lines have the correct function name
-  remstr = '-- Function File: ';
+  %% 2017: we have more choices than "-- Function File"
+  % just trim "--" so it doesn't break indents
   for i=1:length(use)
-    if strfind(use{i}, remstr);
+    if regexp(use{i}, '^ -- ')
       if isempty(strfind(use{i}, [' ' fcn]))
-        error('function @deftypefn line doesn''t include function name')
+        warning('function @deftypefn line may not include function name:')
+        use{i}
       end
     end
-    use{i} = strrep(use{i}, remstr, '    ');
+    use{i} = regexprep(use{i}, '^ -- ', '     ');
   end
   %usestr = strrep(usestr, lookforstr, '');
 
@@ -235,7 +235,7 @@ function success = convert_oct_2_ml (fname, foutname)
 
   fdisp(f, fcn_line)
 
-  fprintf(f, '%%%s   %s\n', upper(fcn), lookforstr)
+  fprintf(f, '%%%s  %s\n', upper(fcn), lookforstr)
 
   for i=1:length(use)
     fprintf(f, '%%%s\n', use{i});
