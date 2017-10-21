@@ -13,7 +13,6 @@ SHELL   := /bin/bash
 PACKAGE := $(shell grep "^Name: " DESCRIPTION | cut -f2 -d" ")
 VERSION := $(shell grep "^Version: " DESCRIPTION | cut -f2 -d" ")
 
-CC_SOURCES := $(wildcard src/*.cc)
 BUILD_DIR := tmp
 MATLAB_PKG := ${BUILD_DIR}/${PACKAGE}-matlab-${VERSION}
 MATLAB_PKG_ZIP := ${MATLAB_PKG}.zip
@@ -23,7 +22,6 @@ OCTAVE_RELEASE_TARBALL := ${BUILD_DIR}/${PACKAGE}-${VERSION}.tar.gz
 INSTALLED_PACKAGE := ~/octave/${PACKAGE}-${VERSION}/packinfo/DESCRIPTION
 HTML_DIR := ${BUILD_DIR}/${PACKAGE}-html
 HTML_TARBALL := ${HTML_DIR}.tar.gz
-OCT_COMPILED := ${BUILD_DIR}/.oct
 
 OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
@@ -46,18 +44,6 @@ help:
 	@echo
 	@echo "  matlab_test        run tests with Matlab"
 	@echo "  matlab_pkg         create Matlab package (${MATLAB_PKG_ZIP})"
-
-
-## If the src/Makefile changes, recompile all oct-files
-${CC_SOURCES}: src/Makefile
-	@touch --no-create "$@"
-
-## Compilation of oct-files happens in a separate Makefile,
-## which is bundled in the release and will be used during
-## package installation by Octave.
-${OCT_COMPILED}: ${CC_SOURCES} | ${BUILD_DIR}
-	MKOCTFILE="${MKOCTFILE}" ${MAKE} -C src
-	@touch "$@"
 
 
 GIT_DATE   := $(shell git show -s --format=\%ci)
@@ -116,13 +102,12 @@ ${BUILD_DIR} ${MATLAB_PKG}/private:
 
 clean:
 	rm -rf "${BUILD_DIR}"
-	rm -f src/*.oct src/*.o
 
-test: ${OCT_COMPILED}
-	${OCTAVE} --path ${PWD}/inst --path ${PWD}/src --eval "${TEST_CODE}"
+test:
+	${OCTAVE} --path ${PWD}/inst --eval "${TEST_CODE}"
 
-test-interactive: ${OCT_COMPILED}
-	script --quiet --command "${OCTAVE} --path ${PWD}/inst --path ${PWD}/src --eval \"${TEST_CODE}\"" /dev/null
+test-interactive:
+	script --quiet --command "${OCTAVE} --path ${PWD}/inst --eval \"${TEST_CODE}\"" /dev/null
 
 
 ## Install in Octave (locally)
