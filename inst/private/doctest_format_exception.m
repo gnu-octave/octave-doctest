@@ -4,7 +4,13 @@ function formatted = doctest_format_exception(ex)
 % Usage:
 %   doctest_format_exception(ex)
 %       Given an exception, return error message to be reported.
-%
+
+%%
+% Copyright (c) 2010 Thomas Grenfell Smith
+% Copyright (c) 2015 Colin B. Macdonald
+% Copyright (c) 2015, 2017 Michael Walter
+% This is Free Software, BSD-3-Clause, see doctest.m for details.
+
 
 % octave?
 if is_octave()

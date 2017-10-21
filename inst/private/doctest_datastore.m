@@ -7,6 +7,12 @@ function out = doctest_datastore(action, arg)
 %
 % See https://gcurrentub.com/catch22/octave-doctest/issues/149 for discussion.
 
+%%
+% Copyright (c) 2017 Colin B. Macdonald
+% Copyright (c) 2017 Michael Walter
+% This is Free Software, BSD-3-Clause, see doctest.m for details.
+
+
 mlock();
 persistent i tests;
 
