@@ -1,8 +1,13 @@
 function [color_ok, color_err, color_warn, reset] = doctest_colors(fid)
-% Return terminal color codes to use for current invocation of doctest.
+%DOCTEST_COLORS  Return terminal color codes.
 %
-% FIXME: Shouldn't use colors if stdout is not a TTY.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   FIXME: Shouldn't use colors if stdout is not a TTY.
+
+%%
+% Copyright (c) 2015 Michael Walter
+% Copyright (c) 2015, 2017 Colin B. Macdonald
+% This is Free Software, BSD-3-Clause, see doctest.m for details.
+
 
 % by default, no colors
 color_ok = '';

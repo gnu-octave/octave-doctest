@@ -1,18 +1,25 @@
 function DOCTEST__results = doctest_run_tests(DOCTEST__tests)
-%DOCTEST_RUN_TESTS - used internally by doctest
+%DOCTEST_RUN_TESTS  Used internally by doctest.
 %
-% Usage:
+%   Usage:
 %   doctest_run_tests(tests)
 %       Carefully evaluate each test in the "tests" structure in
 %       a common newly-created clean namespace (specifically, this
 %       functions workspace).
 %
-% The input is a structure with various fields including "tests.source",
-% the code to be run and "tests.want" the expected output.  Various
-% other flags such as "tests.xfail" and "tests.ellipsis" effect how
-% the test is run and how the test output is compared.
+%   The input is a structure with various fields including "tests.source",
+%   the code to be run and "tests.want" the expected output.  Various
+%   other flags such as "tests.xfail" and "tests.ellipsis" effect how
+%   the test is run and how the test output is compared.
 %
-% The return value is documented in "doctest_run_docstring".
+%   The return value is documented in "doctest_run_docstring".
+
+%%
+% Copyright (c) 2010 Thomas Grenfell Smith
+% Copyright (c) 2011, 2015 Michael Walter
+% Copyright (c) 2015-2017 Colin B. Macdonald
+% License: BSD-3-Clause, see doctest.m for details
+
 
 % Implementation note: all internal variables should start with
 % "DOCTEST__" as (1) these will necessarily be exposed to the tests

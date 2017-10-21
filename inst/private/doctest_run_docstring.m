@@ -1,20 +1,25 @@
 function results = doctest_run_docstring(docstring, defaults)
-%DOCTEST_RUN_DOCSTRING - used internally by doctest
+%DOCTEST_RUN_DOCSTRING  Used internally by doctest.
 %
-% Usage:
-%   doctest_run_docstring(docstring, defaults)
+%   Usage: doctest_run_docstring(docstring, defaults)
 %       Extract all the examples in the input docstring into a
 %       structure.  Process various flags and directives that
 %       about each test.  Run the tests in a common namespace.
 %
-% The return value is a structure with the following fields:
+%   The return value is a structure with the following fields:
 %
-% results.source:   the source code that was run
-% results.want:     the desired output
-% results.got:      the output that was recieved
-% results.passed:   whether .want and .got match each other according to
-%       doctest_compare.
-%
+%   results.source:   the source code that was run
+%   results.want:     the desired output
+%   results.got:      the output that was recieved
+%   results.passed:   whether .want and .got match each other according to
+%                     doctest_compare.
+
+%%
+% Copyright (c) 2010 Thomas Grenfell Smith
+% Copyright (c) 2011, 2015 Michael Walter
+% Copyright (c) 2015-2017 Colin B. Macdonald
+% License: BSD-3-Clause, see doctest.m for details
+
 
 % extract tests from docstring
 TEST_RE = [                               % loosely based on Python 2.6 doctest.py, line 510

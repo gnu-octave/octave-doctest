@@ -1,5 +1,10 @@
 function r = is_octave()
-%IS_OCTAVE  Return true if we are running Octave, false for Matlab.
+%IS_OCTAVE  True if we are running Octave, false for Matlab.
+
+%%
+% Copyright (c) 2015 Colin B. Macdonald
+% This is Free Software, BSD-3-Clause, see doctest.m for details.
+
 
 % Timings for different implementations, 10000 calls
 %

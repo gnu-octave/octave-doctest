@@ -1,10 +1,15 @@
 function d = doctest_default_directives(varargin)
-%DOCTEST_DEFAULT_DIRECTIVES  Return/set defaults directives
+%DOCTEST_DEFAULT_DIRECTIVES  Return/set defaults directives.
 %   Possible calling forms:
 %     dirs = doctest_default_directives()
 %     dirs = doctest_default_directives('ellipsis', true)
 %     dirs = doctest_default_directives(dirs, 'ellipsis', true)
 %   See source/documentation for valid directives.
+
+%%
+% Copyright (c) 2015 Colin B. Macdonald
+% This is Free Software, BSD-3-Clause, see doctest.m for details.
+
 
   defaults.normalize_whitespace = true;
   defaults.ellipsis = true;
