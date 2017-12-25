@@ -239,6 +239,19 @@ function targets = collect_targets_class(what, depth)
     % Octave methods('@foo') gives java error, Matlab just says "No methods"
     what = what(2:end);
   end
+
+  % TODO: workaround github.com/catch22/octave-doctest/issues/135 by
+  % accessing all non-constructor method help text *before* "help obj"
+  if (is_octave ())
+    meths = methods (what);
+    for i=1:numel (meths)
+      if (~ strcmp (meths{i}, what))  % skip @obj/obj
+        name = sprintf ('@%s%s%s', what, filesep (), meths{i});
+        [docstring, format] = get_help_text (name);
+      end
+    end
+  end  % end workaround
+
   % First, "help class".  For classdef, this differs from "help class.class"
   % (general class help vs constructor help).  For old-style classes we will
   % probably end up testing the constructor twice but... meh.
