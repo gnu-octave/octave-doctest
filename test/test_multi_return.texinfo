@@ -23,9 +23,11 @@ disp ('abc'); x = disp ('def')
 Here the warning is not part of the result:
 
 @example
-inv (0)
+inv ([1 2; 2 4])
 @print{} warning: ...matrix singular to machine precision...
-@result{} ans = Inf
+@result{} ans =
+   Inf   Inf
+   Inf   Inf
 @end example
 
 Here we have two results:
