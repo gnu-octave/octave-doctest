@@ -1,6 +1,6 @@
 Name: doctest
-Version: 0.5.0
-Date: 2016-11-13
+Version: 0.6.0
+Date: 2017-12-25
 Author: various authors
 Maintainer: Colin B. Macdonald <cbm@m.fsf.org>, Michael Walter <michael.walter@gmail.com>
 Title: Documentation tests
