@@ -341,6 +341,7 @@ function [docstring, error] = parse_texinfo(str)
 
   % These should work, but I keep hitting ARM-specific when $1 is empty:
   % https://savannah.gnu.org/bugs/index.php?52810
+  % TODO: fixed in 4.2.2, so can revert this once we drop 4.2.1 support
   %str = regexprep (str, ...
   %                 '^([ \t]*)(\@example)(.*)$', ...
   %                 [ '$1$2$3\n', ... % retain original line
