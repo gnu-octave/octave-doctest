@@ -24,6 +24,9 @@ if is_octave()
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texinfo';
+  elseif (exist (what) == 3)  % .oct/.mex
+    [~, what, ~] = fileparts (what);  % strip extension if present
+    type = 'function';                % then access like any function
   elseif (exist(what, 'file') && ~exist(what, 'dir')) || exist(what, 'builtin');
     if (exist(['@' what], 'dir'))
       % special case, e.g., @logical is class, logical is builtin
@@ -109,7 +112,8 @@ if (strcmp(type, 'dir'))
       end
     else
       [~, ~, ext] = fileparts(f);
-      if (~ any(strcmpi(ext, {'.m' '.texinfo' '.texi' '.txi' '.tex'})))
+      if (~ any(strcmpi(ext, ...
+                {'.m' '.texinfo' '.texi' '.txi' '.tex' '.oct' '.mex'})))
         %fprintf(fid, 'Debug: ignoring file "%s"\n', f)
         continue
       end
