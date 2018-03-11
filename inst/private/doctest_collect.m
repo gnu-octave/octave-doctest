@@ -12,6 +12,7 @@ function summary = doctest_collect(what, directives, summary, recursive, depth, 
 % Copyright (c) 2015 Michael Walter
 % Copyright (c) 2015-2018 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
+% Copyright (C) 2018 Mike Miller
 % This is Free Software, BSD-3-Clause, see doctest.m for details.
 
 
@@ -301,16 +302,17 @@ function targets = collect_targets_octfile (file, depth)
   targets = [target];
 
   % octfile may have many fcns in it: find them using the autoload map
-  A = fullfile (pwd, file);
   autoloadmap = autoload ();
-  [files{1:length(autoloadmap)}] = autoloadmap.file;
-  [fcns{1:length(autoloadmap)}] = autoloadmap.function;
-  I = find (strcmp (files, A));
-  if (~ isempty (I))
+  len = numel (file);
+  % matches both "/foo/bar.oct" and "/baz/bar.oct"; uncommon in practice
+  pmatch = @(e) (numel (e.file) >= len) && strcmp (e.file(end-len+1:end), file);
+  idx = find (arrayfun (pmatch, autoloadmap));
+
+  if (~ isempty (idx))
     % indicate that octfile has other fcns, and indent those targets
     targets(1).name = [targets(1).name ':'];
-    for i=1:length(I)
-      f = fcns{I(i)};
+    for i = 1:numel (idx)
+      f = autoloadmap(idx(i)).function;
       target = collect_targets_function (f);
       target.depth = depth + 1;
       targets = [targets; target];
