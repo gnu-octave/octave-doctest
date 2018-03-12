@@ -10,7 +10,7 @@ function summary = doctest_collect(what, directives, summary, recursive, depth, 
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
-% Copyright (c) 2015-2017 Colin B. Macdonald
+% Copyright (c) 2015-2018 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
 % This is Free Software, BSD-3-Clause, see doctest.m for details.
 
