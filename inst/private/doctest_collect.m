@@ -24,6 +24,8 @@ if is_octave()
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texinfo';
+  elseif (strcmp (ext, '.oct') && exist (what) == 3)  % .oct explicitly
+    type = 'octfile';
   elseif (exist (what) == 3)  % .oct/.mex
     [~, what, ~] = fileparts (what);  % strip extension if present
     type = 'function';                % then access like any function
@@ -139,6 +141,8 @@ if strcmp(type, 'function')
   targets = [target];
 elseif strcmp(type, 'class')
   targets = collect_targets_class(what, depth);
+elseif strcmp (type, 'octfile')
+  targets = collect_targets_octfile (what, depth);
 elseif strcmp(type, 'texinfo')
   target = struct();
   target.name = what;
@@ -283,6 +287,34 @@ function targets = collect_targets_class(what, depth)
     target.depth = depth;
     [target.docstring, target.error] = extract_docstring(target.name);
     targets = [targets; target];
+  end
+end
+
+
+function targets = collect_targets_octfile (file, depth)
+  % first target is the name of the octfile (w/o extension)
+  [~, basename, ext] = fileparts (file);
+  assert (strcmp (ext, '.oct'))
+  target = collect_targets_function (basename);
+  target.name = file;
+  target.depth = depth;
+  targets = [target];
+
+  % octfile may have many fcns in it: find them using the autoload map
+  A = fullfile (pwd, file);
+  autoloadmap = autoload ();
+  [files{1:length(autoloadmap)}] = autoloadmap.file;
+  [fcns{1:length(autoloadmap)}] = autoloadmap.function;
+  I = find (strcmp (files, A));
+  if (~ isempty (I))
+    % indicate that octfile has other fcns, and indent those targets
+    targets(1).name = [targets(1).name ':'];
+    for i=1:length(I)
+      f = fcns{I(i)};
+      target = collect_targets_function (f);
+      target.depth = depth + 1;
+      targets = [targets; target];
+    end
   end
 end
 
