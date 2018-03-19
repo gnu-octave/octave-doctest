@@ -29,7 +29,7 @@ if is_octave()
     type = 'octfile';
   elseif (exist (what) == 3)  % .oct/.mex
     [~, what, ~] = fileparts (what);  % strip extension if present
-    type = 'function';                % then access like any function
+    type = 'octfile';                 % then access like any function
   elseif (exist(what, 'file') && ~exist(what, 'dir')) || exist(what, 'builtin');
     if (exist(['@' what], 'dir'))
       % special case, e.g., @logical is class, logical is builtin
@@ -127,6 +127,19 @@ if (strcmp(type, 'dir'))
   return
 end
 
+
+% Deal with .oct files, which may define more than one function
+if (strcmp(type, 'octfile'))
+  len = numel (what) + 4;
+  list = autoload ();
+  pmatch = @(e) (numel (e.file) > len) && strcmp (e.file(end-len+1:end), [what '.oct']);
+  idx = find (arrayfun (pmatch, list));
+  for i = 1:numel (idx)
+    name = list(idx(i)).function;
+    summary = doctest_collect (name, directives, summary, recursive, depth, fid);
+  end
+  type = 'function';
+end
 
 
 % Build structure array with the following fields:
