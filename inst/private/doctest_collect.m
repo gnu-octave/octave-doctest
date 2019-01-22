@@ -10,8 +10,9 @@ function summary = doctest_collect(what, directives, summary, recursive, depth, 
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
-% Copyright (c) 2015-2017 Colin B. Macdonald
+% Copyright (c) 2015-2018 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
+% Copyright (C) 2018 Mike Miller
 % This is Free Software, BSD-3-Clause, see doctest.m for details.
 
 
@@ -24,6 +25,11 @@ if is_octave()
   [~, ~, ext] = fileparts(what);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texinfo';
+  elseif (strcmp (ext, '.oct') && exist (what) == 3)  % .oct explicitly
+    type = 'octfile';
+  elseif (exist (what) == 3)  % .oct/.mex
+    [~, what, ~] = fileparts (what);  % strip extension if present
+    type = 'function';                % then access like any function
   elseif (exist(what, 'file') && ~exist(what, 'dir')) || exist(what, 'builtin');
     if (exist(['@' what], 'dir'))
       % special case, e.g., @logical is class, logical is builtin
@@ -109,7 +115,8 @@ if (strcmp(type, 'dir'))
       end
     else
       [~, ~, ext] = fileparts(f);
-      if (~ any(strcmpi(ext, {'.m' '.texinfo' '.texi' '.txi' '.tex'})))
+      if (~ any(strcmpi(ext, ...
+                {'.m' '.texinfo' '.texi' '.txi' '.tex' '.oct' '.mex'})))
         %fprintf(fid, 'Debug: ignoring file "%s"\n', f)
         continue
       end
@@ -135,6 +142,8 @@ if strcmp(type, 'function')
   targets = [target];
 elseif strcmp(type, 'class')
   targets = collect_targets_class(what, depth);
+elseif strcmp (type, 'octfile')
+  targets = collect_targets_octfile (what, depth);
 elseif strcmp(type, 'texinfo')
   target = struct();
   target.name = what;
@@ -279,6 +288,35 @@ function targets = collect_targets_class(what, depth)
     target.depth = depth;
     [target.docstring, target.error] = extract_docstring(target.name);
     targets = [targets; target];
+  end
+end
+
+
+function targets = collect_targets_octfile (file, depth)
+  % first target is the name of the octfile (w/o extension)
+  [~, basename, ext] = fileparts (file);
+  assert (strcmp (ext, '.oct'))
+  target = collect_targets_function (basename);
+  target.name = file;
+  target.depth = depth;
+  targets = [target];
+
+  % octfile may have many fcns in it: find them using the autoload map
+  autoloadmap = autoload ();
+  len = numel (file);
+  % matches both "/foo/bar.oct" and "/baz/bar.oct"; uncommon in practice
+  pmatch = @(e) (numel (e.file) >= len) && strcmp (e.file(end-len+1:end), file);
+  idx = find (arrayfun (pmatch, autoloadmap));
+
+  if (~ isempty (idx))
+    % indicate that octfile has other fcns, and indent those targets
+    targets(1).name = [targets(1).name ':'];
+    for i = 1:numel (idx)
+      f = autoloadmap(idx(i)).function;
+      target = collect_targets_function (f);
+      target.depth = depth + 1;
+      targets = [targets; target];
+    end
   end
 end
 
