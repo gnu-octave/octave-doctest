@@ -28,7 +28,7 @@ without any warranty.
   <translation/>
   <url type="homepage">http://octave.sourceforge.net/doctest</url>
   <url type="bugtracker">https://github.com/catch22/octave-doctest/issues/new</url>
-  <metadata_license>FSFAP</metadata_license>-->
+  <metadata_license>FSFAP</metadata_license>
   <project_license>BSD-3-Clause</project_license>
   <developer_name>Octave-Forge Community</developer_name>
   <update_contact>octave-maintainers@gnu.org</update_contact>
