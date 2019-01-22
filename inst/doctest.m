@@ -1,6 +1,6 @@
 %% Copyright (c) 2010 Thomas Grenfell Smith
 %% Copyright (c) 2011, 2013-2016 Michael Walter
-%% Copyright (c) 2015-2017 Colin B. Macdonald
+%% Copyright (c) 2015-2019 Colin B. Macdonald
 %%
 %% Redistribution and use in source and binary forms, with or without
 %% modification, are permitted provided that the following conditions are met:
@@ -41,6 +41,7 @@
 %% @item function;
 %% @item class;
 %% @item Texinfo file;
+%% @item .oct/.mex compiled code;
 %% @item directory/folder (pass @code{-nonrecursive} to skip subfolders);
 %% @item cell array of such items.
 %% @end itemize
