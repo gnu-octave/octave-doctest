@@ -26,7 +26,7 @@ without any warranty.
     <keyword>documentation</keyword>
   </keywords>
   <translation/>
-  <url type="homepage">http://octave.sourceforge.net/doctest</url>
+  <url type="homepage">https://octave.sourceforge.io/doctest</url>
   <url type="bugtracker">https://github.com/catch22/octave-doctest/issues/new</url>
   <metadata_license>FSFAP</metadata_license>
   <project_license>BSD-3-Clause</project_license>
