@@ -71,7 +71,7 @@ $(OCTAVE_RELEASE): .git/index | $(BUILD_DIR)
 	$(RM) "$@/README.matlab.md" \
 	      "$@/.gitignore" \
 	      "$@/.travis.yml" \
-	      "$@/.mailmap" \
+	      "$@/.mailmap"
 	$(RM) -r "$@/util"
 	chmod -R a+rX,u+w,go-w "$@"
 
