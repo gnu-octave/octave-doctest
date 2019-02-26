@@ -202,6 +202,20 @@
 %% @end group
 %% @end example
 %%
+%% If your test changes the global state (e.g., @code{format} or
+%% @code{chdir}), you may need to undo your changes afterwards.
+%% In this example, we followup with @code{format} to reset to the
+%% default five digits:
+%%
+%% @example
+%% @group
+%% >> format long
+%% >> 355/113
+%% ans = 3.14159292035...
+%% >> format
+%% @end group
+%% @end example
+%%
 %%
 %% @strong{Diary Style}
 %% When the m-file contains plaintext documentation, doctest finds tests
