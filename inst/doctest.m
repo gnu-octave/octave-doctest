@@ -310,12 +310,30 @@ summary.num_targets_with_extraction_errors = 0;
 summary.num_tests = 0;
 summary.num_tests_passed = 0;
 
-% ensure we have default formatting
+% stash user's formatting
+if (is_octave)
+  if (compare_versions(OCTAVE_VERSION(), '4.3.0', '>='))
+    [save_format, save_spacing] = format();
+  else
+    save_format = eval('__formatstring__()');
+    save_spacing = eval('ifelse(__compactformat__(), "compact", "loose")');
+  end
+else
+  save_format = get(0, 'Format');
+  save_spacing = get(0, 'FormatSpacing');
+end
+% force default formatting
 format()
+
 
 for i=1:numel(what)
   summary = doctest_collect(what{i}, directives, summary, recursive, 0, fid);
 end
+
+
+% restore user's formatting
+format(save_format)
+format(save_spacing)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
