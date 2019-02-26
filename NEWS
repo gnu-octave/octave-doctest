@@ -1,3 +1,12 @@
+doctest 0.7.0-dev
+=================
+
+  * Functions within compiled `.oct` files can now be tested.
+
+  * Makefile fixes.
+
+
+
 doctest 0.6.1 (2018-01-04)
 ==========================
 
