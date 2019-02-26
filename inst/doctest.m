@@ -192,6 +192,17 @@
 %%
 %% To disable the @code{...} wildcard, use the @code{-ELLIPSIS} directive.
 %%
+%%
+%% @strong{Numerical Format}
+%% Tests are run using default formatting:
+%% @example
+%% @group
+%% >> 6/5
+%% ans = 1.2000
+%% @end group
+%% @end example
+%%
+%%
 %% @strong{Diary Style}
 %% When the m-file contains plaintext documentation, doctest finds tests
 %% by searching for lines that begin with @code{>>}.  It then finds the
@@ -285,6 +296,8 @@ summary.num_targets_with_extraction_errors = 0;
 summary.num_tests = 0;
 summary.num_tests_passed = 0;
 
+% ensure we have default formatting
+format()
 
 for i=1:numel(what)
   summary = doctest_collect(what{i}, directives, summary, recursive, 0, fid);
