@@ -12,6 +12,5 @@ addons:
     # - sourceline: 'ppa:dac922/octave-unstable'
     packages:
     - octave
-    - liboctave-dev
 
 script: make test test-interactive
