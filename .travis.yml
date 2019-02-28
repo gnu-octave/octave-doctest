@@ -10,11 +10,11 @@ language: generic
 
 matrix:
   include:
-    - env: OCT=distro
-      addons:
-        apt:
-          packages:
-          - octave
+    #- env: OCT=distro
+    #  addons:
+    #    apt:
+    #      packages:
+    #      - octave
     - env: OCT=ppa
       addons:
         apt:
