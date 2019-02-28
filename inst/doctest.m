@@ -192,6 +192,31 @@
 %%
 %% To disable the @code{...} wildcard, use the @code{-ELLIPSIS} directive.
 %%
+%%
+%% @strong{Numerical Format}
+%% Tests are run using default formatting:
+%% @example
+%% @group
+%% >> 6/5
+%% ans = 1.2000
+%% @end group
+%% @end example
+%%
+%% If your test changes the global state (e.g., @code{format} or
+%% @code{chdir}), you may need to undo your changes afterwards.
+%% In this example, we followup with @code{format} to reset to the
+%% default five digits:
+%%
+%% @example
+%% @group
+%% >> format long
+%% >> 355/113
+%% ans = 3.14159292035...
+%% >> format
+%% @end group
+%% @end example
+%%
+%%
 %% @strong{Diary Style}
 %% When the m-file contains plaintext documentation, doctest finds tests
 %% by searching for lines that begin with @code{>>}.  It then finds the
@@ -285,10 +310,34 @@ summary.num_targets_with_extraction_errors = 0;
 summary.num_tests = 0;
 summary.num_tests_passed = 0;
 
+% stash user's formatting
+if (is_octave)
+  try
+    [save_format, save_spacing] = format();
+  catch
+    % TODO: remove when we drop support for Octave < 4.4.0
+    save_format = eval('__formatstring__()');
+    save_spacing = eval('ifelse(__compactformat__(), "compact", "loose")');
+  end
+else
+  save_format = get(0, 'Format');
+  save_spacing = get(0, 'FormatSpacing');
+end
+% force default formatting
+format()
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Collect and run tests
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i=1:numel(what)
   summary = doctest_collect(what{i}, directives, summary, recursive, 0, fid);
 end
+
+
+% restore user's formatting
+format(save_format)
+format(save_spacing)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
