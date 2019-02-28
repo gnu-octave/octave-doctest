@@ -312,9 +312,10 @@ summary.num_tests_passed = 0;
 
 % stash user's formatting
 if (is_octave)
-  if (compare_versions(OCTAVE_VERSION(), '4.3.0', '>='))
+  try
     [save_format, save_spacing] = format();
-  else
+  catch
+    % TODO: remove when we drop support for Octave < 4.4.0
     save_format = eval('__formatstring__()');
     save_spacing = eval('ifelse(__compactformat__(), "compact", "loose")');
   end
