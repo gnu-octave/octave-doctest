@@ -104,7 +104,7 @@ clean:
 	rm -rf "${BUILD_DIR}"
 
 test:
-	${OCTAVE} --path ${PWD}/inst --eval "${TEST_CODE}"
+	${OCTAVE} -i --path ${PWD}/inst --eval "${TEST_CODE}"
 
 test-interactive:
 	script --quiet --command "${OCTAVE} --path ${PWD}/inst --eval \"${TEST_CODE}\"" /dev/null

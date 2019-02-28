@@ -1,16 +1,40 @@
 sudo: required
 dist: trusty
 
+# Notes:
+#   * 2019-02: trusty: distro Octave is 3.8
+#   * 2019-02: xenial: snapshots don't work, distro Octave is 4.0
+
 # travis-ci does not have first-class support for octave
 language: generic
 
-addons:
-  apt:
-    sources:
-    - sourceline: 'ppa:octave/stable'
-    # not on trusty: http://ppa.launchpad.net/dac922/octave-unstable/ubuntu/pool/main/o/octave/
-    # - sourceline: 'ppa:dac922/octave-unstable'
-    packages:
-    - octave
+matrix:
+  include:
+    - env: OCT=distro
+      addons:
+        apt:
+          packages:
+          - octave
+    - env: OCT=ppa
+      addons:
+        apt:
+          sources:
+          - sourceline: 'ppa:octave/stable'
+          packages:
+          - octave
+    - env: OCT=daily
+      addons:
+        apt:
+          packages:
+          - octave
+  allowed_failures:
+    - env: OCT=daily
+
+
+before_install:
+  - if [ "x$OCT" = "xdaily" ]; then
+        wget https://s3.amazonaws.com/octave-snapshot/public/octave-ubuntu-trusty-snapshot.tar.xz;
+        sudo tar --extract --directory=/usr/local --strip-components=1 --file=octave-ubuntu-trusty-snapshot.tar.xz;
+    fi
 
 script: make test test-interactive
