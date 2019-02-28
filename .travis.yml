@@ -27,8 +27,12 @@ matrix:
         apt:
           packages:
           - octave
-  allowed_failures:
+  allow_failures:
     - env: OCT=daily
+      addons:
+        apt:
+          packages:
+          - octave
 
 
 before_install:
