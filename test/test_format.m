@@ -5,8 +5,8 @@
 %
 % If tests change it...
 % >> format long
-% >> b = 1/6
-% b = 0.166666666...7
+% >> b = 10/6
+% b = 1.66666666...7
 %
 %
 % ... they should change it back to defaults
