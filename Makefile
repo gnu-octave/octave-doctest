@@ -27,7 +27,7 @@ OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
-TEST_CODE=ver('octave'), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
+TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
 
 
 .PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
