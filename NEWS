@@ -1,5 +1,5 @@
-doctest 0.7.0-dev
-=================
+doctest 0.6.1+
+==============
 
   * Functions within compiled `.oct` files can now be tested.
 
