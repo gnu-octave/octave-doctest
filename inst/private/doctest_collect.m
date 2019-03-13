@@ -30,7 +30,7 @@ if is_octave()
   elseif (exist (what) == 3)  % .oct/.mex
     [~, what, ~] = fileparts (what);  % strip extension if present
     type = 'function';                % then access like any function
-  elseif (exist(what, 'file') && ~exist(what, 'dir')) || exist(what, 'builtin');
+  elseif (exist(what, 'file') && ~exist(what, 'dir')) || exist(what, 'builtin')
     if (exist(['@' what], 'dir'))
       % special case, e.g., @logical is class, logical is builtin
       type = 'class';
