@@ -1,4 +1,4 @@
-function summary = doctest_collect(what, directives, summary, recursive, depth, fid)
+function summary = doctest_collect(what, directives, summary, recursive, verbose, depth, fid)
 %DOCTEST_COLLECT  Find and run doctests.
 %
 %   The parameter WHAT is the name of a class, directory, function or filename:
@@ -10,7 +10,7 @@ function summary = doctest_collect(what, directives, summary, recursive, depth, 
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
-% Copyright (c) 2015-2018 Colin B. Macdonald
+% Copyright (c) 2015-2019 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
 % Copyright (C) 2018 Mike Miller
 % This is Free Software, BSD-3-Clause, see doctest.m for details.
@@ -94,7 +94,9 @@ if (strcmp(type, 'dir'))
     else
       slashchar = filesep();
     end
-    fprintf(fid, '%s%s%s\n', spaces, what, slashchar);
+    if (verbose)
+      fprintf(fid, '%s%s%s\n', spaces, what, slashchar);
+    end
   end
   oldcwd = chdir(what);
   files = dir('.');
@@ -121,7 +123,7 @@ if (strcmp(type, 'dir'))
         continue
       end
     end
-    summary = doctest_collect(f, directives, summary, recursive, depth + 1, fid);
+    summary = doctest_collect(f, directives, summary, recursive, verbose, depth + 1, fid);
   end
   chdir(oldcwd);
   return
@@ -174,13 +176,17 @@ for i=1:numel(targets)
   target = targets(i);
   spaces = repmat(' ', 1, 2*target.depth);
   dots = repmat('.', 1, 55 - numel(target.name) - 2*target.depth);
-  fprintf(fid, '%s%s %s ', spaces, target.name, dots);
+  if (verbose)
+    fprintf(fid, '%s%s %s ', spaces, target.name, dots);
+  end
 
   % extraction error?
   if target.error
     summary.num_targets_with_extraction_errors = summary.num_targets_with_extraction_errors + 1;
-    fprintf(fid, [color_err  'EXTRACTION ERROR' reset '\n\n']);
-    fprintf(fid, '    %s\n\n', target.error);
+    if (verbose)
+      fprintf(fid, [color_err  'EXTRACTION ERROR' reset '\n\n']);
+      fprintf(fid, '    %s\n\n', target.error);
+    end
     continue;
   end
 
@@ -206,22 +212,24 @@ for i=1:numel(targets)
     summary.num_targets_without_tests = summary.num_targets_without_tests + 1;
   end
 
-  % pretty print outcome
-  if num_tests == 0
-    fprintf(fid, 'NO TESTS\n');
-  elseif num_tests_passed == num_tests
-    fprintf(fid, [color_ok 'PASS %4d/%-4d' reset '\n'], num_tests_passed, num_tests);
-  else
-    fprintf(fid, [color_err 'FAIL %4d/%-4d' reset '\n\n'], num_tests - num_tests_passed, num_tests);
-    for j = 1:num_tests
-      if ~results(j).passed
-        fprintf(fid, '   >> %s\n\n', results(j).source);
-        fprintf(fid, [ '      expected: ' '%s' '\n' ], results(j).want);
-        fprintf(fid, [ '      got     : ' color_err '%s' reset '\n' ], results(j).got);
-        if results(j).xfail
-          fprintf(fid, '      expected failure, but test succeeded!');
+  if (verbose)
+    % pretty print outcome
+    if num_tests == 0
+      fprintf(fid, 'NO TESTS\n');
+    elseif num_tests_passed == num_tests
+      fprintf(fid, [color_ok 'PASS %4d/%-4d' reset '\n'], num_tests_passed, num_tests);
+    else
+      fprintf(fid, [color_err 'FAIL %4d/%-4d' reset '\n\n'], num_tests - num_tests_passed, num_tests);
+      for j = 1:num_tests
+        if ~results(j).passed
+          fprintf(fid, '   >> %s\n\n', results(j).source);
+          fprintf(fid, [ '      expected: ' '%s' '\n' ], results(j).want);
+          fprintf(fid, [ '      got     : ' color_err '%s' reset '\n' ], results(j).got);
+          if results(j).xfail
+            fprintf(fid, '      expected failure, but test succeeded!');
+          end
+          fprintf(fid, '\n');
         end
-        fprintf(fid, '\n');
       end
     end
   end

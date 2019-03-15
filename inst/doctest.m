@@ -268,6 +268,7 @@ end
 
 % input parsing for options and directives
 recursive = true;
+verbose = true;
 directives = doctest_default_directives();
 for i = 1:(nargin-1)
   assert(ischar(varargin{i}))
@@ -281,6 +282,10 @@ for i = 1:(nargin-1)
     case 'nonrecursive'
       assert(strcmp(pm, '-'))
       recursive = false;
+    case 'quiet'
+      % not mentioned in help text
+      assert(strcmp(pm, '-'))
+      verbose = false;
     otherwise
       assert(strcmp(pm, '+') || strcmp(pm, '-'))
       warning('Doctest:deprecated', ...
@@ -298,9 +303,9 @@ fid = 1;
 % get terminal color codes
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
 
-% print banner
-fprintf(fid, 'Doctest v0.6.1+: this is Free Software without warranty, see source.\n\n');
-
+if (verbose)
+  fprintf(fid, 'Doctest v0.6.1+: this is Free Software without warranty, see source.\n\n');
+end
 
 summary = struct();
 summary.num_targets = 0;
@@ -331,7 +336,7 @@ format()
 % Collect and run tests
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i=1:numel(what)
-  summary = doctest_collect(what{i}, directives, summary, recursive, 0, fid);
+  summary = doctest_collect(what{i}, directives, summary, recursive, verbose, 0, fid);
 end
 
 
@@ -343,18 +348,20 @@ format(save_spacing)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Report summary
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fprintf(fid, '\nSummary:\n\n');
-if (summary.num_tests_passed == summary.num_tests)
-  fprintf(fid, ['   ' color_ok 'PASS %4d/%-4d' reset '\n\n'], summary.num_tests_passed, summary.num_tests);
-else
-  fprintf(fid, ['   ' color_err 'FAIL %4d/%-4d' reset '\n\n'], summary.num_tests - summary.num_tests_passed, summary.num_tests);
-end
+if (verbose)
+  fprintf(fid, '\nSummary:\n\n');
+  if (summary.num_tests_passed == summary.num_tests)
+    fprintf(fid, ['   ' color_ok 'PASS %4d/%-4d' reset '\n\n'], summary.num_tests_passed, summary.num_tests);
+  else
+    fprintf(fid, ['   ' color_err 'FAIL %4d/%-4d' reset '\n\n'], summary.num_tests - summary.num_tests_passed, summary.num_tests);
+  end
 
-fprintf(fid, '%d/%d targets passed, %d without tests', summary.num_targets_passed, summary.num_targets, summary.num_targets_without_tests);
-if summary.num_targets_with_extraction_errors > 0
-  fprintf(fid, [', ' color_err '%d with extraction errors' reset], summary.num_targets_with_extraction_errors);
+  fprintf(fid, '%d/%d targets passed, %d without tests', summary.num_targets_passed, summary.num_targets, summary.num_targets_without_tests);
+  if summary.num_targets_with_extraction_errors > 0
+    fprintf(fid, [', ' color_err '%d with extraction errors' reset], summary.num_targets_with_extraction_errors);
+  end
+  fprintf(fid, '.\n\n');
 end
-fprintf(fid, '.\n\n');
 
 if nargout == 1
   varargout = {summary.num_targets_passed == summary.num_targets};
