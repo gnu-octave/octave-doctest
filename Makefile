@@ -28,6 +28,7 @@ MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
 TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
+BIST_CODE=cd('test'); success = test('bist'); exit(~success);
 
 
 .PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
@@ -38,6 +39,7 @@ help:
 	@echo "  install            install package in Octave"
 	@echo "  test               run tests with Octave"
 	@echo "  test-interactive   run tests with Octave in interactive mode"
+	@echo "  test-bist          run additional tests with Octave"
 	@echo "  dist               create Octave package (${OCTAVE_RELEASE_TARBALL})"
 	@echo "  html               create Octave Forge html (${HTML_TARBALL})"
 	@echo "  release            create both tarballs and md5 sums"
@@ -109,6 +111,8 @@ test:
 test-interactive:
 	script --quiet --command "${OCTAVE} --path ${PWD}/inst --eval \"${TEST_CODE}\"" /dev/null
 
+test-bist:
+	${OCTAVE} --path ${PWD}/inst --eval "${BIST_CODE}"
 
 ## Install in Octave (locally)
 install: ${INSTALLED_PACKAGE}
