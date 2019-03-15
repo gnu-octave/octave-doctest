@@ -17,6 +17,8 @@ end
 
 %!assert (~ doctest ('there_is_no_such_file'))
 
+%!assert (~ doctest ({'doctest', 'there_is_no_such_file'}))
+
 %!error
 %! % TODO: maybe this should be EXTRACTION_ERROR, not raise an error...
 %! doctest @there_is_no_such_class
@@ -33,6 +35,13 @@ end
 %! assert (sum.num_targets == 1)
 %! assert (sum.num_tests == t)
 %! assert (sum.num_tests_passed == n)
+
+%!test
+%! % list input
+%! [n, t1, sum] = doctest ({'doctest'});
+%! [n, t2, sum] = doctest ({'doctest' 'doctest'});
+%! assert (t2 == 2*t1)
+%! assert (sum.num_targets == 2)
 
 %!test
 %! % nonrecursion stays out of subdirs
