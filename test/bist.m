@@ -70,6 +70,17 @@ end
 %! assert (sum.num_targets == 4)
 
 %!xtest
+%! % Currently cannot even run
+%! % https://github.com/catch22/octave-doctest/issues/199
+%! [nump, numt] = doctest ('@classdef_infile/disp');
+%! assert (nump >= 0)
+
+%!xtest
+%! % https://github.com/catch22/octave-doctest/issues/92
+%! [nump, numt] = doctest ('@classdef_infile/disp');
+%! assert (nump == 1 && numt == 1)
+
+%!xtest
 %! % https://github.com/catch22/octave-doctest/issues/92
 %! % Should have 3 targets and 4 tests
 %! %   * general class help (2 tests)
