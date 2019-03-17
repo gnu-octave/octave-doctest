@@ -112,6 +112,9 @@ test-interactive:
 	script --quiet --command "${OCTAVE} --path ${PWD}/inst --eval \"${TEST_CODE}\"" /dev/null
 
 test-bist:
+	@echo
+	@echo "WARNING: output is noisy: errors appearing here *may* be normal"
+	@echo
 	${OCTAVE} --path ${PWD}/inst --eval "${BIST_CODE}"
 
 ## Install in Octave (locally)
