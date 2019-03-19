@@ -268,7 +268,11 @@ end
 
 % input parsing for options and directives
 recursive = true;
-verbose = true;
+if (nargout < 3)
+  verbose = true;
+else
+  verbose = false;
+end
 directives = doctest_default_directives();
 for i = 1:(nargin-1)
   assert(ischar(varargin{i}))
