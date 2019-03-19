@@ -88,11 +88,16 @@ end
 %! assert (nump == 4 && numt == 4)
 %! assert (summ.num_targets == 3)
 
-%!test
-%! % monkey patching methods to existing builtin-objects
-%! % TODO: need to test (and fix?) this if `@logical` is not in pwd
-%! [nump, numt, summ] = doctest ('logical');
-%! % there should be at least "logical" and "logical.mynewmethod"
+%!xtest
+%! % monkey-patching methods to existing builtin-objects
+%! [nump, numt, summ1] = doctest ('logical');
+%! % First, there is (at least) the "logical" builtin
 %! % >= b/c of https://github.com/catch22/octave-doctest/issues/87
+%! assert (summ1.num_targets >= 1)
+%! savepath = addpath ('test_methods_in_subdir');
+%! % there should be at least "logical" builtin and "logical.mynewmethod"
+%! [nump, numt, summ] = doctest ('logical');
 %! assert (summ.num_targets >= 2)
+%! assert (summ.num_targets >= summ1.num_targets)
 %! assert (nump >= 3 && numt >= 3)
+%! path(savepath);
