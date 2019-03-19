@@ -283,9 +283,13 @@ for i = 1:(nargin-1)
       assert(strcmp(pm, '-'))
       recursive = false;
     case 'quiet'
-      % not mentioned in help text
+      % currently not mentioned in help text
       assert(strcmp(pm, '-'))
       verbose = false;
+    case 'verbose'
+      % currently not mentioned in help text
+      assert(strcmp(pm, '-'))
+      verbose = true;
     otherwise
       assert(strcmp(pm, '+') || strcmp(pm, '-'))
       warning('Doctest:deprecated', ...
