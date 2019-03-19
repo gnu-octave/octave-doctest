@@ -28,7 +28,8 @@ MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
 TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
-BIST_CODE=cd('test'); success = test('bist'); exit(~success);
+# run tests twice so we can see some output
+BIST_CODE=cd('test'); test('bist'); success = test('bist'); exit(~success);
 
 
 .PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
