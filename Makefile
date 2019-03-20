@@ -104,10 +104,10 @@ clean:
 	rm -rf "${BUILD_DIR}"
 
 test:
-	${OCTAVE} --path ${PWD}/inst --eval "${TEST_CODE}"
+	${OCTAVE} --path ${CURDIR}/inst --eval "${TEST_CODE}"
 
 test-interactive:
-	script --quiet --command "${OCTAVE} --path ${PWD}/inst --eval \"${TEST_CODE}\"" /dev/null
+	script --quiet --command "${OCTAVE} --path ${CURDIR}/inst --eval \"${TEST_CODE}\"" /dev/null
 
 
 ## Install in Octave (locally)
@@ -120,7 +120,7 @@ ${INSTALLED_PACKAGE}: ${OCTAVE_RELEASE_TARBALL}
 matlab_pkg: $(MATLAB_PKG_ZIP)
 
 ${MATLAB_PKG}: | $(BUILD_DIR) ${MATLAB_PKG}/private
-	$(OCTAVE) --path ${PWD}/util --silent --eval \
+	$(OCTAVE) --path ${CURDIR}/util --silent --eval \
 		"convert_comments('inst/', '', '../${MATLAB_PKG}/')"
 	cp -ra inst/private/*.m ${MATLAB_PKG}/private/
 	cp -ra COPYING ${MATLAB_PKG}/
