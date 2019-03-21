@@ -17,7 +17,7 @@ function DOCTEST__results = doctest_run_tests(DOCTEST__tests)
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2011, 2015 Michael Walter
-% Copyright (c) 2015-2017 Colin B. Macdonald
+% Copyright (c) 2015-2017, 2019 Colin B. Macdonald
 % License: BSD-3-Clause, see doctest.m for details
 
 
@@ -40,15 +40,30 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
   doctest_datastore('set_current_index', DOCTEST__i);
   DOCTEST__current_test = doctest_datastore('get_current_test');
 
+  DOCTEST__current_test.directive_issue = false;
+
   % define test-global constants (these are accessible by the tests)
   DOCTEST_OCTAVE = is_octave();
   DOCTEST_MATLAB = ~DOCTEST_OCTAVE;
 
   % determine whether test should be skipped
   % (careful about Octave bug #46397 to not change the current value of “ans”)
-  eval (strcat ('DOCTEST__current_test.skip = ', ...
-                 doctest_join_conditions(DOCTEST__current_test.skip), ...
-                ';'));
+  try
+    eval (strcat ('DOCTEST__current_test.skip = ', ...
+                  doctest_join_conditions(DOCTEST__current_test.skip), ...
+                  ';'));
+  catch DOCTEST__exception
+    DOCTEST__current_test.directive_issue = true;
+    DOCTEST__current_test.skip = [];
+    DOCTEST__current_test.xfail = [];
+    % hack: put the error message into "got"
+    DOCTEST__current_test.got = strcat('There was a problem executing +SKIP directive:', ...
+                                       sprintf('\n'), ...
+                                       doctest_format_exception(DOCTEST__exception));
+    DOCTEST__current_test.passed = false;
+    doctest_datastore('set_current_test', DOCTEST__current_test);
+    continue
+  end
   if (DOCTEST__current_test.skip)
      doctest_datastore('set_current_test', DOCTEST__current_test);
      continue
@@ -56,9 +71,22 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
 
   % determine whether test is expected to fail
   % (careful about Octave bug #46397 to not change the current value of “ans”)
-  eval (strcat ('DOCTEST__current_test.xfail = ', ...
-                 doctest_join_conditions(DOCTEST__current_test.xfail), ...
-                ';'));
+  try
+    eval (strcat ('DOCTEST__current_test.xfail = ', ...
+                  doctest_join_conditions(DOCTEST__current_test.xfail), ...
+                  ';'));
+  catch DOCTEST__exception
+    DOCTEST__current_test.directive_issue = true;
+    DOCTEST__current_test.xfail = [];
+    % hack: put the error message into "got"
+    DOCTEST__current_test.got = ['problem executing +XFAIL directive:' ...
+                                 sprintf('\n') ...
+                                 doctest_format_exception(DOCTEST__exception)];
+    DOCTEST__current_test.passed = false;
+    doctest_datastore('set_current_test', DOCTEST__current_test);
+    continue
+  end
+
   doctest_datastore('set_current_test', DOCTEST__current_test);
 
   % run the test code
