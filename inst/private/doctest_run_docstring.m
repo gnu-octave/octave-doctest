@@ -13,11 +13,13 @@ function results = doctest_run_docstring(docstring, defaults)
 %   results.got:      the output that was recieved
 %   results.passed:   whether .want and .got match each other according to
 %                     doctest_compare.
+%
+%   There may be other fields as well.
 
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2011, 2015 Michael Walter
-% Copyright (c) 2015-2017 Colin B. Macdonald
+% Copyright (c) 2015-2017, 2019 Colin B. Macdonald
 % License: BSD-3-Clause, see doctest.m for details
 
 
