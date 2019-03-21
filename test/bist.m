@@ -15,11 +15,9 @@ end
 
 %!assert (~ doctest ('there_is_no_such_file', '-quiet'))
 
-%!assert (~ doctest ({'doctest', 'there_is_no_such_file'}, '-quiet'))
+%!assert (~ doctest ('@there_is_no_such_class', '-quiet'))
 
-%!error
-%! % TODO: maybe this should be EXTRACTION_ERROR, not raise an error...
-%! doctest @there_is_no_such_class -quiet
+%!assert (~ doctest ({'doctest', 'there_is_no_such_file'}, '-quiet'))
 
 %!test
 %! [n, t] = doctest ('doctest', '-quiet');
@@ -67,8 +65,7 @@ end
 %! assert (nump == 5 && numt == 5)
 %! assert (summ.num_targets == 4)
 
-%!xtest
-%! % Currently cannot even run
+%!test
 %! % https://github.com/catch22/octave-doctest/issues/199
 %! [nump, numt, summ] = doctest ('@classdef_infile/disp');
 %! assert (nump >= 0)
@@ -88,7 +85,7 @@ end
 %! assert (nump == 4 && numt == 4)
 %! assert (summ.num_targets == 3)
 
-%!xtest
+%!test
 %! % monkey-patching methods to existing builtin-objects
 %! [nump, numt, summ1] = doctest ('logical');
 %! % First, there is (at least) the "logical" builtin
