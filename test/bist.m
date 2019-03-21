@@ -4,8 +4,6 @@ function bist()
 % Doctest mostly tests itself but in some cases we want to ensure
 % exactly what is being tested and yet we cannat call doctest recursively
 % https://github.com/catch22/octave-doctest/issues/184
-%
-% The output is rather noisy: perhaps evalc could make it less verbose?
 
 end
 
