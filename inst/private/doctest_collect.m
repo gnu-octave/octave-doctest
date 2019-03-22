@@ -54,7 +54,7 @@ if is_octave()
   if (strcmp (type, 'unknown'))
     if (exist(what, 'dir'))
       type = 'dir';
-    elseif (exist(what, 'file') || exist(what, 'builtin'))
+    elseif (exist(what, 'file') || exist(what, 'builtin') || exist(what) == 103)
       type = 'function';
     else
       type = 'unknown';

@@ -98,3 +98,33 @@ end
 %! assert (summ.num_targets >= summ1.num_targets)
 %! assert (nump >= 3 && numt >= 3)
 %! path(savepath);
+
+
+%!function y = foo (x)
+%!  % >> foo (2)
+%!  % 4
+%!  % >> foo (10)
+%!  % 20
+%!  y = 2*x;
+%!endfunction
+
+%!assert (doctest ('foo', '-quiet'))
+
+%!test
+%! [n, t, summ] = doctest ('foo');
+%! assert (n == 2)
+%! assert (t == n)
+%! assert (summ.num_targets == 1)
+
+%!function y = bar (x)
+%!  % >> bar (2)
+%!  % 42
+%!  % >> bar (3)
+%!  % 3
+%!  y = x;
+%!endfunction
+
+%!test
+%! [n, t, summ] = doctest ('bar');
+%! assert (n == 1)
+%! assert (t == 2)
