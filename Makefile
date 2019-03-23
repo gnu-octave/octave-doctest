@@ -29,7 +29,7 @@ MATLAB ?= matlab
 
 TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
 # run tests twice so we can see some output
-BIST_CODE=cd('test'); test('bist'); success = test('bist'); exit(~success);
+BIST_CODE=cd('test'); pwd(), test('bist'); success = test('bist'); exit(~success);
 
 
 .PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
@@ -113,7 +113,7 @@ test-interactive:
 	script --quiet --command "${OCTAVE} --path ${CURDIR}/inst --eval \"${TEST_CODE}\"" /dev/null
 
 test-bist:
-	${OCTAVE} --path ${PWD}/inst --eval "${BIST_CODE}"
+	${OCTAVE} --path ${CURDIR}/inst --eval "${BIST_CODE}"
 
 ## Install in Octave (locally)
 install: ${INSTALLED_PACKAGE}
