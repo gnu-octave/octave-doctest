@@ -40,8 +40,6 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
   doctest_datastore('set_current_index', DOCTEST__i);
   DOCTEST__current_test = doctest_datastore('get_current_test');
 
-  DOCTEST__current_test.directive_issue = false;
-
   % define test-global constants (these are accessible by the tests)
   DOCTEST_OCTAVE = is_octave();
   DOCTEST_MATLAB = ~DOCTEST_OCTAVE;
@@ -53,7 +51,6 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
                   doctest_join_conditions(DOCTEST__current_test.skip), ...
                   ';'));
   catch DOCTEST__exception
-    DOCTEST__current_test.directive_issue = true;
     DOCTEST__current_test.skip = [];
     DOCTEST__current_test.xfail = [];
     % hack: put the error message into "got"
@@ -76,7 +73,6 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
                   doctest_join_conditions(DOCTEST__current_test.xfail), ...
                   ';'));
   catch DOCTEST__exception
-    DOCTEST__current_test.directive_issue = true;
     DOCTEST__current_test.xfail = [];
     % hack: put the error message into "got"
     DOCTEST__current_test.got = ['problem executing +XFAIL directive:' ...
