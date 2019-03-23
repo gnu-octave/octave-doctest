@@ -17,7 +17,7 @@ function DOCTEST__results = doctest_run_tests(DOCTEST__tests)
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2011, 2015 Michael Walter
-% Copyright (c) 2015-2017 Colin B. Macdonald
+% Copyright (c) 2015-2017, 2019 Colin B. Macdonald
 % License: BSD-3-Clause, see doctest.m for details
 
 
@@ -46,20 +46,41 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
 
   % determine whether test should be skipped
   % (careful about Octave bug #46397 to not change the current value of “ans”)
-  eval (strcat ('DOCTEST__current_test.skip = ', ...
-                 doctest_join_conditions(DOCTEST__current_test.skip), ...
-                ';'));
-  if (DOCTEST__current_test.skip)
-     doctest_datastore('set_current_test', DOCTEST__current_test);
-     continue
+  try
+    eval (strcat ('DOCTEST__current_test.skip = ', ...
+                  doctest_join_conditions(DOCTEST__current_test.skip), ...
+                  ';'));
+  catch DOCTEST__exception
+    DOCTEST__current_test.skip = true;
+    DOCTEST__current_test.xfail = [];   % don't know (yet)
+    % hack: put the error message into "got"
+    DOCTEST__current_test.got = strcat('There was a problem executing +SKIP directive:', ...
+                                       sprintf('\n'), ...
+                                       doctest_format_exception(DOCTEST__exception));
+    DOCTEST__current_test.passed = false;
   end
 
   % determine whether test is expected to fail
   % (careful about Octave bug #46397 to not change the current value of “ans”)
-  eval (strcat ('DOCTEST__current_test.xfail = ', ...
-                 doctest_join_conditions(DOCTEST__current_test.xfail), ...
-                ';'));
+  try
+    eval (strcat ('DOCTEST__current_test.xfail = ', ...
+                  doctest_join_conditions(DOCTEST__current_test.xfail), ...
+                  ';'));
+  catch DOCTEST__exception
+    DOCTEST__current_test.skip = true;  % test is not going to run
+    DOCTEST__current_test.xfail = [];  % cannot say
+    % hack: put the error message into "got"
+    DOCTEST__current_test.got = strcat('problem executing +XFAIL directive:', ...
+                                       sprintf('\n'), ...
+                                       doctest_format_exception(DOCTEST__exception));
+    DOCTEST__current_test.passed = false;
+  end
+
   doctest_datastore('set_current_test', DOCTEST__current_test);
+
+  if (DOCTEST__current_test.skip)
+    continue
+  end
 
   % run the test code
   try
@@ -90,7 +111,8 @@ doctest_datastore('clear_and_munlock');
 %DOCTEST__results = cell2mat(tests);  % fails b/c they have different fields
 DOCTEST__results = [];
 for j=1:numel(tests)
-  if ~any(tests{j}.skip)
+  if (~any(tests{j}.skip) || isfield(tests{j}, 'passed'))
+    % skipped but pass was false, may be a directive so keep
     DOCTEST__results = [DOCTEST__results tests{j}];
   end
 end

@@ -1,0 +1,42 @@
+function bist_skip_xfail_errors()
+% >> a = 42
+% a = 42
+%
+%
+% The directive has an undefined error
+% >> a = 43    %doctest: +SKIP_IF(truthy)
+% a = 43
+%
+%
+% The directive failed; test should not have run
+% >> a
+% a = 42
+%
+%
+% The directive has an undefined error
+% >> b = 44    %doctest: +XFAIL_IF(undef)
+% b = 44
+%
+%
+% The directive has a syntax error
+% >> b = 45    %doctest: +XFAIL_IF(\m/)
+% b = 45
+%
+%
+% An actual passing test
+% >> c = 46
+% c = 46
+%
+%
+% An actual failing test
+% >> c = 47
+% c = 4200
+
+end
+
+
+%!test
+%! % some are supposed to fail
+%! [n, t, summ] = doctest('bist_skip_xfail_errors');
+%! assert (n == 3)
+%! assert (t == 7)
