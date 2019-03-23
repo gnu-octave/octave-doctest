@@ -255,10 +255,12 @@ function varargout = doctest(what, varargin)
 % Process parameters.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% print usage?
-if nargin < 1
-  help doctest;
-  return;
+if (nargin < 1 || nargout > 3)
+  if (is_octave)
+    print_usage()
+  end
+  help doctest
+  return
 end
 
 % if given a single object, wrap it in a cell array
