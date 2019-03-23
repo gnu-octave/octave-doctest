@@ -51,19 +51,13 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
                   doctest_join_conditions(DOCTEST__current_test.skip), ...
                   ';'));
   catch DOCTEST__exception
-    DOCTEST__current_test.skip = [];
-    DOCTEST__current_test.xfail = [];
+    DOCTEST__current_test.skip = true;
+    DOCTEST__current_test.xfail = [];   % don't know (yet)
     % hack: put the error message into "got"
     DOCTEST__current_test.got = strcat('There was a problem executing +SKIP directive:', ...
                                        sprintf('\n'), ...
                                        doctest_format_exception(DOCTEST__exception));
     DOCTEST__current_test.passed = false;
-    doctest_datastore('set_current_test', DOCTEST__current_test);
-    continue
-  end
-  if (DOCTEST__current_test.skip)
-     doctest_datastore('set_current_test', DOCTEST__current_test);
-     continue
   end
 
   % determine whether test is expected to fail
@@ -73,17 +67,20 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
                   doctest_join_conditions(DOCTEST__current_test.xfail), ...
                   ';'));
   catch DOCTEST__exception
-    DOCTEST__current_test.xfail = [];
+    DOCTEST__current_test.skip = true;  % test is not going to run
+    DOCTEST__current_test.xfail = [];  % cannot say
     % hack: put the error message into "got"
     DOCTEST__current_test.got = strcat('problem executing +XFAIL directive:', ...
                                        sprintf('\n'), ...
                                        doctest_format_exception(DOCTEST__exception));
     DOCTEST__current_test.passed = false;
-    doctest_datastore('set_current_test', DOCTEST__current_test);
-    continue
   end
 
   doctest_datastore('set_current_test', DOCTEST__current_test);
+
+  if (DOCTEST__current_test.skip)
+    continue
+  end
 
   % run the test code
   try
@@ -114,7 +111,8 @@ doctest_datastore('clear_and_munlock');
 %DOCTEST__results = cell2mat(tests);  % fails b/c they have different fields
 DOCTEST__results = [];
 for j=1:numel(tests)
-  if ~any(tests{j}.skip)
+  if (~any(tests{j}.skip) || isfield(tests{j}, 'passed'))
+    % skipped but pass was false, may be a directive so keep
     DOCTEST__results = [DOCTEST__results tests{j}];
   end
 end

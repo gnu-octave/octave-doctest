@@ -13,8 +13,12 @@ function results = doctest_run_docstring(docstring, defaults)
 %   results.got:      the output that was recieved
 %   results.passed:   whether .want and .got match each other according to
 %                     doctest_compare.
+%   results.xfail:    true/false/empty: whether the test was expected to
+%                     fail.
+%   results.skip:     true/false: whether the test was skipped, some skips
+%                     could also set passed=false.
 %
-%   There may be other fields as well.
+%   There may be other fields as well; these can change at any time.
 
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
