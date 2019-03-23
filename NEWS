@@ -1,5 +1,5 @@
-doctest 0.6.1+
-==============
+doctest 0.7.0 (2019-03-23)
+==========================
 
   * Functions within compiled `.oct` files can now be tested.
 
