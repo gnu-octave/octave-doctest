@@ -3,7 +3,11 @@ doctest 0.6.1+
 
   * Functions within compiled `.oct` files can now be tested.
 
-  * Makefile fixes.
+  * Tests are run with default number formatting (see `help doctest`).
+
+  * More robust to errors during testing.
+
+  * Makefile improvements and fixes.
 
 
 
