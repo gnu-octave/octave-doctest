@@ -13,4 +13,4 @@ before_install:
   - docker pull mtmiller/octave:${IMAGE_TAG}
 
 script:
-  - docker run --volume=${PWD}:/doctest mtmiller/octave:${IMAGE_TAG} make -C /doctest test test-interactive
+  - docker run --volume=${PWD}:/doctest mtmiller/octave:${IMAGE_TAG} make -C /doctest test test-interactive test-bist
