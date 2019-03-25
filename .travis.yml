@@ -6,8 +6,12 @@ services:
 
 matrix:
   include:
-  - name: "Octave latest release"
-    env: TAG=latest
+  - name: "Octave version 4.2"
+    env: TAG=4.2
+  - name: "Octave version 4.4"
+    env: TAG=4.4
+  - name: "Octave version 5"
+    env: TAG=5
 
 before_install:
 - docker pull mtmiller/octave:${TAG}
