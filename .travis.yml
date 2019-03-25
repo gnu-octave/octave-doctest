@@ -2,15 +2,15 @@ dist: xenial
 language: generic
 
 services:
-  - docker
+- docker
 
 matrix:
   include:
   - name: "Octave latest release"
-    env: IMAGE_TAG=latest
+    env: TAG=latest
 
 before_install:
-  - docker pull mtmiller/octave:${IMAGE_TAG}
+- docker pull mtmiller/octave:${TAG}
 
 script:
-  - docker run --volume=${PWD}:/doctest mtmiller/octave:${IMAGE_TAG} make -C /doctest test test-interactive test-bist
+- docker run --volume=${PWD}:/doctest:z mtmiller/octave:${TAG} make -C /doctest test test-interactive test-bist
