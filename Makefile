@@ -29,7 +29,7 @@ MATLAB ?= matlab
 
 TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
 # run tests twice so we can see some output
-BIST_CODE=cd('test'); test('bist'); success = test('bist'); exit(~success);
+BIST_CODE=cd('test'); pwd(), test('bist'); success = test('bist'); exit(~success);
 
 
 .PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
@@ -107,13 +107,13 @@ clean:
 	rm -rf "${BUILD_DIR}"
 
 test:
-	${OCTAVE} --path ${PWD}/inst --eval "${TEST_CODE}"
+	${OCTAVE} --path ${CURDIR}/inst --eval "${TEST_CODE}"
 
 test-interactive:
-	script --quiet --command "${OCTAVE} --path ${PWD}/inst --eval \"${TEST_CODE}\"" /dev/null
+	script --quiet --command "${OCTAVE} --path ${CURDIR}/inst --eval \"${TEST_CODE}\"" /dev/null
 
 test-bist:
-	${OCTAVE} --path ${PWD}/inst --eval "${BIST_CODE}"
+	${OCTAVE} --path ${CURDIR}/inst --eval "${BIST_CODE}"
 
 ## Install in Octave (locally)
 install: ${INSTALLED_PACKAGE}
@@ -125,7 +125,7 @@ ${INSTALLED_PACKAGE}: ${OCTAVE_RELEASE_TARBALL}
 matlab_pkg: $(MATLAB_PKG_ZIP)
 
 ${MATLAB_PKG}: | $(BUILD_DIR) ${MATLAB_PKG}/private
-	$(OCTAVE) --path ${PWD}/util --silent --eval \
+	$(OCTAVE) --path ${CURDIR}/util --silent --eval \
 		"convert_comments('inst/', '', '../${MATLAB_PKG}/')"
 	cp -ra inst/private/*.m ${MATLAB_PKG}/private/
 	cp -ra COPYING ${MATLAB_PKG}/
