@@ -12,6 +12,11 @@ matrix:
     env: TAG=4.4
   - name: "Octave version 5"
     env: TAG=5
+  - name: "Octave development version"
+    env: TAG=devel
+  allow_failures:
+  - name: "Octave development version"
+    env: TAG=devel
 
 before_install:
 - docker pull mtmiller/octave:${TAG}
