@@ -10,6 +10,8 @@ SHELL   := /bin/bash
 ## notice and this notice are preserved.  This file is offered as-is,
 ## without any warranty.
 
+TAR := $(shell which gtar 2>/dev/null || echo tar)
+
 PACKAGE := $(shell grep "^Name: " DESCRIPTION | cut -f2 -d" ")
 VERSION := $(shell grep "^Version: " DESCRIPTION | cut -f2 -d" ")
 
@@ -29,7 +31,7 @@ MATLAB ?= matlab
 
 TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
 # run tests twice so we can see some output
-BIST_CODE=cd('test'); test('bist'); success = test('bist'); exit(~success);
+BIST_CODE=cd('test'); pwd(), test('bist'); success = test('bist'); exit(~success);
 
 
 .PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
@@ -55,7 +57,7 @@ define create_tarball
 $(shell cd $(dir $(1)) \
     && find $(notdir $(1)) -print0 \
     | LC_ALL=C sort -z \
-    | tar c --mtime="$(GIT_DATE)" \
+    | $(TAR) c --mtime="$(GIT_DATE)" \
             --owner=root --group=root --numeric-owner \
             --no-recursion --null -T - -f - \
     | gzip -9n > "$(2)")
@@ -70,7 +72,7 @@ endef
 $(OCTAVE_RELEASE): .git/index | $(BUILD_DIR)
 	@echo "Creating package version $(VERSION) release ..."
 	-$(RM) -r "$@"
-	git archive --format=tar --prefix="$@/" HEAD | tar -x
+	git archive --format=tar --prefix="$@/" HEAD | $(TAR) -x
 	$(RM) "$@/README.matlab.md" \
 	      "$@/.gitignore" \
 	      "$@/.travis.yml" \
@@ -107,13 +109,13 @@ clean:
 	rm -rf "${BUILD_DIR}"
 
 test:
-	${OCTAVE} --path ${PWD}/inst --eval "${TEST_CODE}"
+	${OCTAVE} --path ${CURDIR}/inst --eval "${TEST_CODE}"
 
 test-interactive:
-	script --quiet --command "${OCTAVE} --path ${PWD}/inst --eval \"${TEST_CODE}\"" /dev/null
+	script --quiet --command "${OCTAVE} --path ${CURDIR}/inst --eval \"${TEST_CODE}\"" /dev/null
 
 test-bist:
-	${OCTAVE} --path ${PWD}/inst --eval "${BIST_CODE}"
+	${OCTAVE} --path ${CURDIR}/inst --eval "${BIST_CODE}"
 
 ## Install in Octave (locally)
 install: ${INSTALLED_PACKAGE}
@@ -125,7 +127,7 @@ ${INSTALLED_PACKAGE}: ${OCTAVE_RELEASE_TARBALL}
 matlab_pkg: $(MATLAB_PKG_ZIP)
 
 ${MATLAB_PKG}: | $(BUILD_DIR) ${MATLAB_PKG}/private
-	$(OCTAVE) --path ${PWD}/util --silent --eval \
+	$(OCTAVE) --path ${CURDIR}/util --silent --eval \
 		"convert_comments('inst/', '', '../${MATLAB_PKG}/')"
 	cp -ra inst/private/*.m ${MATLAB_PKG}/private/
 	cp -ra COPYING ${MATLAB_PKG}/
