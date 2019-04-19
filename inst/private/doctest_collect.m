@@ -30,30 +30,33 @@ if is_octave()
   elseif (exist (what) == 3)  % .oct/.mex
     [~, what, ~] = fileparts (what);  % strip extension if present
     type = 'function';                % then access like any function
-  elseif (exist(what, 'file') && ~exist(what, 'dir')) || exist(what, 'builtin')
-    if (exist(['@' what], 'dir'))
-      % special case, e.g., @logical is class, logical is builtin
-      type = 'class';
-    else
-      type = 'function';
-    end
-  elseif (strcmp(what(1), '@'))
-    % comes after 'file' above for "doctest @class/method"
-    type = 'class';
-  elseif (exist(what, 'dir'))
-    type = 'dir';
-  elseif exist(what) == 2 || exist(what) == 103
-    % Notes:
-    %   * exist('@class', 'dir') only works if pwd is the parent of
-    %     '@class', having it in the path is not sufficient.
-    %   * Return 2 on Octave 3.8 and 103 on Octave 4.
-    type = 'class';
   else
-    % classdef classes are not detected by any of the above
+    type = 'unknown';
+  end
+
+  %% Let's see if its a class by checking if methods returns
+  % What about classdef in oct file above?  Should we do this even if
+  % type is 'octfile'?
+  if (strcmp (type, 'unknown'))
+    if (~ isempty (what) && strcmp (what(1), '@'))
+      temp = what(2:end);
+    else
+      temp = what;
+    end
     try
-      temp = methods(what);
+      temp = methods(temp);
       type = 'class';
     catch
+      type = 'unknown';
+    end
+  end
+
+  if (strcmp (type, 'unknown'))
+    if (exist(what, 'dir'))
+      type = 'dir';
+    elseif (exist(what, 'file') || exist(what, 'builtin') || exist(what) == 103)
+      type = 'function';
+    else
       type = 'unknown';
     end
   end
