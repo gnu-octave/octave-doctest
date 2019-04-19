@@ -1,6 +1,10 @@
 doctest 0.7.0+
 ==============
 
+  * `doctest myclass` has been refactored with various bugs fixed.
+
+  * Functions defined directly in the Octave interpretor can now be tested.
+
 
 
 doctest 0.7.0 (2019-03-23)
