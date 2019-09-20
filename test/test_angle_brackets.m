@@ -1,6 +1,9 @@
 function s = test_angle_brackets()
 % https://savannah.gnu.org/bugs/?45084 (Fixed in Octave 4.0)
 %
+% Copyright (c) 2015-2016 Colin B. Macdonald
+% SPDX-License-Identifier: BSD-3-Clause
+%
 % Fails on 3.8
 % >> oct38 = DOCTEST_OCTAVE && compare_versions(OCTAVE_VERSION, '4.0.0', '<');
 %
