@@ -134,3 +134,20 @@ end
 %! assert (n == 0)
 %! assert (t == 0)
 %! assert (summ.num_targets == 0)
+
+%!test
+%! % skip empty targets
+%! [n, t, summ] = doctest({'', ''});
+%! assert (n == 0)
+%! assert (t == 0)
+%! assert (summ.num_targets == 0)
+%! assert (summ.num_targets_with_extraction_errors == 0)
+
+%!test
+%! % skip empty targets
+%! [n1, t1, summ1] = doctest('doctest');
+%! [n2, t2, summ2] = doctest({'', '', 'doctest', ''});
+%! assert (n1 == n2)
+%! assert (t1 == t2)
+%! assert (summ1.num_targets == summ2.num_targets)
+%! assert (summ2.num_targets_with_extraction_errors == 0)

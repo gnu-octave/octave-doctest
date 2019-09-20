@@ -19,6 +19,10 @@ function summary = doctest_collect(w, directives, summary, recursive, verbose, d
 % TODO: methods('logical') octave/matlab differ: which behaviour do we want?
 % TODO: what about builtin "test" versus dir "test/"?  Do we prefer dir?
 
+if (isempty(w))
+  return
+end
+
 % determine type of target
 if is_octave()
   % Note: ripe for refactoring once "exist(w, 'class')" works in Octave.
