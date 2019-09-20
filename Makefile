@@ -129,12 +129,12 @@ matlab_pkg: $(MATLAB_PKG_ZIP)
 ${MATLAB_PKG}: | $(BUILD_DIR) ${MATLAB_PKG}/private
 	$(OCTAVE) --path ${CURDIR}/util --silent --eval \
 		"convert_comments('inst/', '', '../${MATLAB_PKG}/')"
-	cp -ra inst/private/*.m ${MATLAB_PKG}/private/
-	cp -ra COPYING ${MATLAB_PKG}/
-	cp -ra CONTRIBUTORS ${MATLAB_PKG}/
-	cp -ra NEWS ${MATLAB_PKG}/
-	cp -ra README.matlab.md ${MATLAB_PKG}/
-	cp -ra test ${MATLAB_PKG}/
+	cp -a inst/private/*.m ${MATLAB_PKG}/private/
+	cp -a COPYING ${MATLAB_PKG}/
+	cp -a CONTRIBUTORS ${MATLAB_PKG}/
+	cp -a NEWS ${MATLAB_PKG}/
+	cp -a README.matlab.md ${MATLAB_PKG}/
+	cp -a test ${MATLAB_PKG}/
 
 matlab_test:
 	cd "${MATLAB_PKG}"; ${MATLAB} -nojvm -nodisplay -nosplash -r "${TEST_CODE}"
