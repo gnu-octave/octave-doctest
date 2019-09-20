@@ -6,6 +6,7 @@ SHELL   := /bin/bash
 ## Copyright 2016 Carnë Draug
 ## Copyright 2019 Mike Miller
 ## Copyright 2019 Andrew Janke
+## Copyright 2019 Manuel Leonhardt
 ##
 ## Copying and distribution of this file, with or without modification,
 ## are permitted in any medium without royalty provided the copyright
