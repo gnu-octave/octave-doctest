@@ -14,7 +14,7 @@ function match = doctest_compare(want, got, normalize_whitespace, ellipsis)
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
 % Copyright (c) 2015-2016 Colin B. Macdonald
-% This is Free Software, BSD-3-Clause, see doctest.m for details.
+% SPDX-License-Identifier: BSD-3-Clause
 
 
 % This looks bad, like hardcoding for lower-case "a href"

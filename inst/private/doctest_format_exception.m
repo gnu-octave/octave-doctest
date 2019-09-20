@@ -9,7 +9,7 @@ function formatted = doctest_format_exception(ex)
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015, 2019 Colin B. Macdonald
 % Copyright (c) 2015, 2017 Michael Walter
-% This is Free Software, BSD-3-Clause, see doctest.m for details.
+% SPDX-License-Identifier: BSD-3-Clause
 
 
 % octave?

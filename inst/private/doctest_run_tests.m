@@ -18,7 +18,7 @@ function DOCTEST__results = doctest_run_tests(DOCTEST__tests)
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2011, 2015 Michael Walter
 % Copyright (c) 2015-2017, 2019 Colin B. Macdonald
-% License: BSD-3-Clause, see doctest.m for details
+% SPDX-License-Identifier: BSD-3-Clause
 
 
 % Implementation note: all internal variables should start with

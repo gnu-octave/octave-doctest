@@ -8,7 +8,7 @@ function d = doctest_default_directives(varargin)
 
 %%
 % Copyright (c) 2015 Colin B. Macdonald
-% This is Free Software, BSD-3-Clause, see doctest.m for details.
+% SPDX-License-Identifier: BSD-3-Clause
 
 
   defaults.normalize_whitespace = true;

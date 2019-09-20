@@ -1,17 +1,21 @@
 SHELL   := /bin/bash
 
-## Copyright 2015 Oliver Heimlich
-## Copyright 2015 Michael Walter
-## Copyright 2015-2017, 2019 Colin B. Macdonald
-## Copyright 2016 Carnë Draug
-## Copyright 2019 Mike Miller
-## Copyright 2019 Andrew Janke
-## Copyright 2019 Manuel Leonhardt
-##
-## Copying and distribution of this file, with or without modification,
-## are permitted in any medium without royalty provided the copyright
-## notice and this notice are preserved.  This file is offered as-is,
-## without any warranty.
+# Maintainer makefile for Octave Doctest
+#
+# SPDX-License-Identifier: FSFAP
+#
+# Copyright 2015 Oliver Heimlich
+# Copyright 2015 Michael Walter
+# Copyright 2015-2017 Colin B. Macdonald
+# Copyright 2016 Carnë Draug
+# Copyright 2019 Mike Miller
+# Copyright 2019 Andrew Janke
+# Copyright 2019 Manuel Leonhardt
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
 
 TAR := $(shell which gtar 2>/dev/null || echo tar)
 

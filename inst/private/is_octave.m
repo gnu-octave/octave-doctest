@@ -3,7 +3,7 @@ function r = is_octave()
 
 %%
 % Copyright (c) 2015 Colin B. Macdonald
-% This is Free Software, BSD-3-Clause, see doctest.m for details.
+% SPDX-License-Identifier: BSD-3-Clause
 
 
 % Timings for different implementations, 10000 calls
