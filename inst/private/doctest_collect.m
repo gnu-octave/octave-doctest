@@ -1,7 +1,7 @@
-function summary = doctest_collect(what, directives, summary, recursive, verbose, depth, fid)
+function summary = doctest_collect(w, directives, summary, recursive, verbose, depth, fid)
 %DOCTEST_COLLECT  Find and run doctests.
 %
-%   The parameter WHAT is the name of a class, directory, function or filename:
+%   The input W is the name of a class, directory, function or filename:
 %   * For a directory, calls itself on the contents, recursively if
 %     RECURSIVE is true;
 %   * For a class, all methods are tested;
@@ -21,14 +21,14 @@ function summary = doctest_collect(what, directives, summary, recursive, verbose
 
 % determine type of target
 if is_octave()
-  % Note: ripe for refactoring once "exist(what, 'class')" works in Octave.
-  [~, ~, ext] = fileparts(what);
+  % Note: ripe for refactoring once "exist(w, 'class')" works in Octave.
+  [~, ~, ext] = fileparts(w);
   if any(strcmpi(ext, {'.texinfo' '.texi' '.txi' '.tex'}))
     type = 'texinfo';
-  elseif (strcmp (ext, '.oct') && exist (what) == 3)  % .oct explicitly
+  elseif (strcmp (ext, '.oct') && exist (w) == 3)  % .oct explicitly
     type = 'octfile';
-  elseif (exist (what) == 3)  % .oct/.mex
-    [~, what, ~] = fileparts (what);  % strip extension if present
+  elseif (exist (w) == 3)  % .oct/.mex
+    [~, w, ~] = fileparts (w);  % strip extension if present
     type = 'function';                % then access like any function
   else
     type = 'unknown';
@@ -38,10 +38,10 @@ if is_octave()
   % What about classdef in oct file above?  Should we do this even if
   % type is 'octfile'?
   if (strcmp (type, 'unknown'))
-    if (~ isempty (what) && strcmp (what(1), '@'))
-      temp = what(2:end);
+    if (~ isempty (w) && strcmp (w(1), '@'))
+      temp = w(2:end);
     else
-      temp = what;
+      temp = w;
     end
     try
       temp = methods(temp);
@@ -52,26 +52,26 @@ if is_octave()
   end
 
   if (strcmp (type, 'unknown'))
-    if (exist(what, 'dir'))
+    if (exist(w, 'dir'))
       type = 'dir';
-    elseif (exist(what, 'file') || exist(what, 'builtin') || exist(what) == 103)
+    elseif (exist(w, 'file') || exist(w, 'builtin') || exist(w) == 103)
       type = 'function';
     else
       type = 'unknown';
     end
   end
 else % Matlab
-  if (strcmp(what(1), '@')) && ~isempty(methods(what(2:end)))
+  if (strcmp(w(1), '@')) && ~isempty(methods(w(2:end)))
     % covers "doctest @class", but not "doctest @class/method"
     type = 'class';
-  elseif ~isempty(methods(what))
+  elseif ~isempty(methods(w))
     % covers "doctest class"
     type = 'class';
-  elseif (exist(what, 'dir'))
+  elseif (exist(w, 'dir'))
     type = 'dir';
-  elseif exist(what, 'file') || exist(what, 'builtin');
+  elseif exist(w, 'file') || exist(w, 'builtin');
     type = 'function';
-  elseif ~isempty(help(what))
+  elseif ~isempty(help(w))
     % covers "doctest class.method" and "doctest class/method"
     type = 'function'
   else
@@ -85,23 +85,23 @@ end
 
 % Deal with directories
 if (strcmp(type, 'dir'))
-  if (strcmp(what, '.'))
+  if (strcmp(w, '.'))
     if (depth == 0)
       % cheap hack to not indent when calling "doctest ."
       depth = -1;
     end
   else
     spaces = repmat(' ', 1, 2*depth);
-    if (strcmp(what(end), filesep()))
+    if (strcmp(w(end), filesep()))
       slashchar = '';
     else
       slashchar = filesep();
     end
     if (verbose)
-      fprintf(fid, '%s%s%s\n', spaces, what, slashchar);
+      fprintf(fid, '%s%s%s\n', spaces, w, slashchar);
     end
   end
-  oldcwd = chdir(what);
+  oldcwd = chdir(w);
   files = dir('.');
   for i=1:numel(files)
     f = files(i).name;
@@ -142,23 +142,23 @@ end
 %   TARGETS(i).depth      How "deep" in a recursive traversal are we
 
 if strcmp(type, 'function')
-  target = collect_targets_function(what);
+  target = collect_targets_function(w);
   target.depth = depth;
   targets = [target];
 elseif strcmp(type, 'class')
-  targets = collect_targets_class(what, depth);
+  targets = collect_targets_class(w, depth);
 elseif strcmp (type, 'octfile')
-  targets = collect_targets_octfile (what, depth);
+  targets = collect_targets_octfile (w, depth);
 elseif strcmp(type, 'texinfo')
   target = struct();
-  target.name = what;
+  target.name = w;
   target.link = '';
   target.depth = depth;
-  [target.docstring, target.error] = parse_texinfo(fileread(what));
+  [target.docstring, target.error] = parse_texinfo(fileread(w));
   targets = [target];
 else
   target = struct();
-  target.name = what;
+  target.name = w;
   target.link = '';
   target.depth = depth;
   target.docstring = '';
@@ -242,31 +242,31 @@ end
 
 
 
-function target = collect_targets_function(what)
+function target = collect_targets_function(w)
   target = struct();
-  target.name = what;
+  target.name = w;
   if is_octave()
     target.link = '';
   else
-    target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
+    target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(w), w);
   end
   [target.docstring, target.error] = extract_docstring(target.name);
 end
 
 
-function targets = collect_targets_class(what, depth)
-  if (strcmp(what(1), '@'))
+function targets = collect_targets_class(w, depth)
+  if (strcmp(w(1), '@'))
     % Octave methods('@foo') gives java error, Matlab just says "No methods"
-    what = what(2:end);
+    w = w(2:end);
   end
 
   % TODO: workaround github.com/catch22/octave-doctest/issues/135 by
   % accessing all non-constructor method help text *before* "help obj"
   if (is_octave ())
-    meths = methods (what);
+    meths = methods (w);
     for i=1:numel (meths)
-      if (~ strcmp (meths{i}, what))  % skip @obj/obj
-        name = sprintf ('@%s%s%s', what, filesep (), meths{i});
+      if (~ strcmp (meths{i}, w))  % skip @obj/obj
+        name = sprintf ('@%s%s%s', w, filesep (), meths{i});
         [docstring, format] = get_help_text (name);
       end
     end
@@ -275,26 +275,26 @@ function targets = collect_targets_class(what, depth)
   % First, "help class".  For classdef, this differs from "help class.class"
   % (general class help vs constructor help).  For old-style classes we will
   % probably end up testing the constructor twice but... meh.
-  target.name = what;
+  target.name = w;
   if is_octave()
     target.link = '';
   else
-    target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(what), what);
+    target.link = sprintf('<a href="matlab:editorservices.openAndGoToLine(''%s'', 1);">%s</a>', which(w), w);
   end
   target.depth = depth;
   [target.docstring, target.error] = extract_docstring(target.name);
   targets = target;
 
   % Next, add targets for all class methods
-  meths = methods(what);
+  meths = methods(w);
   for i=1:numel(meths)
     target = struct();
     if is_octave()
-      target.name = sprintf('@%s%s%s', what, filesep(), meths{i});
+      target.name = sprintf('@%s%s%s', w, filesep(), meths{i});
       target.link = '';
     else
-      target.name = sprintf('%s.%s', what, meths{i});
-      target.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', which(what), meths{i}, target.name);
+      target.name = sprintf('%s.%s', w, meths{i});
+      target.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', which(w), meths{i}, target.name);
     end
     target.depth = depth;
     [target.docstring, target.error] = extract_docstring(target.name);
