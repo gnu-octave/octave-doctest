@@ -128,3 +128,9 @@ end
 %! [n, t, summ] = doctest ('bar');
 %! assert (n == 1)
 %! assert (t == 2)
+
+%!test
+%! [n, t, summ] = doctest({});
+%! assert (n == 0)
+%! assert (t == 0)
+%! assert (summ.num_targets == 0)
