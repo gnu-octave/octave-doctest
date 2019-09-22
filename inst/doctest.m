@@ -250,7 +250,7 @@
 %% @seealso{test}
 %% @end deftypefn
 
-function varargout = doctest(what, varargin)
+function varargout = doctest(targets, varargin)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Process parameters.
@@ -265,8 +265,8 @@ if (nargin < 1 || nargout > 3)
 end
 
 % if given a single object, wrap it in a cell array
-if ~iscell(what)
-  what = {what};
+if ~iscell(targets)
+  targets = {targets};
 end
 
 % input parsing for options and directives
@@ -346,8 +346,8 @@ format()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Collect and run tests
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for i=1:numel(what)
-  summary = doctest_collect(what{i}, directives, summary, recursive, verbose, 0, fid);
+for i=1:numel(targets)
+  summary = doctest_collect(targets{i}, directives, summary, recursive, verbose, 0, fid);
 end
 
 
