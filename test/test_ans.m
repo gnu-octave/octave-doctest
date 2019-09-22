@@ -1,3 +1,6 @@
+% Copyright (c) 2015 Colin B. Macdonald
+% SPDX-License-Identifier: BSD-3-Clause
+%
 % >> 4
 % ans =  4
 %

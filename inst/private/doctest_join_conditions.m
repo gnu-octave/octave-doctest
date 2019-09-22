@@ -8,7 +8,7 @@ function result = doctest_join_conditions(conditions)
 
 %%
 % Copyright (c) 2015, 2017 Michael Walter
-% This is Free Software, BSD-3-Clause, see doctest.m for details.
+% SPDX-License-Identifier: BSD-3-Clause
 
 
 if isempty(conditions)

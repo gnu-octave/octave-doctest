@@ -13,7 +13,7 @@ function summary = doctest_collect(what, directives, summary, recursive, verbose
 % Copyright (c) 2015-2019 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
 % Copyright (C) 2018 Mike Miller
-% This is Free Software, BSD-3-Clause, see doctest.m for details.
+% SPDX-License-Identifier: BSD-3-Clause
 
 
 % TODO: methods('logical') octave/matlab differ: which behaviour do we want?

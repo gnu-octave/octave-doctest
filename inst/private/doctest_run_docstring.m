@@ -24,7 +24,7 @@ function results = doctest_run_docstring(docstring, defaults)
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2011, 2015 Michael Walter
 % Copyright (c) 2015-2017, 2019 Colin B. Macdonald
-% License: BSD-3-Clause, see doctest.m for details
+% SPDX-License-Identifier: BSD-3-Clause
 
 
 % extract tests from docstring
