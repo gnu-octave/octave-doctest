@@ -1,6 +1,7 @@
 %% Copyright (c) 2010 Thomas Grenfell Smith
 %% Copyright (c) 2011, 2013-2016 Michael Walter
 %% Copyright (c) 2015-2019 Colin B. Macdonald
+%% Copyright (c) 2019 Manuel Leonhardt
 %% SPDX-License-Identifier: BSD-3-Clause
 %%
 %% Redistribution and use in source and binary forms, with or without
