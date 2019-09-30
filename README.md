@@ -8,14 +8,14 @@ This can be useful as part of a testing framework or simply to ensure that docum
 To get started, here is a simple example:
 
 ~~~matlab
-function greeting = greet(user)
+function greet(user)
   % Returns a greeting.
   %
   % >> greet World
   %
   % Hello, World!
 
-  greeting = ['Hello, ' user '!'];
+  disp(['Hello, ' user '!']);
 
 end
 ~~~

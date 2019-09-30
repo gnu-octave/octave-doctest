@@ -7,10 +7,8 @@ function test_compare_backspace()
 % >> if (exist('OCTAVE_VERSION'))
 % ..   eval('sprintf("Hi, no question mark here?\x08 goodbye")')
 % .. else
-% ..   sprintf('Hi, no question mark here?\x08 goodbye')
+% ..   disp(sprintf('Hi, no question mark here?\x08 goodbye'))
 % .. end
-%
-% ans =
 %
 % Hi, no question mark here goodbye
 %

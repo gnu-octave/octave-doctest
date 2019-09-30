@@ -1,10 +1,10 @@
-function greeting = greet(user)
+function greet(user)
 % Returns a greeting.
 %
 % >> greet World
 %
 % Hello, World!
 
-greeting = ['Hello, ' user '!'];
+disp(['Hello, ' user '!']);
 
 end

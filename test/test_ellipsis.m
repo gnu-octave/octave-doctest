@@ -1,5 +1,5 @@
 function test_ellipsis()
-% >> '...'   % doctest: -ELLIPSIS
+% >> disp('...')   % doctest: -ELLIPSIS
 %
 % ...
 %
