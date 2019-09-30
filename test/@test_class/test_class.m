@@ -1,7 +1,7 @@
 function obj = test_class
 %
-% >> class(test_class)
-% ans = test_class
+% >> disp(class(test_class))
+% test_class
 %
 %
 % >> methods test_class

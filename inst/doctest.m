@@ -85,7 +85,7 @@
 %%
 %% @example
 %% @group
-%% >> datestr(now, 'yyyy-mm-dd')
+%% >> disp(datestr(now, 'yyyy-mm-dd'))
 %% 2...
 %% @end group
 %% @end example

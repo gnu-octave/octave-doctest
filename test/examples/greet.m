@@ -1,7 +1,7 @@
 function greeting = greet(user)
 % Returns a greeting.
 %
-% >> greet World
+% >> disp(greet('World'))
 %
 % Hello, World!
 
