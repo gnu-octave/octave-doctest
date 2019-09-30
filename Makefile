@@ -143,5 +143,5 @@ ${MATLAB_PKG}: | $(BUILD_DIR) ${MATLAB_PKG}/private
 	cp -a README.matlab.md ${MATLAB_PKG}/
 	cp -a test ${MATLAB_PKG}/
 
-matlab_test:
+matlab_test: matlab_pkg
 	cd "${MATLAB_PKG}"; ${MATLAB} -nojvm -nodisplay -nosplash -r "${TEST_CODE}"
