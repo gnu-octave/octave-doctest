@@ -30,7 +30,7 @@ function results = doctest_run_docstring(docstring, defaults)
 % extract tests from docstring
 TEST_RE = [                               % loosely based on Python 2.6 doctest.py, line 510
     '(?m)(?-s)'                          ... % options
-    '(?:^ *>> )'                         ... % ">> "
+    '(?:^ *>>>? )'                         ... % ">> " or ">>> "
     '(.*(?:\n *\.\. .*)*)\n'             ... % rest of line + ".. " lines
     '((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)'];  % the output
 
