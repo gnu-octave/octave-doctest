@@ -27,12 +27,13 @@ function results = doctest_run_docstring(docstring, defaults)
 % SPDX-License-Identifier: BSD-3-Clause
 
 
-% extract tests from docstring
-TEST_RE = [                                   % loosely based on Python 2.6 doctest.py, line 510
-    '(?m)(?-s)'                          ...  % options
-    '(?:^ *>> )'                         ...  % ">> "
-    '(.*(?:\n *\.\. .*)*)\n'             ...  % rest of line + ".. " lines
-    '((?:(?:^ *$\n)?(?!\s*>> ).*\S.*\n)*)'];  % the output
+PR = '>> ';
+% extract tests from docstring, regex loosely based on Python 2.6 doctest.py
+TEST_RE = [
+    '(?m)(?-s)'                             ...  % options
+    '(?:^ *' PR ')'                         ...  % prompt
+    '(.*(?:\n *\.\. .*)*)\n'                ...  % rest of line + ".. " lines
+    '((?:(?:^ *$\n)?(?!\s*' PR ').*\S.*\n)*)'];  % the output upto next prompt
 
 tests = [];
 test_matches = regexp(docstring, TEST_RE, 'tokens');
