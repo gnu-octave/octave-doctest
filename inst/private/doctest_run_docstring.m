@@ -31,7 +31,7 @@ PR = '>> ';
 % extract tests from docstring, regex loosely based on Python 2.6 doctest.py
 TEST_RE = [
     '(?m)(?-s)'                             ...  % options
-    '(?:^ *' PR ')'                         ...  % prompt
+    '(?:^\s*' PR ')'                        ...  % prompt
     '(.*(?:\n *\.\. .*)*)\n'                ...  % rest of line + ".. " lines
     '((?:(?:^ *$\n)?(?!\s*' PR ').*\S.*\n)*)'];  % the output upto next prompt
 

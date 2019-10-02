@@ -154,3 +154,8 @@ end
 %! assert (t1 == t2)
 %! assert (summ1.num_targets == summ2.num_targets)
 %! assert (summ2.num_targets_with_extraction_errors == 0)
+
+%!test
+%! % correct number of tests
+%! [n, t, summ] = doctest('test_tab_before_prompt');
+%! assert (n == 2)
