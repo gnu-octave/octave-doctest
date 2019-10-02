@@ -159,3 +159,8 @@ end
 %! % correct number of tests
 %! [n, t, summ] = doctest('test_tab_before_prompt');
 %! assert (n == 2)
+
+%!test
+%! % correct number of error tests
+%! [n, t, summ] = doctest('test_error');
+%! assert (t == 4)
