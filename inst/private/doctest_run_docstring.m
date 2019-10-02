@@ -32,7 +32,7 @@ TEST_RE = [                               % loosely based on Python 2.6 doctest.
     '(?m)(?-s)'                          ... % options
     '(?:^ *>> )'                         ... % ">> "
     '(.*(?:\n *\.\. .*)*)\n'             ... % rest of line + ".. " lines
-    '((?:(?:^ *$\n)?(?!\s*>>).*\S.*\n)*)'];  % the output
+    '((?:(?:^ *$\n)?(?!\s*>> ).*\S.*\n)*)'];  % the output
 
 tests = [];
 test_matches = regexp(docstring, TEST_RE, 'tokens');
