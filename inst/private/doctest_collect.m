@@ -484,7 +484,7 @@ function [docstring, error] = parse_texinfo(str)
       % First nonblank line starts with '>>': assume diary style.  However,
       % we strip @result and @print macros (TODO: perhaps unwisely?)
       L = strsplit (T{i}, '\n');
-      L = regexprep (L, '^(\s*)(?:⇒|=>|⊣|-\||error→|error->|)', '$1', 'once', 'lineanchors');
+      L = regexprep (L, '^(\s*)(?:⇒|=>|⊣|-\||error→|error->)', '$1', 'once', 'lineanchors');
       T{i} = strjoin (L, '\n');
       continue
     end
@@ -493,7 +493,7 @@ function [docstring, error] = parse_texinfo(str)
     % Hack: the @example block is commonly mis-used to store non-examples such as
     % diagrams or math.  Delete an example block that has no indicated output.
     % (Hard to leave for "later" as we don't keep track of @example blocks.)
-    R1 = regexp (T{i}, '^\s*(⇒|=>|⊣|-\||error→|error->|)', 'lineanchors');
+    R1 = regexp (T{i}, '^\s*(⇒|=>|⊣|-\||error→|error->)', 'lineanchors');
     R2 = regexp (T{i}, '(doctest:\s+-TEXINFO_SKIP_BLOCKS_WO_OUTPUT)');
     T{i} = regexprep (T{i}, '(doctest:\s+-TEXINFO_SKIP_BLOCKS_WO_OUTPUT)', '');
     if (isempty (R1) && isempty (R2))
@@ -507,7 +507,7 @@ function [docstring, error] = parse_texinfo(str)
     % Categorize input and output lines in the example using
     % @result and @print macros.  Everything else, including comment lines and
     % empty lines, is categorized as input (for now).
-    Linput = cellfun ('isempty', regexp (L, '^\s*(⇒|=>|⊣|-\||error→|error->|)', 'once'));
+    Linput = cellfun ('isempty', regexp (L, '^\s*(⇒|=>|⊣|-\||error→|error->)', 'once'));
 
     if (not (Linput (1)))
       error = 'no command: @result on first line?';
@@ -556,7 +556,7 @@ function [docstring, error] = parse_texinfo(str)
     % strip @result and @print macro output
     Loutput = not (Linput);
     L(Loutput) = regexprep (L(Loutput), ...
-                            '^(\s*)(?:⇒|=>|⊣|-\||error→|error->|)', ...
+                            '^(\s*)(?:⇒|=>|⊣|-\||error→|error->)', ...
                             '$1', ...
                             'once', 'lineanchors');
 
