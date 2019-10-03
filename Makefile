@@ -6,7 +6,7 @@ SHELL   := /bin/bash
 #
 # Copyright 2015 Oliver Heimlich
 # Copyright 2015 Michael Walter
-# Copyright 2015-2017 Colin B. Macdonald
+# Copyright 2015-2017, 2019 Colin B. Macdonald
 # Copyright 2016 Carnë Draug
 # Copyright 2019 Mike Miller
 # Copyright 2019 Andrew Janke
@@ -143,5 +143,5 @@ ${MATLAB_PKG}: | $(BUILD_DIR) ${MATLAB_PKG}/private
 	cp -a README.matlab.md ${MATLAB_PKG}/
 	cp -a test ${MATLAB_PKG}/
 
-matlab_test:
+matlab_test: matlab_pkg
 	cd "${MATLAB_PKG}"; ${MATLAB} -nojvm -nodisplay -nosplash -r "${TEST_CODE}"
