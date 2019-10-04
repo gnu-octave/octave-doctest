@@ -12,11 +12,14 @@ function formatted = doctest_format_exception(ex)
 % SPDX-License-Identifier: BSD-3-Clause
 
 
-% octave?
-if is_octave()
-  formatted = ['??? ' strtrim(ex.message)];
-  return
-end
+  if is_octave()
+    if (regexp (ex.message, '^parse error:'))
+      formatted = strtrim(ex.message);
+    else
+      formatted = ['error: ' strtrim(ex.message)];
+    end
+    return
+  end
 
 % matlab!
 if strcmp(ex.stack(1).name, 'doctest_run_tests')

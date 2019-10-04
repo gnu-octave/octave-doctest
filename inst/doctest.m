@@ -98,7 +98,7 @@
 %% @example
 %% @group
 %% >> not_a_real_function(42)
-%% ??? ...ndefined ...
+%% ...ndefined ...
 %% @end group
 %% @end example
 %% (Note use of wildcards here; MATLAB spells this 'Undefined', while Octave

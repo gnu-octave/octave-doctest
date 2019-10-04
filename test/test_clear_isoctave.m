@@ -6,12 +6,12 @@ function test_clear_isoctave()
 %
 % >> clear
 % >> a
-% ??? ...ndefined ...
+% ...ndefined ...
 %
 %
 % >> clear all
 % >> a
-% ??? ...ndefined ...
+% ...ndefined ...
 %
 %
 % Make sure these macros are still available after a clear

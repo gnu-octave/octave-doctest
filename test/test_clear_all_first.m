@@ -3,7 +3,7 @@ function test_clear_all_first()
 % subfunctions haven't yet been called.  At least on Octave 4.2.1.
 % >> clear all
 % >> a
-% ??? ...ndefined ...
+% ...ndefined ...
 %
 %
 % >> a = 6
