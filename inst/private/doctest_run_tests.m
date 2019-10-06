@@ -57,6 +57,7 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
     DOCTEST__current_test.got = strcat('There was a problem executing +SKIP directive:', ...
                                        sprintf('\n'), ...
                                        doctest_format_exception(DOCTEST__exception));
+    DOCTEST__current_test.goterr = true;
     DOCTEST__current_test.passed = false;
   end
 
@@ -73,6 +74,7 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
     DOCTEST__current_test.got = strcat('problem executing +XFAIL directive:', ...
                                        sprintf('\n'), ...
                                        doctest_format_exception(DOCTEST__exception));
+    DOCTEST__current_test.goterr = true;
     DOCTEST__current_test.passed = false;
   end
 
@@ -85,17 +87,24 @@ for DOCTEST__i = 1:numel(DOCTEST__tests)
   % run the test code
   try
     DOCTEST__got = evalc(DOCTEST__current_test.source);
+    DOCTEST__goterr = false;
   catch DOCTEST__exception
     DOCTEST__got = doctest_format_exception(DOCTEST__exception);
+    DOCTEST__goterr = true;
   end
 
   % at this point, we can only rely on the DOCTEST__got variable
   % being available
   DOCTEST__current_test = doctest_datastore('get_current_test');
   DOCTEST__current_test.got = DOCTEST__got;
+  DOCTEST__current_test.goterr = DOCTEST__goterr;
 
   % determine if test has passed
-  DOCTEST__current_test.passed = doctest_compare(DOCTEST__current_test.want, DOCTEST__current_test.got, DOCTEST__current_test.normalize_whitespace, DOCTEST__current_test.ellipsis);
+  DOCTEST__current_test.passed = doctest_compare(DOCTEST__current_test.want, ...
+                                                 DOCTEST__current_test.got, ...
+                                                 DOCTEST__current_test.goterr, ...
+                                                 DOCTEST__current_test.normalize_whitespace, ...
+                                                 DOCTEST__current_test.ellipsis);
   if DOCTEST__current_test.xfail
     DOCTEST__current_test.passed = ~DOCTEST__current_test.passed;
   end
