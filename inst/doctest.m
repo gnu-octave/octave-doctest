@@ -98,15 +98,14 @@
 %% @example
 %% @group
 %% >> not_a_real_function(42)
-%% ...ndefined ...
+%% error: ...ndefined ...
 %% @end group
 %% @end example
-%% (Note use of wildcards here; MATLAB spells this 'Undefined', while Octave
-%% uses 'undefined').
 %%
-%% However, currently this does not work if the code emits other output
-%% @strong{before} the error message.  Warnings are different; they work
-%% fine.
+%% Note use of wildcards here; MATLAB spells this @code{Undefined}, while
+%% Octave uses @code{undefined}.  Writing @code{error: } is optional.
+%% Currently errors do not work if the code emits other output before the
+%% error message.  Warnings are different; they work fine.
 %%
 %%
 %% @strong{Multiple lines of code}
