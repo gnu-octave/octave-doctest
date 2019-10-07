@@ -181,13 +181,13 @@
 %%
 %% @example
 %% @group
+%% >> fprintf('a   b\nc   d\n')
+%% a b
+%% c d
+%%
 %% >> fprintf('a   b\nc   d\n')    % doctest: -NORMALIZE_WHITESPACE
 %% a   b
 %% c   d
-%%
-%% >> fprintf('a   b\nc   d\n')    % doctest: +NORMALIZE_WHITESPACE
-%% a b
-%% c d
 %% @end group
 %% @end example
 %%
