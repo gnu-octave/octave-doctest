@@ -165,8 +165,8 @@
 %%
 %% @example
 %% @group
-%% >> "shiny Octave feature"    % doctest: +XFAIL_IF(DOCTEST_MATLAB)
-%% ans = shiny Octave feature
+%% >> a += 36       % doctest: +XFAIL_IF(DOCTEST_MATLAB)
+%% a = 42
 %% @end group
 %% @end example
 %%
