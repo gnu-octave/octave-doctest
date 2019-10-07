@@ -3,7 +3,7 @@ doctest 0.7.0+
 
   * `doctest myclass` has been refactored with various bugs fixed.
 
-  * Functions defined directly in the Octave interpretor can now be tested.
+  * Functions defined directly in the Octave interpreter can now be tested.
 
 
 
