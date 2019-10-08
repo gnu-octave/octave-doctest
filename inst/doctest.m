@@ -165,8 +165,8 @@
 %%
 %% @example
 %% @group
-%% >> a += 36       % doctest: +XFAIL_IF(DOCTEST_MATLAB)
-%% a = 42
+%% >> license       % doctest: +XFAIL_IF(DOCTEST_MATLAB)
+%% ans = GNU General Public License
 %% @end group
 %% @end example
 %%
