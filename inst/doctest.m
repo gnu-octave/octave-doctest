@@ -165,8 +165,8 @@
 %%
 %% @example
 %% @group
-%% >> "shiny Octave feature"    % doctest: +XFAIL_IF(DOCTEST_MATLAB)
-%% ans = shiny Octave feature
+%% >> license       % doctest: +XFAIL_IF(DOCTEST_MATLAB)
+%% ans = GNU General Public License
 %% @end group
 %% @end example
 %%
