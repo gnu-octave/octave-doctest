@@ -6,13 +6,13 @@ function test_clear()
 % >> b
 % b =  7
 % >> a
-% ??? ...ndefined ...
+% ...ndefined ...
 %
 %
 % Harder:
 % >> clear
 % >> a
-% ??? ...ndefined ...
+% ...ndefined ...
 %
 %
 % >> a = 4
@@ -22,7 +22,7 @@ function test_clear()
 % "clear all" clears stuff inside persistent vars
 % >> clear all
 % >> a
-% ??? ...ndefined ...
+% ...ndefined ...
 %
 %
 % >> a = 5

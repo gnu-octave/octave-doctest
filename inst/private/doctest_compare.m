@@ -1,4 +1,4 @@
-function match = doctest_compare(want, got, normalize_whitespace, ellipsis)
+function match = doctest_compare(want, got, goterr, normalize_whitespace, ellipsis)
 %DOCTEST_COMPARE  Check if two strings match.
 %
 %   Returns true if string GOT matches the template string WANT.  Basically
@@ -34,6 +34,17 @@ got = regexprep(got, '.\x08', '');
   end
 
   want = regexptranslate('escape', want);
+
+  % support various optional prefixes for errors
+  if (goterr)
+    if (strncmp(want, 'error: ', 7) && length(want) >= 8)
+      want = ['(error: )?' want(8:end)];
+    elseif (strncmp(want, '\?\?\? ', 7) && length(want) >= 8)
+      % ??? is soft-deprecated 2019-10: support for now
+      want = ['(\?\?\? )?' want(8:end)];
+    end
+  end
+
   if normalize_whitespace
     % collapse multiple spaces, then have each match many
     if is_octave && compare_versions (OCTAVE_VERSION, '4.1', '<')
@@ -51,8 +62,11 @@ got = regexprep(got, '.\x08', '');
   end
 
   % allow "ans = " to be missing
-  want = ['^(ans\s*=\s*)?' want '$'];
+  if (~ goterr)
+    want = ['(ans\s*=\s*)?' want];
+  end
 
+  want = ['^' want '$'];
 
   result = regexp(got, want, 'once');
 

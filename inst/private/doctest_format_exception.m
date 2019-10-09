@@ -12,20 +12,19 @@ function formatted = doctest_format_exception(ex)
 % SPDX-License-Identifier: BSD-3-Clause
 
 
-% octave?
-if is_octave()
-  formatted = ['??? ' strtrim(ex.message)];
-  return
-end
+  if is_octave()
+    formatted = strtrim(ex.message);
+    return
+  end
 
-% matlab!
-if strcmp(ex.stack(1).name, 'doctest_run_tests')
+
+  if strcmp(ex.stack(1).name, 'doctest_run_tests')
   % we don't want the report, we just want the message
   % otherwise it'll talk about evalc, which is not what the user got on
   % the command line.
-  formatted = ['??? ' ex.message];
-else
-  formatted = ['??? ' ex.getReport('basic')];
-end
+    formatted = ex.message;
+  else
+    formatted = ex.getReport('basic');
+  end
 
 end

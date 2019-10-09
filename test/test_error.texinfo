@@ -1,0 +1,37 @@
+Copyright (c) 2019 Colin B. Macdonald
+SPDX-License-Identifier: BSD-3-Clause
+
+@example
+2 + (1 + !))
+  @error{} parse error:
+  @error{}
+  @error{} syntax error
+  @error{} >>> 2 + (1 + !))
+  @error{}               ^
+@end example
+
+@example
+nosuchfcn(42)
+  @error{} error: 'nosuchfcn' undefined near line 1 column 1
+@end example
+
+@example
+nosuchfcn(42)
+  @print{} error: 'nosuchfcn' undefined near line 1 column 1
+@end example
+
+@example
+nosuchfcn(42)
+  @error{} 'nosuchfcn' undefined near line 1 column 1
+@end example
+
+In symbolic I had a failure when a test contained more code after an
+error.  It did not pass without careful treatment of the typography of
+the texinfo error macro.
+@example
+a = 3;
+b = nosuchfcn(a)
+  @error{} ... undefined...
+c = inv(a)
+  @result{} c = 0.33333
+@end example

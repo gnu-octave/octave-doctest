@@ -8,7 +8,7 @@ function test_error()
 %
 %
 % >> 2 + (1 + !))   % doctest: +XFAIL_IF(DOCTEST_MATLAB)
-% ??? parse error:
+% parse error:
 %
 % syntax error
 % >>> 2 + (1 + !))   % doctest: +XFAIL_IF(DOCTEST_MATLAB)
@@ -20,7 +20,7 @@ function test_error()
 % tests to bist.m.
 %
 % >> 2 + (1 + !))   % doctest: +XFAIL_IF(DOCTEST_MATLAB)
-% ??? parse error:
+% parse error:
 %
 % syntax error
 % >>> 2 + (1 + !))   % doctest: +XFAIL_IF(DOCTEST_MATLAB)
