@@ -12,17 +12,17 @@ SPDX-License-Identifier: BSD-3-Clause
 
 @example
 nosuchfcn(42)
-  @error{} error: 'nosuchfcn' undefined near line 1 column 1
+  @error{} error: 'nosuchfcn' undefined near line 1...
 @end example
 
 @example
 nosuchfcn(42)
-  @print{} error: 'nosuchfcn' undefined near line 1 column 1
+  @print{} error: 'nosuchfcn' undefined near line 1...
 @end example
 
 @example
 nosuchfcn(42)
-  @error{} 'nosuchfcn' undefined near line 1 column 1
+  @error{} 'nosuchfcn' undefined near line 1...
 @end example
 
 In symbolic I had a failure when a test contained more code after an
