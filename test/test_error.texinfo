@@ -32,6 +32,6 @@ the texinfo error macro.
 a = 3;
 b = nosuchfcn(a)
   @error{} ... undefined...
-c = inv(a)
-  @result{} c = 0.33333
+c = exp(a)
+  @result{} c = 20.086
 @end example
