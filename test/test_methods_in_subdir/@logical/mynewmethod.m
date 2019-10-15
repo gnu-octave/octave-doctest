@@ -1,10 +1,9 @@
 function y = mynewmethod(x)
 %MYNEWMETHOD: monkey patch something onto class logical
-%   >> a = 42
-%   a = 42
-%   >> mynewmethod(true)
+%   >> a = mynewmethod(true);
+%   >> double(a)
 %   ans = 0
-%   >> islogical(ans)
+%   >> double(islogical(a))
 %   ans = 1
   y = ~ x;
 end
