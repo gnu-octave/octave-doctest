@@ -12,17 +12,17 @@ SPDX-License-Identifier: BSD-3-Clause
 
 @example
 nosuchfcn(42)
-  @error{} error: 'nosuchfcn' undefined near line 1 column 1
+  @error{} error: 'nosuchfcn' undefined near line 1...
 @end example
 
 @example
 nosuchfcn(42)
-  @print{} error: 'nosuchfcn' undefined near line 1 column 1
+  @print{} error: 'nosuchfcn' undefined near line 1...
 @end example
 
 @example
 nosuchfcn(42)
-  @error{} 'nosuchfcn' undefined near line 1 column 1
+  @error{} 'nosuchfcn' undefined near line 1...
 @end example
 
 In symbolic I had a failure when a test contained more code after an
@@ -32,6 +32,6 @@ the texinfo error macro.
 a = 3;
 b = nosuchfcn(a)
   @error{} ... undefined...
-c = inv(a)
-  @result{} c = 0.33333
+c = exp(a)
+  @result{} c = 20.086
 @end example
