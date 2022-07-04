@@ -66,19 +66,21 @@ jobs:
           # TODO: nonsense here to try to get r/w access: enables sudo below
           docker run --name=oc --detach --init \
             -u root --env="GRANT_SUDO=yes" \
-            --volume=$PWD:/home/jovyan/doctest:rw \
+            --volume=$PWD:/doctest:rw \
             gnuoctave/octave:$OCT sleep inf
           # FIXME: workaround "fatal: unsafe repository" error
           # For more details, see https://stackoverflow.com/q/71901632
           # and https://github.com/actions/checkout/issues/760
-          docker exec oc sudo git config --global --add safe.directory /home/jovyan/doctest
-          docker exec oc      git config --global --add safe.directory /home/jovyan/doctest
-      - name: Run BIST in-place
-        run: docker exec oc make -C doctest test test-interactive test-bist
+          docker exec oc sudo git config --global --add safe.directory /doctest
+          docker exec oc      git config --global --add safe.directory /doctest
+      - name: Run test suite
+        run: docker exec oc make -C /doctest test test-interactive
+      - name: Run BIST
+        run: docker exec oc make -C /doctest test-bist
       - name: Make package, then pkg install-load-unload-uninstall
         run: |
-          docker exec oc make -C doctest install
-          docker exec oc octave --eval "pkg load doctest; cd ..; help doctest; doctest doctest; pkg unload doctest; pkg uninstall doctest"
+          docker exec oc make -C /doctest install
+          docker exec oc octave --eval "pkg load doctest; help doctest; doctest doctest; pkg unload doctest; pkg uninstall doctest"
       - name: Stop container
         run: |
           docker stop oc
