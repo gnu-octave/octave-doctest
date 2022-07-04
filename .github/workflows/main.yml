@@ -20,7 +20,7 @@ on:
 
 
 jobs:
-  packaging_tests:
+  basic_packaging:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -45,3 +45,41 @@ jobs:
       - name: uninstall package
         run: |
           octave --eval "pkg uninstall doctest; pkg list"
+
+
+  # Built-in Self Tests for various supported Octave
+  # TODO: fail-fast -> true later
+  bist:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        octave: [4.2.0, 4.2.1, 4.2.2, 4.4.0, 4.4.1, 5.1.0, 5.2.0, 6.1.0, 6.2.0, 6.3.0, 6.4.0, 7.1.0]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Container setup
+        env:
+          OCT: ${{ matrix.octave }}
+        run: |
+          sudo uname -a
+          docker pull docker.io/gnuoctave/octave:$OCT
+          # TODO: nonsense here to try to get r/w access: enables sudo below
+          docker run --name=oc --detach --init \
+            -u root --env="GRANT_SUDO=yes" \
+            --volume=$PWD:/home/jovyan/doctest:rw \
+            gnuoctave/octave:$OCT sleep inf
+          # FIXME: workaround "fatal: unsafe repository" error
+          # For more details, see https://stackoverflow.com/q/71901632
+          # and https://github.com/actions/checkout/issues/760
+          docker exec oc sudo git config --global --add safe.directory /home/jovyan/doctest
+          docker exec oc      git config --global --add safe.directory /home/jovyan/doctest
+      - name: Run BIST in-place
+        run: docker exec oc make -C doctest test
+      - name: Make package, then install-load-unload-uninstall
+        run: |
+          docker exec oc make -C doctest install
+          docker exec oc octave --eval "pkg load doctest; help doctest; doctest doctest; pkg unload doctest; pkg uninstall doctest"
+      - name: Stop container
+        run: |
+          docker stop oc
+          docker rm oc
