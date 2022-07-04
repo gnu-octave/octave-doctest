@@ -1,29 +1,87 @@
+# SPDX-License-Identifier: FSFAP
+# Copyright (C) 2022 Colin B. Macdonald
+# Copyright (C) 2022 Alex Vong
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+#
+# Github Actions configuration for Octave's Doctest package.
+
 name: CI
 
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  basic_packaging:
+    runs-on: ubuntu-22.04
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Install Octave
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          sudo uname -a
+          sudo apt-get install -y octave
+          octave --version
+      - name: Install package, verify
+        run: |
+          pwd
+          make install
+          octave --eval "pkg load doctest; help doctest; doctest doctest; pkg unload doctest"
+      - name: Load package, run tests
+        run: |
+          octave --eval "pkg test doctest"
+      - name: Build HTML documentation
+        run: |
+          octave --eval "pkg install -forge generate_html"
+          make html
+          octave --eval "pkg uninstall generate_html; pkg list"
+      - name: uninstall package
+        run: |
+          octave --eval "pkg uninstall doctest; pkg list"
+
+
+  # Built-in Self Tests for various supported Octave
+  # TODO: fail-fast -> true later
+  bist:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        octave: [4.2.0, 4.2.1, 4.2.2, 4.4.0, 4.4.1, 5.1.0, 5.2.0, 6.1.0, 6.2.0, 6.3.0, 6.4.0, 7.1.0]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Container setup
+        env:
+          OCT: ${{ matrix.octave }}
+        run: |
+          sudo uname -a
+          docker pull docker.io/gnuoctave/octave:$OCT
+          # TODO: nonsense here to try to get r/w access: enables sudo below
+          docker run --name=oc --detach --init \
+            -u root --env="GRANT_SUDO=yes" \
+            --volume=$PWD:/doctest:rw \
+            gnuoctave/octave:$OCT sleep inf
+          # FIXME: workaround "fatal: unsafe repository" error
+          # For more details, see https://stackoverflow.com/q/71901632
+          # and https://github.com/actions/checkout/issues/760
+          docker exec oc git config --global --add safe.directory /doctest
+      - name: Run test suite
+        run: docker exec oc make -C /doctest test test-interactive
+      - name: Run BIST
+        run: docker exec oc make -C /doctest test-bist
+      - name: Make package, then pkg install-load-unload-uninstall
+        run: |
+          docker exec oc make -C /doctest install
+          docker exec oc octave --eval "pkg load doctest; help doctest; doctest doctest; pkg unload doctest; pkg uninstall doctest"
+      - name: Stop container
+        run: |
+          docker stop oc
+          docker rm oc
