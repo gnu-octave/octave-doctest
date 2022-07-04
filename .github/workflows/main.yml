@@ -1,29 +1,47 @@
+# SPDX-License-Identifier: FSFAP
+# Copyright (C) 2022 Colin B. Macdonald
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+#
+# Github Actions configuration for Octave's Doctest package.
+
 name: CI
 
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  packaging_tests:
+    runs-on: ubuntu-22.04
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Install Octave
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          sudo uname -a
+          sudo apt-get install -y octave
+          octave --version
+      - name: Install package, verify
+        run: |
+          pwd
+          make install
+          octave --eval "pkg load doctest; help doctest; doctest doctest; pkg unload doctest"
+      - name: Load package, run tests
+        run: |
+          octave --eval "pkg test doctest"
+      - name: Build HTML documentation
+        run: |
+          octave --eval "pkg install -forge generate_html"
+          make html
+          octave --eval "pkg uninstall generate_html; pkg list"
+      - name: uninstall package
+        run: |
+          octave --eval "pkg uninstall doctest; pkg list"
