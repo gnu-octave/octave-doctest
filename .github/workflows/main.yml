@@ -74,8 +74,8 @@ jobs:
           docker exec oc sudo git config --global --add safe.directory /home/jovyan/doctest
           docker exec oc      git config --global --add safe.directory /home/jovyan/doctest
       - name: Run BIST in-place
-        run: docker exec oc make -C doctest test
-      - name: Make package, then install-load-unload-uninstall
+        run: docker exec oc make -C doctest test test-interactive test-bist
+      - name: Make package, then pkg install-load-unload-uninstall
         run: |
           docker exec oc make -C doctest install
           docker exec oc octave --eval "pkg load doctest; cd ..; help doctest; doctest doctest; pkg unload doctest; pkg uninstall doctest"
