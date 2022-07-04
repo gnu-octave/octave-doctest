@@ -78,7 +78,7 @@ jobs:
       - name: Make package, then install-load-unload-uninstall
         run: |
           docker exec oc make -C doctest install
-          docker exec oc octave --eval "pkg load doctest; help doctest; doctest doctest; pkg unload doctest; pkg uninstall doctest"
+          docker exec oc octave --eval "pkg load doctest; cd ..; help doctest; doctest doctest; pkg unload doctest; pkg uninstall doctest"
       - name: Stop container
         run: |
           docker stop oc
