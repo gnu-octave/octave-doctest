@@ -72,8 +72,7 @@ jobs:
           # FIXME: workaround "fatal: unsafe repository" error
           # For more details, see https://stackoverflow.com/q/71901632
           # and https://github.com/actions/checkout/issues/760
-          docker exec oc sudo git config --global --add safe.directory /doctest
-          docker exec oc      git config --global --add safe.directory /doctest
+          docker exec oc git config --global --add safe.directory /doctest
       - name: Run test suite
         run: docker exec oc make -C /doctest test test-interactive
       - name: Run BIST
