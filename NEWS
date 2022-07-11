@@ -13,7 +13,7 @@ doctest 0.7.0+
 
   * Test suite fixes for Octave 6.
 
-  * Source code is in encoded UTF-8, indicated with `.oct-config` files.
+  * Source code is encoded with UTF-8, indicated with `.oct-config` files.
 
 
 
