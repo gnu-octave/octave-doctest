@@ -82,7 +82,6 @@ $(OCTAVE_RELEASE): .git/index | $(BUILD_DIR)
 	git archive --format=tar --prefix="$@/" HEAD | $(TAR) -x
 	$(RM) "$@/README.matlab.md" \
 	      "$@/.gitignore" \
-	      "$@/.gitattributes" \
 	      "$@/.mailmap"
 	$(RM) -r "$@/.github"
 	$(RM) -r "$@/util"
