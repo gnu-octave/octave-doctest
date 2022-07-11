@@ -1,4 +1,4 @@
-Doctest [![Build Status](https://travis-ci.org/catch22/octave-doctest.svg?branch=master)](https://travis-ci.org/catch22/octave-doctest)
+Doctest
 =======
 
 The [Octave-Forge Doctest](http://octave.sourceforge.net/doctest/) package finds specially-formatted blocks of example code within documentation files.
