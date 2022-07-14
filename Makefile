@@ -36,7 +36,7 @@ OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
-TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
+TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); run('test-extra/run_tests.m'); exit(~success || ~success_extra);
 # run tests twice so we can see some output
 BIST_CODE=cd('test'); pwd(), test('bist'); success = test('bist'); exit(~success);
 

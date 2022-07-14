@@ -36,7 +36,7 @@
 %%
 %% @example
 %% s = 'ÄÖÜäöü Šš'
-%%   @result s = ÄÖÜäöü Šš
+%%   @result{} s = ÄÖÜäöü Šš
 %% @end example
 %% @end deftypefn
 
