@@ -36,7 +36,9 @@ success_extra = true;
 path_orig = path ();
 path_protect = onCleanup (@() path (path_orig));
 
-addpath (canonicalize_file_name ("test_encoding"));
-success_extra = doctest ("test_CP1252.m") && success_extra;
+if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
+  addpath (canonicalize_file_name ("test_encoding"));
+  success_extra = doctest ("test_CP1252.m") && success_extra;
+end
 
 clear path_protect;
