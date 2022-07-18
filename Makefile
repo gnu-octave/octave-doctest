@@ -39,7 +39,7 @@ MATLAB ?= matlab
 
 TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
 # run tests twice so we can see some output
-BIST_CODE=ver(), cd('test'); disp(pwd()), test('bist'); success1 = test('bist'); cd('..'); cd('test_extra'); disp(pwd()), test('run_tests'); success2 = test('run_tests'); exit(~success1) || ~success2;
+BIST_CODE=ver(), cd('test'); disp(pwd()), test('bist'); success1 = test('bist'); cd('..'); cd('test_extra'); disp(pwd()), test('run_tests'); success2 = test('run_tests'); exit(~success1 || ~success2);
 
 
 .PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
