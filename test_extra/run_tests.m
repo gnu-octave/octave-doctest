@@ -43,3 +43,15 @@
 %!   assert (success)
 %! end
 %! clear path_protect;
+
+%!test
+%! %% CP1252 to UTF-8 internally, check byte counts
+%! path_orig = path ();
+%! path_protect = onCleanup (@() path (path_orig));
+%!
+%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
+%!   addpath (canonicalize_file_name ('test_encoding'));
+%!   success = doctest ('test_bytecount_CP1252.m', '-quiet');
+%!   assert (success)
+%! end
+%! clear path_protect;
