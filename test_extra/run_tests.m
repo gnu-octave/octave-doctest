@@ -32,28 +32,23 @@
 
 %!test
 %! %% test for file that is not encoded in UTF-8
-%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
-%!   if (compare_versions (OCTAVE_VERSION(), '8.0.0', '<'))
-%!     warning ('TODO: will be noisy: learn how to enquiet...')
-%!   end
-%!   % A bug in Octave 7 requires that the folder containing the .oct-config file
-%!   % is in the load path (not the current folder).
-%!   path_orig = path ();
-%!   unwind_protect
-%!     addpath (canonicalize_file_name ('test_encoding'));
-%!     success = doctest ('test_CP1252.m', '-quiet');
-%!     assert (success)
-%!   unwind_protect_cleanup
-%!     path (path_orig)
-%!   end
+%! % this is a bare minimal test: the file is probably not read correctly
+%! % until Octave >= 7.0.0.
+%! % TODO: need to silence some warnings here on Octave 6.x and 7.x?
+%! path_orig = path ();
+%! unwind_protect
+%!   addpath (canonicalize_file_name ('test_encoding'));
+%!   success = doctest ('test_CP1252.m', '-quiet');
+%!   assert (success)
+%! unwind_protect_cleanup
+%!   path (path_orig)
 %! end
 
 %!test
 %! %% CP1252 to UTF-8 internally, check byte counts
+%! % A bug in Octave 7 requires that the folder containing the .oct-config file
+%! % is in the load path (not the current directory).
 %! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
-%!   if (compare_versions (OCTAVE_VERSION(), '8.0.0', '<'))
-%!     warning ('TODO: will be noisy: learn how to enquiet...')
-%!   end
 %!   path_orig = path ();
 %!   unwind_protect
 %!     addpath (canonicalize_file_name ('test_encoding'));
