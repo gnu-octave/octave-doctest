@@ -32,31 +32,37 @@
 
 %!test
 %! %% test for file that is not encoded in UTF-8
-%! % A bug in Octave 7 requires that the folder containing the .oct-config file
-%! % is in the load path (not the current folder).
-%! path_orig = path ();
-%! path_protect = onCleanup (@() path (path_orig));
-%!
-%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '<'))
-%!   warning ('TODO: will be noisy: learn how to enquiet...')
+%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
+%!   if (compare_versions (OCTAVE_VERSION(), '8.0.0', '<'))
+%!     warning ('TODO: will be noisy: learn how to enquiet...')
+%!   end
+%!   % A bug in Octave 7 requires that the folder containing the .oct-config file
+%!   % is in the load path (not the current folder).
+%!   path_orig = path ();
+%!   unwind_protect
+%!     addpath (canonicalize_file_name ('test_encoding'));
+%!     success = doctest ('test_CP1252.m', '-quiet');
+%!     assert (success)
+%!   unwind_protect_cleanup
+%!     path (path_orig)
+%!   end
 %! end
-%! addpath (canonicalize_file_name ('test_encoding'));
-%! success = doctest ('test_CP1252.m', '-quiet');
-%! assert (success)
-%! clear path_protect;
 
 %!test
 %! %% CP1252 to UTF-8 internally, check byte counts
-%! path_orig = path ();
-%! path_protect = onCleanup (@() path (path_orig));
-%!
-%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '<'))
-%!   warning ('TODO: will be noisy: learn how to enquiet...')
+%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
+%!   if (compare_versions (OCTAVE_VERSION(), '8.0.0', '<'))
+%!     warning ('TODO: will be noisy: learn how to enquiet...')
+%!   end
+%!   path_orig = path ();
+%!   unwind_protect
+%!     addpath (canonicalize_file_name ('test_encoding'));
+%!     success = doctest ('test_bytecount_CP1252.m', '-quiet');
+%!     assert (success)
+%!   unwind_protect_cleanup
+%!     path (path_orig)
+%!   end
 %! end
-%! addpath (canonicalize_file_name ('test_encoding'));
-%! success = doctest ('test_bytecount_CP1252.m', '-quiet');
-%! assert (success)
-%! clear path_protect;
 
 %!test
 %! %% On Octave 8, we can go to the actual directory
