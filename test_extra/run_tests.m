@@ -38,7 +38,7 @@
 %! path_protect = onCleanup (@() path (path_orig));
 %!
 %! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
-%!   addpath (canonicalize_file_name ("test_extra/test_encoding"));
+%!   addpath (canonicalize_file_name ('test_encoding'));
 %!   success = doctest ('test_CP1252.m', '-quiet');
 %!   assert (success)
 %! end
