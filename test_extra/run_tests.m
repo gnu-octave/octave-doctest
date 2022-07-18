@@ -37,11 +37,12 @@
 %! path_orig = path ();
 %! path_protect = onCleanup (@() path (path_orig));
 %!
-%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
-%!   addpath (canonicalize_file_name ('test_encoding'));
-%!   success = doctest ('test_CP1252.m', '-quiet');
-%!   assert (success)
+%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '<'))
+%!   warning ('TODO: will be noisy: learn how to enquiet...')
 %! end
+%! addpath (canonicalize_file_name ('test_encoding'));
+%! success = doctest ('test_CP1252.m', '-quiet');
+%! assert (success)
 %! clear path_protect;
 
 %!test
@@ -49,9 +50,23 @@
 %! path_orig = path ();
 %! path_protect = onCleanup (@() path (path_orig));
 %!
-%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
-%!   addpath (canonicalize_file_name ('test_encoding'));
-%!   success = doctest ('test_bytecount_CP1252.m', '-quiet');
-%!   assert (success)
+%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '<'))
+%!   warning ('TODO: will be noisy: learn how to enquiet...')
 %! end
+%! addpath (canonicalize_file_name ('test_encoding'));
+%! success = doctest ('test_bytecount_CP1252.m', '-quiet');
+%! assert (success)
 %! clear path_protect;
+
+%!test
+%! %% On Octave 8, we can go to the actual directory
+%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
+%!   d = pwd ();
+%!   unwind_protect
+%!     cd ('test_encoding');
+%!     success = doctest ('test_bytecount_CP1252.m', '-quiet');
+%!     assert (success)
+%!   unwind_protect_cleanup
+%!     cd (d)
+%!   end
+%! end
