@@ -1,4 +1,5 @@
 %% Copyright (c) 2022 Markus Mützel
+%% Copyright (c) 2022 Colin B. Macdonald
 %%
 %% SPDX-License-Identifier: BSD-3-Clause
 %%
@@ -28,17 +29,17 @@
 %% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 %% POSSIBILITY OF SUCH DAMAGE.
 
-success_extra = true;
 
-%% test for file that is not encoded in UTF-8
-% A bug in Octave 7 requires that the folder containing the .oct-config file
-% is in the load path (not the current folder).
-path_orig = path ();
-path_protect = onCleanup (@() path (path_orig));
-
-if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
-  addpath (canonicalize_file_name ("test_encoding"));
-  success_extra = doctest ("test_CP1252.m") && success_extra;
-end
-
-clear path_protect;
+%!test
+%! %% test for file that is not encoded in UTF-8
+%! % A bug in Octave 7 requires that the folder containing the .oct-config file
+%! % is in the load path (not the current folder).
+%! path_orig = path ();
+%! path_protect = onCleanup (@() path (path_orig));
+%!
+%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
+%!   addpath (canonicalize_file_name ("test_extra/test_encoding"));
+%!   success = doctest ('test_CP1252.m', '-quiet');
+%!   assert (success)
+%! end
+%! clear path_protect;

@@ -6,11 +6,12 @@ SHELL   := /bin/bash
 #
 # Copyright 2015 Oliver Heimlich
 # Copyright 2015 Michael Walter
-# Copyright 2015-2017, 2019 Colin B. Macdonald
+# Copyright 2015-2017, 2019, 2022 Colin B. Macdonald
 # Copyright 2016 Carnë Draug
 # Copyright 2019 Mike Miller
 # Copyright 2019 Andrew Janke
 # Copyright 2019 Manuel Leonhardt
+# Copyright 2022 Markus Muetzel
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -36,9 +37,9 @@ OCTAVE ?= octave
 MKOCTFILE ?= mkoctfile -Wall
 MATLAB ?= matlab
 
-TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); run('test-extra/run_tests.m'); exit(~success || ~success_extra);
+TEST_CODE=ver(), success = doctest({'doctest', 'test/', 'test/examples/'}); exit(~success);
 # run tests twice so we can see some output
-BIST_CODE=cd('test'); pwd(), test('bist'); success = test('bist'); exit(~success);
+BIST_CODE=ver(), cd('test'); disp(pwd()), test('bist'); success1 = test('bist'); cd('..'); cd('test_extra'); disp(pwd()), test('run_tests'); success2 = test('run_tests'); exit(~success1) || ~success2;
 
 
 .PHONY: help clean install test test-interactive dist html matlab_test matlab_pkg
