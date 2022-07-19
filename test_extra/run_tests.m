@@ -31,15 +31,14 @@
 
 
 %!test
-%! %% test for file that is not encoded in UTF-8
+%! %% test with file that is not encoded in UTF-8
 %! % this is a bare minimal test: the file is probably not read correctly
 %! % until Octave >= 7.0.0.
 %! path_orig = path ();
 %! warn_orig = warning ('off', 'octave:get_input:invalid_utf8');
 %! unwind_protect
 %!   addpath (canonicalize_file_name ('test_encoding'));
-%!   success = doctest ('test_CP1252.m', '-quiet');
-%!   assert (success)
+%!   assert (doctest ('test_CP1252.m', '-quiet'));
 %! unwind_protect_cleanup
 %!   path (path_orig)
 %!   warning (warn_orig)
@@ -53,8 +52,7 @@
 %!   path_orig = path ();
 %!   unwind_protect
 %!     addpath (canonicalize_file_name ('test_encoding'));
-%!     success = doctest ('test_bytecount_CP1252.m', '-quiet');
-%!     assert (success)
+%!     assert (doctest ('test_bytecount_CP1252.m', '-quiet'));
 %!   unwind_protect_cleanup
 %!     path (path_orig)
 %!   end
@@ -66,8 +64,7 @@
 %!   d = pwd ();
 %!   unwind_protect
 %!     cd ('test_encoding');
-%!     success = doctest ('test_bytecount_CP1252.m', '-quiet');
-%!     assert (success)
+%!     assert (doctest ('test_bytecount_CP1252.m', '-quiet'));
 %!   unwind_protect_cleanup
 %!     cd (d)
 %!   end
