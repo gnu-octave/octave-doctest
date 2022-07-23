@@ -98,7 +98,10 @@
 %! unwind_protect
 %!   cd ('../test/')
 %!   help @test_classdef/amethod
-%!   help test_classdef.disp
+%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!     % dot notation broken before Octave 6?
+%!     help test_classdef.disp
+%!   end
 %!   doctest('@test_classdef')
 %!   [numpass, numtest, summary] = doctest('@test_classdef')
 %!   assert (numpass == numtest)
