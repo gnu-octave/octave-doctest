@@ -69,3 +69,42 @@
 %!     cd (d)
 %!   end
 %! end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%!test
+%! %% Issue #220, workarounds for testing classdef are sensitive to
+%! % the order of tests in the main "test" directory.  Here we clear
+%! % first.
+%! clear classes
+%! d = pwd ();
+%! unwind_protect
+%!   cd ('../test/')
+%!   doctest('@test_classdef')
+%!   [numpass, numtest, summary] = doctest('@test_classdef')
+%!   assert (numpass == numtest)
+%!   summary
+%!   summary.num_targets_without_tests
+%!   methods test_classdef
+%! unwind_protect_cleanup
+%!   cd (d)
+%! end
+
+%!test
+%! %% Issue #220, again with some methods reloaded as a workaround
+%! clear classes
+%! d = pwd ();
+%! unwind_protect
+%!   cd ('../test/')
+%!   help @test_classdef/amethod
+%!   help test_classdef.disp
+%!   doctest('@test_classdef')
+%!   [numpass, numtest, summary] = doctest('@test_classdef')
+%!   assert (numpass == numtest)
+%!   summary
+%!   summary.num_targets_without_tests
+%!   methods test_classdef
+%! unwind_protect_cleanup
+%!   cd (d)
+%! end
