@@ -291,6 +291,7 @@ function targets = collect_targets_class(w, depth)
 
   % Next, add targets for all class methods
   meths = methods(w);
+  meths = unique (meths);  # Issue #260
   for i=1:numel(meths)
     target = struct();
     if is_octave()
