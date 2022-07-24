@@ -60,6 +60,9 @@ if is_octave()
       type = 'dir';
     elseif (exist(w, 'file') || exist(w, 'builtin') || exist(w) == 103)
       type = 'function';
+    elseif (~isempty (help (w)))
+      % covers "doctest class.method" and (maybe in future) "doctest class/method"
+      type = 'function';
     else
       type = 'unknown';
     end
