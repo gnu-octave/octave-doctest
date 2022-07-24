@@ -76,38 +76,73 @@
 %!test
 %! %% Issue #220, workarounds for testing classdef are sensitive to
 %! % the order of tests in the main "test" directory.  Here we clear
-%! % first.
+%! % first.  But we "preload" some methods as a workaround.
+%! if (compare_versions (OCTAVE_VERSION(), '4.4.0', '>='))
 %! clear classes
 %! d = pwd ();
 %! unwind_protect
 %!   cd ('../test/')
-%!   doctest('@test_classdef')
-%!   [numpass, numtest, summary] = doctest('@test_classdef')
+%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!     doc = help ('@test_classdef/amethod');
+%!     assert (length (doc) > 10)
+%!     % dot notation broken before Octave 6
+%!     doc = help ('test_classdef.disp')
+%!     assert (length (doc) > 10)
+%!   end
+%!   doctest ('@test_classdef')
+%!   [numpass, numtest, summary] = doctest ('@test_classdef');
 %!   assert (numpass == numtest)
 %!   summary
-%!   summary.num_targets_without_tests
-%!   methods test_classdef
+%!   methods ('test_classdef')
+%!   if (compare_versions (OCTAVE_VERSION(), '4.4.0', '>='))
+%!     assert (summary.num_targets_without_tests <= 2)
+%!   end
+%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!     assert (summary.num_targets_without_tests <= 1)
+%!   end
+%!   % glorious future!
+%!   % if (compare_versions (OCTAVE_VERSION(), 'X.Y.Z', '>='))
+%!   %   assert (summary.num_targets_without_tests == 0)
+%!   % end
 %! unwind_protect_cleanup
 %!   cd (d)
 %! end
+%! end
 
-%!test
-%! %% Issue #220, again with some methods reloaded as a workaround
+%!xtest
+%! %% Issue #220, as above but w/o preload workaround, lots broken.
+%! % xtest b/c Issue #220 is still open and broken upstream.
+%! if (compare_versions (OCTAVE_VERSION(), '4.4.0', '>='))
 %! clear classes
 %! d = pwd ();
 %! unwind_protect
 %!   cd ('../test/')
-%!   help @test_classdef/amethod
-%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
-%!     % dot notation broken before Octave 6?
-%!     help test_classdef.disp
-%!   end
-%!   doctest('@test_classdef')
-%!   [numpass, numtest, summary] = doctest('@test_classdef')
+%!   doctest ('@test_classdef')
+%!   [numpass, numtest, summary] = doctest ('@test_classdef');
 %!   assert (numpass == numtest)
 %!   summary
-%!   summary.num_targets_without_tests
-%!   methods test_classdef
+%!   methods ('test_classdef')
+%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!     % before this missing many methods
+%!     assert (summary.num_targets_without_tests <= 1)
+%!   end
 %! unwind_protect_cleanup
 %!   cd (d)
+%! end
+%! end
+
+%!xtest
+%! %% Issue #220 and Issue #261
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%! clear classes
+%! d = pwd ();
+%! unwind_protect
+%!   cd ('../test/')
+%!   doctest ('@test_classdef')
+%!   [numpass, numtest, summary] = doctest ('@test_classdef');
+%!   assert (numpass == numtest)
+%!   assert (summary.num_targets_without_tests == 0)
+%! unwind_protect_cleanup
+%!   cd (d)
+%! end
 %! end
