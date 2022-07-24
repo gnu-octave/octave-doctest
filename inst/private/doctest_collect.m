@@ -77,7 +77,7 @@ else % Matlab
     type = 'function';
   elseif ~isempty(help(w))
     % covers "doctest class.method" and "doctest class/method"
-    type = 'function'
+    type = 'function';
   else
     type = 'unknown';
   end
