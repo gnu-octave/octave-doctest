@@ -280,6 +280,7 @@ function targets = collect_targets_class(w, depth)
 
   % TODO: workaround github.com/catch22/octave-doctest/issues/135 by
   % accessing all non-constructor method help text *before* "help obj"
+  if (false)
   if (is_octave ())
     meths = methods (w);
     for i=1:numel (meths)
@@ -289,6 +290,7 @@ function targets = collect_targets_class(w, depth)
       end
     end
   end  % end workaround
+  end
 
   % First, "help class".  For classdef, this differs from "help class.class"
   % (general class help vs constructor help).  For old-style classes we will
@@ -309,8 +311,14 @@ function targets = collect_targets_class(w, depth)
   for i=1:numel(meths)
     target = struct();
     if is_octave()
-      target.name = sprintf('@%s%s%s', w, filesep(), meths{i});
-      target.link = '';
+      if compare_versions (OCTAVE_VERSION, '7.0.0', '<')
+        % TODO: also for old-style classes https://savannah.gnu.org/bugs/?61521
+        target.name = sprintf ('@%s%s%s', w, filesep (), meths{i});
+        target.link = '';
+      else
+        target.name = sprintf ('%s.%s', w, meths{i});
+        target.link = '';
+      end
     else
       target.name = sprintf('%s.%s', w, meths{i});
       target.link = sprintf('<a href="matlab:editorservices.openAndGoToFunction(''%s'', ''%s'');">%s</a>', which(w), meths{i}, target.name);
