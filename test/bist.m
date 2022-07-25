@@ -49,11 +49,12 @@ end
 %! assert (t2 < t1)
 
 %!test
+%! % maybe not recommended notation for classdef, but works for now...
 %! [nump, numt, summ] = doctest ('@test_classdef/amethod');
 %! assert (nump == 1 && numt == 1)
 
 %!xtest
-%! % https://github.com/catch22/octave-doctest/issues/92
+%! % maybe not recommended notation for classdef
 %! [nump, numt, summ] = doctest ('@test_classdef/disp');
 %! assert (nump == 1 && numt == 1)
 
@@ -111,12 +112,13 @@ end
 
 
 %!test
+%! % maybe not recommended notation for classdef, but currently at least no error
 %! % https://github.com/catch22/octave-doctest/issues/199
 %! [nump, numt, summ] = doctest ('@classdef_infile/disp');
 %! assert (nump >= 0)
 
 %!xtest
-%! % https://github.com/catch22/octave-doctest/issues/92
+%! % maybe not recommended notation for classdef
 %! [nump, numt, summ] = doctest ('@classdef_infile/disp');
 %! assert (nump == 1 && numt == 1)
 
