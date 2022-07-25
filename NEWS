@@ -9,6 +9,8 @@ doctest 0.7.0+
 
   * `doctest myclass` has been refactored with various bugs fixed.
 
+  * Preliminary support for `doctest classdef.method` on Octave.
+
   * Functions defined directly in the Octave interpreter can now be tested.
 
   * Test suite fixes for Octave 6.
