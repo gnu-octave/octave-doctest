@@ -15,6 +15,8 @@ doctest 0.7.0+
 
   * Source code is encoded with UTF-8, indicated with `.oct-config` files.
 
+  * Don't doctest some classdef methods twice.
+
 
 
 doctest 0.7.0 (2019-03-23)
