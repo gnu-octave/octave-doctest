@@ -60,13 +60,23 @@ if is_octave()
       type = 'dir';
     elseif (exist(w, 'file') || exist(w, 'builtin') || exist(w) == 103)
       type = 'function';
-    elseif (~isempty (help (w)))
-      % covers "doctest class.method" and (maybe in future) "doctest class/method"
-      type = 'function';
     else
       type = 'unknown';
     end
   end
+
+  % This covers anything that we can get help from that wasn't covered above,
+  % notably "doctest class.method".  Quite possibly some other things too.
+  if (strcmp (type, 'unknown'))
+    try
+      if (~isempty (help (w)))
+        type = 'function';
+      end
+    catch
+      % no-op
+    end
+  end
+
 else % Matlab
   if (strcmp(w(1), '@')) && ~isempty(methods(w(2:end)))
     % covers "doctest @class", but not "doctest @class/method"
@@ -80,6 +90,7 @@ else % Matlab
     type = 'function';
   elseif ~isempty(help(w))
     % covers "doctest class.method" and "doctest class/method"
+    % no try-catch needed as no error when w has no help
     type = 'function';
   else
     type = 'unknown';

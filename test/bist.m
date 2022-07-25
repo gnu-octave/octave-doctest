@@ -208,3 +208,35 @@ end
 %! % correct number of error tests
 %! [n, t, summ] = doctest('test_error');
 %! assert (t == 4)
+
+%!test
+%! % class inside a package
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [n, t, summary] = doctest ("containers.Map");
+%!   assert (n == t)
+%!   assert (summary.num_targets >= 10)  % lots of methods
+%! end
+
+%!test
+%! % classdef.method
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [n, t, summary] = doctest ("test_classdef.disp");
+%!   assert (n == t)
+%!   assert (n == 1)
+%! end
+
+%!test
+%! % classdef.method, where method is external file
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [n, t, summary] = doctest ("test_classdef.amethod");
+%!   assert (n == t)
+%!   assert (n == 1)
+%! end
+
+%!test
+%! % classdef.method
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [n, t, summary] = doctest ("classdef_infile.disp");
+%!   assert (n == t)
+%!   assert (n == 1)
+%! end
