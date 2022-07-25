@@ -10,7 +10,7 @@ function summary = doctest_collect(w, directives, summary, recursive, verbose, d
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
-% Copyright (c) 2015-2019 Colin B. Macdonald
+% Copyright (c) 2015-2019, 2022 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
 % Copyright (C) 2018 Mike Miller
 % SPDX-License-Identifier: BSD-3-Clause
@@ -291,6 +291,7 @@ function targets = collect_targets_class(w, depth)
 
   % Next, add targets for all class methods
   meths = methods(w);
+  meths = unique (meths);  % Issue #260
   for i=1:numel(meths)
     target = struct();
     if is_octave()
