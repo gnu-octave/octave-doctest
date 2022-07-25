@@ -316,6 +316,10 @@ function targets = collect_targets_class(w, depth)
         target.name = sprintf ('@%s%s%s', w, filesep (), meths{i});
         target.link = '';
       else
+        if strcmp (meths{i}, w)
+          % TODO: gathering the ctor help fails https://savannah.gnu.org/bugs/?62803
+          continue
+        end
         target.name = sprintf ('%s.%s', w, meths{i});
         target.link = '';
       end
