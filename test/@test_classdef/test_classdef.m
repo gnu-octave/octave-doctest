@@ -22,9 +22,9 @@ classdef test_classdef
   methods
 
     function obj = test_classdef(n, a)
-      % constructor help text
+      % test_classdef: constructor help text
       %
-      % note sure how to see this but here's an embedded doctest
+      % not sure how to see this but here's an embedded doctest
       %
       % >> a = 13 + 1
       % a = 14
