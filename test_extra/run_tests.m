@@ -93,7 +93,6 @@
 %!   [numpass, numtest, summary] = doctest ('@test_classdef');
 %!   assert (numpass == numtest)
 %!   summary
-%!   methods ('test_classdef')
 %!   if (compare_versions (OCTAVE_VERSION(), '4.4.0', '>='))
 %!     assert (summary.num_targets_without_tests <= 2)
 %!   end
@@ -121,7 +120,6 @@
 %!   [numpass, numtest, summary] = doctest ('@test_classdef');
 %!   assert (numpass == numtest)
 %!   summary
-%!   methods ('test_classdef')
 %!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
 %!     % before this missing many methods
 %!     assert (summary.num_targets_without_tests <= 1)
