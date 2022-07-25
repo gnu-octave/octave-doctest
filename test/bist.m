@@ -57,7 +57,7 @@ end
 %! [nump, numt, summ] = doctest ('@test_classdef/disp');
 %! assert (nump == 1 && numt == 1)
 
-%!xtest
+%!test
 %! % https://github.com/catch22/octave-doctest/issues/92
 %! % Should have 4 targets and 5 tests
 %! %   * general class help (2 tests)
@@ -120,15 +120,17 @@ end
 %! [nump, numt, summ] = doctest ('@classdef_infile/disp');
 %! assert (nump == 1 && numt == 1)
 
-%!xtest
+%!test
 %! % https://github.com/catch22/octave-doctest/issues/92
 %! % Should have 3 targets and 4 tests
 %! %   * general class help (2 tests)
 %! %   * ctor (1 test)
 %! %   * disp method (1 test)
-%! [nump, numt, summ] = doctest ('classdef_infile');
-%! assert (nump == 4 && numt == 4)
-%! assert (summ.num_targets == 3)
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [nump, numt, summ] = doctest ('classdef_infile');
+%!   assert (nump == 4 && numt == 4)
+%!   assert (summ.num_targets == 3)
+%! end
 
 %!test
 %! % monkey-patching methods to existing builtin-objects
