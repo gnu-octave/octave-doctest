@@ -64,9 +64,51 @@ end
 %! %   * ctor (1 test)
 %! %   * disp method (1 test)
 %! %   * amethod in external file (1 test)
-%! [nump, numt, summ] = doctest ('test_classdef');
-%! assert (nump == 5 && numt == 5)
-%! assert (summ.num_targets == 4)
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [nump, numt, summ] = doctest ('test_classdef');
+%!   % only passes by coincidence! classhelp twice + amethod
+%!   % assert (nump == 5 && numt == 5)
+%!   assert (summ.num_targets == 4)
+%! end
+
+%!xtest
+%! %% Issue #220, Issue #261, clear and w/o special order or workarounds
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   clear classes
+%!   % doctest ('test_classdef')
+%!   [numpass, numtest, summary] = doctest ('test_classdef');
+%!   assert (numpass == numtest)
+%!   assert (summary.num_targets_without_tests == 0)
+%! end
+
+%!test
+%! %% Issue #220, workarounds for testing classdef are sensitive to
+%! % the order of tests above.  Here we clear first.  But we "preload"
+%! % some methods as a workaround.
+%! if (compare_versions (OCTAVE_VERSION(), '4.4.0', '>='))
+%!   clear classes
+%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!     doc = help ('@test_classdef/amethod');
+%!     assert (length (doc) > 10)
+%!     % dot notation broken before Octave 6
+%!     doc = help ('test_classdef.disp');
+%!     assert (length (doc) > 10)
+%!   end
+%!   % doctest ('test_classdef')
+%!   [numpass, numtest, summary] = doctest ('test_classdef');
+%!   assert (numpass == numtest)
+%!   if (compare_versions (OCTAVE_VERSION(), '4.4.0', '>='))
+%!     assert (summary.num_targets_without_tests <= 2)
+%!   end
+%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!     assert (summary.num_targets_without_tests <= 1)
+%!   end
+%!   % glorious future!  Issue #261
+%!   % if (compare_versions (OCTAVE_VERSION(), 'X.Y.Z', '>='))
+%!   %   assert (summary.num_targets_without_tests == 0)
+%!   % end
+%! end
+
 
 %!test
 %! % https://github.com/catch22/octave-doctest/issues/199
