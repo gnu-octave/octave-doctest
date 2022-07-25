@@ -311,16 +311,17 @@ function targets = collect_targets_class(w, depth)
   for i=1:numel(meths)
     target = struct();
     if is_octave()
-      if compare_versions (OCTAVE_VERSION, '7.0.0', '<')
-        % TODO: also for old-style classes https://savannah.gnu.org/bugs/?61521
-        target.name = sprintf ('@%s%s%s', w, filesep (), meths{i});
-        target.link = '';
-      else
+      if compare_versions (OCTAVE_VERSION, '7.0.0', '>=') && exist (w, "class") == 8
+        % classdef on newish Octave: use cls.method
         if strcmp (meths{i}, w)
           % TODO: gathering the ctor help fails https://savannah.gnu.org/bugs/?62803
           continue
         end
         target.name = sprintf ('%s.%s', w, meths{i});
+        target.link = '';
+      else
+        % use @cls/method for old-style classes https://savannah.gnu.org/bugs/?61521
+        target.name = sprintf ('@%s%s%s', w, filesep (), meths{i});
         target.link = '';
       end
     else
