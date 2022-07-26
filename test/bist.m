@@ -49,11 +49,12 @@ end
 %! assert (t2 < t1)
 
 %!test
+%! % maybe not recommended notation for classdef, but works for now...
 %! [nump, numt, summ] = doctest ('@test_classdef/amethod');
 %! assert (nump == 1 && numt == 1)
 
 %!xtest
-%! % https://github.com/catch22/octave-doctest/issues/92
+%! % maybe not recommended notation for classdef
 %! [nump, numt, summ] = doctest ('@test_classdef/disp');
 %! assert (nump == 1 && numt == 1)
 
@@ -111,12 +112,13 @@ end
 
 
 %!test
+%! % maybe not recommended notation for classdef, but currently at least no error
 %! % https://github.com/catch22/octave-doctest/issues/199
 %! [nump, numt, summ] = doctest ('@classdef_infile/disp');
 %! assert (nump >= 0)
 
 %!xtest
-%! % https://github.com/catch22/octave-doctest/issues/92
+%! % maybe not recommended notation for classdef
 %! [nump, numt, summ] = doctest ('@classdef_infile/disp');
 %! assert (nump == 1 && numt == 1)
 
@@ -208,3 +210,35 @@ end
 %! % correct number of error tests
 %! [n, t, summ] = doctest('test_error');
 %! assert (t == 4)
+
+%!test
+%! % class inside a package
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [n, t, summary] = doctest ("containers.Map");
+%!   assert (n == t)
+%!   assert (summary.num_targets >= 10)  % lots of methods
+%! end
+
+%!test
+%! % classdef.method
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [n, t, summary] = doctest ("test_classdef.disp");
+%!   assert (n == t)
+%!   assert (n == 1)
+%! end
+
+%!test
+%! % classdef.method, where method is external file
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [n, t, summary] = doctest ("test_classdef.amethod");
+%!   assert (n == t)
+%!   assert (n == 1)
+%! end
+
+%!test
+%! % classdef.method
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   [n, t, summary] = doctest ("classdef_infile.disp");
+%!   assert (n == t)
+%!   assert (n == 1)
+%! end
