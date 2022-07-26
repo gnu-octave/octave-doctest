@@ -278,10 +278,9 @@ function targets = collect_targets_class(w, depth)
     w = w(2:end);
   end
 
-  % TODO: workaround github.com/catch22/octave-doctest/issues/135 by
+  % workaround github.com/catch22/octave-doctest/issues/135 by
   % accessing all non-constructor method help text *before* "help obj"
-  if (false)
-  if (is_octave ())
+  if (is_octave () && compare_versions (OCTAVE_VERSION, '7.0.0', '<'))
     meths = methods (w);
     for i=1:numel (meths)
       if (~ strcmp (meths{i}, w))  % skip @obj/obj
@@ -290,7 +289,6 @@ function targets = collect_targets_class(w, depth)
       end
     end
   end  % end workaround
-  end
 
   % First, "help class".  For classdef, this differs from "help class.class"
   % (general class help vs constructor help).  For old-style classes we will
