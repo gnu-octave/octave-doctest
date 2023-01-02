@@ -16,7 +16,7 @@ doctest 0.7.0+
 
   * Functions defined directly in the Octave interpreter can now be tested.
 
-  * Test suite fixes for Octave 6.
+  * Test suite fixes for Octave 6 and 7.
 
   * Source code is encoded with UTF-8, indicated with `.oct-config` files.
 
