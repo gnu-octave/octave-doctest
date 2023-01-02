@@ -11,6 +11,9 @@ doctest 0.7.0+
 
   * Preliminary support for `doctest classdef.method` on Octave.
 
+  * Test classdef methods using dotted `classdef.method` while still
+    using `@class/method` on old-style classes.
+
   * Functions defined directly in the Octave interpreter can now be tested.
 
   * Test suite fixes for Octave 6.
