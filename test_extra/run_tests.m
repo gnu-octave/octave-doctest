@@ -1,5 +1,5 @@
 %% Copyright (c) 2022 Markus Mützel
-%% Copyright (c) 2022 Colin B. Macdonald
+%% Copyright (c) 2022-2023 Colin B. Macdonald
 %%
 %% SPDX-License-Identifier: BSD-3-Clause
 %%
@@ -53,6 +53,7 @@
 %!   unwind_protect
 %!     addpath (canonicalize_file_name ('test_encoding'));
 %!     assert (doctest ('test_bytecount_CP1252.m', '-quiet'));
+%!     assert (doctest ('test_matlab_style_CP1252.m', '-quiet'));
 %!   unwind_protect_cleanup
 %!     path (path_orig)
 %!   end
@@ -65,6 +66,7 @@
 %!   unwind_protect
 %!     cd ('test_encoding');
 %!     assert (doctest ('test_bytecount_CP1252.m', '-quiet'));
+%!     assert (doctest ('test_matlab_style_CP1252.m', '-quiet'));
 %!   unwind_protect_cleanup
 %!     cd (d)
 %!   end
