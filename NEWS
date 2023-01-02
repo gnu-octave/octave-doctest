@@ -1,5 +1,5 @@
-doctest 0.7.0+
-==============
+doctest 0.8.0 (2023-01-03)
+==========================
 
   * Expected error messages can be optionally prefixed with "error: ".
 
