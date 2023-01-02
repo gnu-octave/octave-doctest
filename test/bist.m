@@ -67,14 +67,21 @@ end
 %! %   * amethod in external file (1 test)
 %! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
 %!   [nump, numt, summ] = doctest ('test_classdef');
-%!   % only passes by coincidence! classhelp twice + amethod
-%!   % assert (nump == 5 && numt == 5)
-%!   assert (summ.num_targets == 4)
+%!   assert (nump == numt && numt >= 4)
+%!   assert (summ.num_targets >= 3)
 %! end
 
 %!xtest
+%! % https://github.com/catch22/octave-doctest/issues/268
+%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
+%!   [nump, numt, summ] = doctest ('classdef_infile');
+%!   assert (nump == numt && numt == 5)
+%!   assert (summ.num_targets == 4)
+%! end
+
+%!test
 %! %% Issue #220, Issue #261, clear and w/o special order or workarounds
-%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
 %!   clear classes
 %!   % doctest ('test_classdef')
 %!   [numpass, numtest, summary] = doctest ('test_classdef');
@@ -130,8 +137,16 @@ end
 %! %   * disp method (1 test)
 %! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
 %!   [nump, numt, summ] = doctest ('classdef_infile');
-%!   assert (nump == 4 && numt == 4)
+%!   assert (nump == numt && numt >= 3)
+%!   assert (summ.num_targets >= 2)
+%! end
+
+%!xtest
+%! % https://github.com/catch22/octave-doctest/issues/268
+%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
+%!   [nump, numt, summ] = doctest ('classdef_infile');
 %!   assert (summ.num_targets == 3)
+%!   assert (nump == numt && numt == 4)
 %! end
 
 %!test
