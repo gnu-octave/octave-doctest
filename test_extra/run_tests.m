@@ -29,6 +29,30 @@
 %% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 %% POSSIBILITY OF SUCH DAMAGE.
 
+function success = run_tests ()
+  success = true;
+
+  is_oct = exist('OCTAVE_VERSION', 'builtin') ~= 0;
+  if (~ is_oct)
+    save_enc = feature ('DefaultCharacterSet');
+    meh = feature ('DefaultCharacterSet', 'CP1252');
+    chdir ('test_encoding')
+    ok1 = doctest ('test_matlab_style_CP1252.m');
+    chdir ('..')
+
+    meh = feature ('DefaultCharacterSet', 'UTF-8');
+    chdir ('test_encoding_utf8')
+    ok2 = doctest ('test_matlab_style_utf8.m');
+    chdir ('..')
+
+    meh = feature ('DefaultCharacterSet', save_enc);
+
+    success = success && ok1 && ok2;
+  end
+
+  % Octave is tested by BIST, no action required here
+
+end
 
 %!test
 %! %% test with file that is not encoded in UTF-8
