@@ -1,6 +1,6 @@
 %% Copyright (c) 2010 Thomas Grenfell Smith
 %% Copyright (c) 2011, 2013-2016 Michael Walter
-%% Copyright (c) 2015-2019 Colin B. Macdonald
+%% Copyright (c) 2015-2019, 2023 Colin B. Macdonald
 %% Copyright (c) 2019 Manuel Leonhardt
 %% SPDX-License-Identifier: BSD-3-Clause
 %%
@@ -246,6 +246,13 @@
 %%
 %% The two styles are not mutually exclusive: this documentation is written
 %% in Texinfo using a hybrid approach.
+%%
+%% @strong{Support for non-ASCII characters}
+%% If you encounter file encoding issues on Octave, it may be helpful to
+%% @pxref{dir_encoding} and @pxref{__mfile_encoding__}.  For example, this
+%% file itself is encoded in utf-8 and declares this by installing a
+%% @code{.oct-config} file.  Matlab users might want to try
+%% @code{feature('DefaultCharacterSet', 'UTF-8')}.
 %%
 %% @seealso{test}
 %% @end deftypefn

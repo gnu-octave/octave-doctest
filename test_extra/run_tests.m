@@ -1,5 +1,5 @@
 %% Copyright (c) 2022 Markus Mützel
-%% Copyright (c) 2022 Colin B. Macdonald
+%% Copyright (c) 2022-2023 Colin B. Macdonald
 %%
 %% SPDX-License-Identifier: BSD-3-Clause
 %%
@@ -29,6 +29,30 @@
 %% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 %% POSSIBILITY OF SUCH DAMAGE.
 
+function success = run_tests ()
+  success = true;
+
+  is_oct = exist('OCTAVE_VERSION', 'builtin') ~= 0;
+  if (~ is_oct)
+    save_enc = feature ('DefaultCharacterSet');
+    meh = feature ('DefaultCharacterSet', 'CP1252');
+    chdir ('test_encoding')
+    ok1 = doctest ('test_matlab_style_CP1252.m');
+    chdir ('..')
+
+    meh = feature ('DefaultCharacterSet', 'UTF-8');
+    chdir ('test_encoding_utf8')
+    ok2 = doctest ('test_matlab_style_utf8.m');
+    chdir ('..')
+
+    meh = feature ('DefaultCharacterSet', save_enc);
+
+    success = success && ok1 && ok2;
+  end
+
+  % Octave is tested by BIST, no action required here
+
+end
 
 %!test
 %! %% test with file that is not encoded in UTF-8
@@ -53,6 +77,7 @@
 %!   unwind_protect
 %!     addpath (canonicalize_file_name ('test_encoding'));
 %!     assert (doctest ('test_bytecount_CP1252.m', '-quiet'));
+%!     assert (doctest ('test_matlab_style_CP1252.m', '-quiet'));
 %!   unwind_protect_cleanup
 %!     path (path_orig)
 %!   end
@@ -65,6 +90,32 @@
 %!   unwind_protect
 %!     cd ('test_encoding');
 %!     assert (doctest ('test_bytecount_CP1252.m', '-quiet'));
+%!     assert (doctest ('test_matlab_style_CP1252.m', '-quiet'));
+%!   unwind_protect_cleanup
+%!     cd (d)
+%!   end
+%! end
+
+%!test
+%! % A bug in Octave 7 requires that the folder containing the .oct-config file
+%! % is in the load path (not the current directory).
+%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
+%!   path_orig = path ();
+%!   unwind_protect
+%!     addpath (canonicalize_file_name ('test_encoding_utf8'));
+%!     assert (doctest ('test_matlab_style_utf8.m', '-quiet'));
+%!   unwind_protect_cleanup
+%!     path (path_orig)
+%!   end
+%! end
+
+%!test
+%! %% On Octave 8, we can go to the actual directory
+%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
+%!   d = pwd ();
+%!   unwind_protect
+%!     cd ('test_encoding_utf8');
+%!     assert (doctest ('test_matlab_style_utf8.m', '-quiet'));
 %!   unwind_protect_cleanup
 %!     cd (d)
 %!   end
