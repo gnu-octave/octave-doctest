@@ -71,3 +71,28 @@
 %!     cd (d)
 %!   end
 %! end
+
+%!test
+%! % A bug in Octave 7 requires that the folder containing the .oct-config file
+%! % is in the load path (not the current directory).
+%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
+%!   path_orig = path ();
+%!   unwind_protect
+%!     addpath (canonicalize_file_name ('test_encoding_utf8'));
+%!     assert (doctest ('test_matlab_style_utf8.m', '-quiet'));
+%!   unwind_protect_cleanup
+%!     path (path_orig)
+%!   end
+%! end
+
+%!test
+%! %% On Octave 8, we can go to the actual directory
+%! if (compare_versions (OCTAVE_VERSION(), '8.0.0', '>='))
+%!   d = pwd ();
+%!   unwind_protect
+%!     cd ('test_encoding_utf8');
+%!     assert (doctest ('test_matlab_style_utf8.m', '-quiet'));
+%!   unwind_protect_cleanup
+%!     cd (d)
+%!   end
+%! end
