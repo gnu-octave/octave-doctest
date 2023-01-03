@@ -248,11 +248,10 @@
 %% in Texinfo using a hybrid approach.
 %%
 %% @strong{Support for non-ASCII characters}
-%% If you encounter file encoding issues on Octave, it may be helpful to
-%% @pxref{dir_encoding} and @pxref{__mfile_encoding__}.  For example, this
-%% file itself is encoded in utf-8 and declares this by installing a
-%% @code{.oct-config} file.  Matlab users might want to try
-%% @code{feature('DefaultCharacterSet', 'UTF-8')}.
+%% If you encounter file encoding issues on Octave, @pxref{dir_encoding} and
+%% @ref{__mfile_encoding__}.  For example, this file itself is encoded in
+%% utf-8 and declares this by installing a @code{.oct-config} file.
+%% Matlab users might want to try @code{feature('DefaultCharacterSet', 'UTF-8')}.
 %%
 %% @seealso{test}
 %% @end deftypefn
