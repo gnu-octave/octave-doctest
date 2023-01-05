@@ -3,9 +3,9 @@ function bist()
 %
 % Doctest mostly tests itself but in some cases we want to ensure
 % exactly what is being tested and yet we cannot call doctest recursively
-% https://github.com/catch22/octave-doctest/issues/184
+% https://github.com/gnu-octave/octave-doctest/issues/184
 %
-% Copyright (c) 2019, 2022 Colin B. Macdonald
+% Copyright (c) 2019, 2022-2023 Colin B. Macdonald
 % SPDX-License-Identifier: BSD-3-Clause
 
 end
@@ -59,7 +59,7 @@ end
 %! assert (nump == 1 && numt == 1)
 
 %!test
-%! % https://github.com/catch22/octave-doctest/issues/92
+%! % https://github.com/gnu-octave/octave-doctest/issues/92
 %! % Should have 4 targets and 5 tests
 %! %   * general class help (2 tests)
 %! %   * ctor (1 test)
@@ -72,7 +72,7 @@ end
 %! end
 
 %!xtest
-%! % https://github.com/catch22/octave-doctest/issues/268
+%! % https://github.com/gnu-octave/octave-doctest/issues/268
 %! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
 %!   [nump, numt, summ] = doctest ('classdef_infile');
 %!   assert (nump == numt && numt == 5)
@@ -120,7 +120,7 @@ end
 
 %!test
 %! % maybe not recommended notation for classdef, but currently at least no error
-%! % https://github.com/catch22/octave-doctest/issues/199
+%! % https://github.com/gnu-octave/octave-doctest/issues/199
 %! [nump, numt, summ] = doctest ('@classdef_infile/disp');
 %! assert (nump >= 0)
 
@@ -130,7 +130,7 @@ end
 %! assert (nump == 1 && numt == 1)
 
 %!test
-%! % https://github.com/catch22/octave-doctest/issues/92
+%! % https://github.com/gnu-octave/octave-doctest/issues/92
 %! % Should have 3 targets and 4 tests
 %! %   * general class help (2 tests)
 %! %   * ctor (1 test)
@@ -142,7 +142,7 @@ end
 %! end
 
 %!xtest
-%! % https://github.com/catch22/octave-doctest/issues/268
+%! % https://github.com/gnu-octave/octave-doctest/issues/268
 %! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
 %!   [nump, numt, summ] = doctest ('classdef_infile');
 %!   assert (summ.num_targets == 3)
@@ -153,7 +153,7 @@ end
 %! % monkey-patching methods to existing builtin-objects
 %! [nump, numt, summ1] = doctest ('logical');
 %! % First, there is (at least) the "logical" builtin
-%! % >= b/c of https://github.com/catch22/octave-doctest/issues/87
+%! % >= b/c of https://github.com/gnu-octave/octave-doctest/issues/87
 %! assert (summ1.num_targets >= 1)
 %! savepath = addpath ('test_methods_in_subdir');
 %! % there should be at least "logical" builtin and "logical.mynewmethod"
