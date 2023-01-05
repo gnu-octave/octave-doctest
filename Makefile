@@ -6,7 +6,7 @@ SHELL   := /bin/bash
 #
 # Copyright 2015 Oliver Heimlich
 # Copyright 2015 Michael Walter
-# Copyright 2015-2017, 2019, 2022 Colin B. Macdonald
+# Copyright 2015-2017, 2019, 2022-2023 Colin B. Macdonald
 # Copyright 2016 Carnë Draug
 # Copyright 2019 Mike Miller
 # Copyright 2019 Andrew Janke
