@@ -10,7 +10,7 @@ function summary = doctest_collect(w, directives, summary, recursive, verbose, d
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
-% Copyright (c) 2015-2019, 2022 Colin B. Macdonald
+% Copyright (c) 2015-2019, 2022-2023 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
 % Copyright (C) 2018 Mike Miller
 % SPDX-License-Identifier: BSD-3-Clause
@@ -278,7 +278,7 @@ function targets = collect_targets_class(w, depth)
     w = w(2:end);
   end
 
-  % workaround github.com/catch22/octave-doctest/issues/135 by
+  % workaround github.com/gnu-octave/octave-doctest/issues/135 by
   % accessing all non-constructor method help text *before* "help obj"
   if (is_octave () && compare_versions (OCTAVE_VERSION, '7.0.0', '<'))
     meths = methods (w);

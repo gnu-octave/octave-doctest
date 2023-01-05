@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright 2016, 2019 Colin B. Macdonald
+Copyright 2016, 2019, 2023 Colin B. Macdonald
 SPDX-License-Identifier: FSFAP
 
 Copying and distribution of this file, with or without modification,
@@ -27,7 +27,7 @@ without any warranty.
   </keywords>
   <translation/>
   <url type="homepage">https://octave.sourceforge.io/doctest</url>
-  <url type="bugtracker">https://github.com/catch22/octave-doctest/issues/new</url>
+  <url type="bugtracker">https://github.com/gnu-octave/octave-doctest/issues/new</url>
   <metadata_license>FSFAP</metadata_license>
   <project_license>BSD-3-Clause</project_license>
   <developer_name>Octave-Forge Community</developer_name>
