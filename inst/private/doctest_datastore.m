@@ -5,10 +5,10 @@ function out = doctest_datastore(action, arg)
 %   doctest_datastore(action, arg)
 %       Store variables in a way that survives "clear" and "clear all".
 %
-% See https://github.com/catch22/octave-doctest/issues/149 for discussion.
+% See https://github.com/gnu-octave/octave-doctest/issues/149 for discussion.
 
 %%
-% Copyright (c) 2017, 2019 Colin B. Macdonald
+% Copyright (c) 2017, 2019, 2023 Colin B. Macdonald
 % Copyright (c) 2017 Michael Walter
 % SPDX-License-Identifier: BSD-3-Clause
 
