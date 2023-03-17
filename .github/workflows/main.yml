@@ -29,6 +29,7 @@ jobs:
       - name: Install Octave
         run: |
           sudo uname -a
+          sudo apt-get update
           sudo apt-get install -y octave
           octave --version
       - name: Install package, verify
