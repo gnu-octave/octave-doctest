@@ -9,7 +9,7 @@ notice and this notice are preserved.  This file is offered as-is,
 without any warranty.
 -->
 <component type="addon">
-  <id>io.github.gnu_octave.octave_doctest</id>
+  <id>io.github.gnu_octave.doctest</id>
   <extends>org.octave.Octave</extends>
   <name>Doctest</name>
   <summary>Find and run example code within documentation</summary>
