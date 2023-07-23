@@ -9,8 +9,8 @@ notice and this notice are preserved.  This file is offered as-is,
 without any warranty.
 -->
 <component type="addon">
-  <id>octave-doctest</id>
-  <extends>www.octave.org-octave.desktop</extends>
+  <id>io.github.gnu_octave.doctest</id>
+  <extends>org.octave.Octave</extends>
   <name>Doctest</name>
   <summary>Find and run example code within documentation</summary>
   <description>
@@ -30,6 +30,6 @@ without any warranty.
   <url type="bugtracker">https://github.com/gnu-octave/octave-doctest/issues/new</url>
   <metadata_license>FSFAP</metadata_license>
   <project_license>BSD-3-Clause</project_license>
-  <developer_name>Octave-Forge Community</developer_name>
+  <developer_name>Octave Community</developer_name>
   <update_contact>octave-maintainers@gnu.org</update_contact>
 </component>
