@@ -10,7 +10,7 @@ without any warranty.
 -->
 <component type="addon">
   <id>octave-doctest</id>
-  <extends>www.octave.org-octave.desktop</extends>
+  <extends>org.octave.Octave</extends>
   <name>Doctest</name>
   <summary>Find and run example code within documentation</summary>
   <description>
