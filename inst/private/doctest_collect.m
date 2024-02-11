@@ -10,7 +10,7 @@ function summary = doctest_collect(w, directives, summary, recursive, verbose, d
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
-% Copyright (c) 2015-2019, 2022-2023 Colin B. Macdonald
+% Copyright (c) 2015-2019, 2022-2024 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
 % Copyright (C) 2018 Mike Miller
 % SPDX-License-Identifier: BSD-3-Clause
@@ -364,7 +364,14 @@ end
 
 function [docstring, error] = extract_docstring(name)
   if is_octave()
-    [docstring, format] = get_help_text(name);
+    try
+      [docstring, format] = get_help_text (name);
+    catch exc
+      docstring = '';
+      error = strcat ('Error extracting help text: ', ...
+                      doctest_format_exception (exc));
+      return
+    end
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);
     elseif strcmp(format, 'plain text')
