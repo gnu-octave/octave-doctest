@@ -49,6 +49,20 @@ jobs:
         run: |
           octave --eval "pkg uninstall doctest; pkg list"
 
+  appstream-validate:
+    runs-on: fedora:40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Appstream
+        run: |
+          sudo uname -a
+          sudo dnf install -y appstream
+          appstreamcli --version
+      - name: Validate
+        run: |
+          pwd
+          ls
+          appstreamcli validate --strict --pedantic --explain io.github.gnu_octave.doctest.metainfo.xml
 
   # Built-in Self Tests for various supported Octave
   # TODO: fail-fast -> true later
