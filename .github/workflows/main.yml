@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install Flatpak
+      - name: Install Flatpak and add Flathub
         run: |
           whoami
           uname -a
@@ -62,11 +62,11 @@ jobs:
           sudo apt-get install -y flatpak
           sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
           sudo flatpak install -y org.freedesktop.appstream.cli
+      - name: List appstream.cli version
+        run: |
+          flatpak run org.freedesktop.appstream.cli --version
       - name: Validate
         run: |
-          pwd
-          ls
-          flatpak run org.freedesktop.appstream.cli --version
           flatpak run org.freedesktop.appstream.cli validate --strict --pedantic --explain io.github.gnu_octave.doctest.metainfo.xml
 
   # Built-in Self Tests for various supported Octave
