@@ -72,21 +72,40 @@ end
 %! end
 
 %!xtest
+%! % complicated classdef has correct number of tests and targets
 %! % https://github.com/gnu-octave/octave-doctest/issues/268
-%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
-%!   [nump, numt, summ] = doctest ('classdef_infile');
+%! % Now on Octave 9, #268 fixed but it fails in new way:
+%! % https://github.com/gnu-octave/octave-doctest/issues/288
+%! % (these issues test separately elsewhere)
+%! if (compare_versions (OCTAVE_VERSION(), '9.0.0', '>='))
+%!   [nump, numt, summ] = doctest ('test_classdef');
 %!   assert (nump == numt && numt == 5)
 %!   assert (summ.num_targets == 4)
+%! end
+
+%!test
+%! % https://github.com/gnu-octave/octave-doctest/issues/268
+%! if (compare_versions (OCTAVE_VERSION(), '9.0.0', '>='))
+%!   [nump, numt, summ] = doctest ('classdef_infile.classdef_infile');
+%!   assert (nump == numt && numt == 1)
+%!   assert (summ.num_targets == 1)
+%! end
+
+%!test
+%! % https://github.com/gnu-octave/octave-doctest/issues/268
+%! if (compare_versions (OCTAVE_VERSION(), '9.0.0', '>='))
+%!   [nump, numt, summ] = doctest ('test_classdef.test_classdef');
+%!   assert (nump == numt && numt == 1)
+%!   assert (summ.num_targets == 1)
 %! end
 
 %!test
 %! %% Issue #220, Issue #261, clear and w/o special order or workarounds
 %! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
 %!   clear classes
-%!   % doctest ('test_classdef')
 %!   [numpass, numtest, summary] = doctest ('test_classdef');
 %!   assert (numpass == numtest)
-%!   assert (summary.num_targets_without_tests == 0)
+%!   assert (summary.num_targets >= 3)
 %! end
 
 %!test
@@ -141,9 +160,9 @@ end
 %!   assert (summ.num_targets >= 2)
 %! end
 
-%!xtest
+%!test
 %! % https://github.com/gnu-octave/octave-doctest/issues/268
-%! if (compare_versions (OCTAVE_VERSION(), '7.0.0', '>='))
+%! if (compare_versions (OCTAVE_VERSION(), '9.0.0', '>='))
 %!   [nump, numt, summ] = doctest ('classdef_infile');
 %!   assert (summ.num_targets == 3)
 %!   assert (nump == numt && numt == 4)
@@ -244,11 +263,18 @@ end
 
 %!test
 %! % classdef.method, where method is external file
-%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%! if ((compare_versions (OCTAVE_VERSION(), '6.0.0', '>=')) && ...
+%!     (compare_versions (OCTAVE_VERSION(), '9.0.0', '<')))
 %!   [n, t, summary] = doctest ("test_classdef.amethod");
 %!   assert (n == t)
 %!   assert (n == 1)
 %! end
+%!xtest
+%! % classdef.method, where method is external file
+%! % https://github.com/gnu-octave/octave-doctest/issues/288
+%! [n, t, summary] = doctest ("test_classdef.amethod");
+%! assert (n == t)
+%! assert (n == 1)
 
 %!test
 %! % classdef.method

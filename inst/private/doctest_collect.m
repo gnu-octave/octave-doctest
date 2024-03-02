@@ -10,7 +10,7 @@ function summary = doctest_collect(w, directives, summary, recursive, verbose, d
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
-% Copyright (c) 2015-2019, 2022-2023 Colin B. Macdonald
+% Copyright (c) 2015-2019, 2022-2024 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
 % Copyright (C) 2018 Mike Miller
 % SPDX-License-Identifier: BSD-3-Clause
@@ -309,10 +309,14 @@ function targets = collect_targets_class(w, depth)
   for i=1:numel(meths)
     target = struct();
     if is_octave()
-      if compare_versions (OCTAVE_VERSION, '7.0.0', '>=') && exist (w, "class") == 8
+      if compare_versions (OCTAVE_VERSION, '9.0.0', '>=') && exist (w, "class") == 8
         % classdef on newish Octave: use cls.method
+        target.name = sprintf ('%s.%s', w, meths{i});
+        target.link = '';
+      elseif compare_versions (OCTAVE_VERSION, '7.0.0', '>=') && exist (w, "class") == 8
+        % use cls.method, use cls.method, but skip cls.cls
         if strcmp (meths{i}, w)
-          % TODO: gathering the ctor help fails https://savannah.gnu.org/bugs/?62803
+          % gathering the ctor help fails https://savannah.gnu.org/bugs/?62803
           continue
         end
         target.name = sprintf ('%s.%s', w, meths{i});
