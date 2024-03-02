@@ -49,6 +49,25 @@ jobs:
         run: |
           octave --eval "pkg uninstall doctest; pkg list"
 
+  appstream-validate:
+    # maybe a later Ubuntu will have appstream >= 1, for now we pull from flatpak
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flatpak and add Flathub
+        run: |
+          whoami
+          uname -a
+          sudo apt-get update
+          sudo apt-get install -y flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y org.freedesktop.appstream.cli
+      - name: List appstream.cli version
+        run: |
+          flatpak run org.freedesktop.appstream.cli --version
+      - name: Validate
+        run: |
+          flatpak run org.freedesktop.appstream.cli validate --strict --pedantic --explain io.github.gnu_octave.doctest.metainfo.xml
 
   # Built-in Self Tests for various supported Octave
   # TODO: fail-fast -> true later
