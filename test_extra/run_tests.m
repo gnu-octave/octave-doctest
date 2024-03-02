@@ -1,5 +1,5 @@
 %% Copyright (c) 2022 Markus Mützel
-%% Copyright (c) 2022-2023 Colin B. Macdonald
+%% Copyright (c) 2022-2024 Colin B. Macdonald
 %%
 %% SPDX-License-Identifier: BSD-3-Clause
 %%
@@ -37,12 +37,12 @@ function success = run_tests ()
     save_enc = feature ('DefaultCharacterSet');
     meh = feature ('DefaultCharacterSet', 'CP1252');
     chdir ('test_encoding')
-    ok1 = doctest ('test_matlab_style_CP1252.m');
+    ok1 = doctest ('test_matlab_style_CP1252');
     chdir ('..')
 
     meh = feature ('DefaultCharacterSet', 'UTF-8');
     chdir ('test_encoding_utf8')
-    ok2 = doctest ('test_matlab_style_utf8.m');
+    ok2 = doctest ('test_matlab_style_utf8');
     chdir ('..')
 
     meh = feature ('DefaultCharacterSet', save_enc);
@@ -62,7 +62,7 @@ end
 %! warn_orig = warning ('off', 'octave:get_input:invalid_utf8');
 %! unwind_protect
 %!   addpath (canonicalize_file_name ('test_encoding'));
-%!   assert (doctest ('test_CP1252.m', '-quiet'));
+%!   assert (doctest ('test_CP1252', '-quiet'));
 %! unwind_protect_cleanup
 %!   path (path_orig)
 %!   warning (warn_orig)
@@ -76,8 +76,8 @@ end
 %!   path_orig = path ();
 %!   unwind_protect
 %!     addpath (canonicalize_file_name ('test_encoding'));
-%!     assert (doctest ('test_bytecount_CP1252.m', '-quiet'));
-%!     assert (doctest ('test_matlab_style_CP1252.m', '-quiet'));
+%!     assert (doctest ('test_bytecount_CP1252', '-quiet'));
+%!     assert (doctest ('test_matlab_style_CP1252', '-quiet'));
 %!   unwind_protect_cleanup
 %!     path (path_orig)
 %!   end
@@ -89,8 +89,8 @@ end
 %!   d = pwd ();
 %!   unwind_protect
 %!     cd ('test_encoding');
-%!     assert (doctest ('test_bytecount_CP1252.m', '-quiet'));
-%!     assert (doctest ('test_matlab_style_CP1252.m', '-quiet'));
+%!     assert (doctest ('test_bytecount_CP1252', '-quiet'));
+%!     assert (doctest ('test_matlab_style_CP1252', '-quiet'));
 %!   unwind_protect_cleanup
 %!     cd (d)
 %!   end
@@ -103,7 +103,7 @@ end
 %!   path_orig = path ();
 %!   unwind_protect
 %!     addpath (canonicalize_file_name ('test_encoding_utf8'));
-%!     assert (doctest ('test_matlab_style_utf8.m', '-quiet'));
+%!     assert (doctest ('test_matlab_style_utf8', '-quiet'));
 %!   unwind_protect_cleanup
 %!     path (path_orig)
 %!   end
@@ -115,7 +115,7 @@ end
 %!   d = pwd ();
 %!   unwind_protect
 %!     cd ('test_encoding_utf8');
-%!     assert (doctest ('test_matlab_style_utf8.m', '-quiet'));
+%!     assert (doctest ('test_matlab_style_utf8', '-quiet'));
 %!   unwind_protect_cleanup
 %!     cd (d)
 %!   end
