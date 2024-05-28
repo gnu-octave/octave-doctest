@@ -1,9 +1,11 @@
 Doctest
 =======
 
-The [Octave-Forge Doctest](http://octave.sourceforge.net/doctest/) package finds specially-formatted blocks of example code within documentation files.
+The [Octave Doctest](https://gnu-octave.github.io/packages/doctest/) package
+finds specially-formatted blocks of example code within documentation files.
 It then executes the code and confirms the output is correct.
-This can be useful as part of a testing framework or simply to ensure that documentation stays up-to-date during software development.
+This can be useful as part of a testing framework or simply to ensure that
+documentation stays up-to-date during software development.
 
 To get started, here is a simple example:
 
