@@ -368,7 +368,14 @@ end
 
 function [docstring, error] = extract_docstring(name)
   if is_octave()
-    [docstring, format] = get_help_text(name);
+    try
+      [docstring, format] = get_help_text (name);
+    catch exc
+      docstring = '';
+      error = strcat ('Error extracting help text: ', ...
+                      doctest_format_exception (exc));
+      return
+    end
     if strcmp(format, 'texinfo')
       [docstring, error] = parse_texinfo(docstring);
     elseif strcmp(format, 'plain text')
