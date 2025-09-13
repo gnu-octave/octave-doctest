@@ -10,7 +10,7 @@ function summary = doctest_collect(w, directives, summary, recursive, verbose, d
 %%
 % Copyright (c) 2010 Thomas Grenfell Smith
 % Copyright (c) 2015 Michael Walter
-% Copyright (c) 2015-2019, 2022-2024 Colin B. Macdonald
+% Copyright (c) 2015-2019, 2022-2025 Colin B. Macdonald
 % Copyright (c) 2015 Oliver Heimlich
 % Copyright (C) 2018 Mike Miller
 % SPDX-License-Identifier: BSD-3-Clause
@@ -377,8 +377,12 @@ function [docstring, error] = extract_docstring(name)
       assert (isempty (docstring))
       error = '';
     elseif strcmp(format, 'Not found')
-      % looks like "doctest test_no_docs.m" gets us here: octave bug?
       if (regexp(name,'\.m$'))
+        % looks like "doctest test_no_docs.m" gets us here: octave bug?
+        assert (isempty (docstring))
+        error = '';
+      elseif (is_octave() && compare_versions (OCTAVE_VERSION(), '9.0.0', '>=') && regexp(name,'.+\.delete$'))
+        % forgive mssing "classdef.delete", which Octave 9 "methods" adds to handle-classes
         assert (isempty (docstring))
         error = '';
       else
