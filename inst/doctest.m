@@ -1,6 +1,6 @@
 %% Copyright (c) 2010 Thomas Grenfell Smith
 %% Copyright (c) 2011, 2013-2016 Michael Walter
-%% Copyright (c) 2015-2019, 2023 Colin B. Macdonald
+%% Copyright (c) 2015-2019, 2023, 2025 Colin B. Macdonald
 %% Copyright (c) 2019 Manuel Leonhardt
 %% SPDX-License-Identifier: BSD-3-Clause
 %%
@@ -321,7 +321,7 @@ fid = 1;
 [color_ok, color_err, color_warn, reset] = doctest_colors(fid);
 
 if (verbose)
-  fprintf(fid, 'Doctest v0.8.0+: this is Free Software without warranty, see source.\n\n');
+  fprintf(fid, 'Doctest v0.8.1: this is Free Software without warranty, see source.\n\n');
 end
 
 summary = struct();
