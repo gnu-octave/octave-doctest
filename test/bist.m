@@ -5,7 +5,7 @@ function bist()
 % exactly what is being tested and yet we cannot call doctest recursively
 % https://github.com/gnu-octave/octave-doctest/issues/184
 %
-% Copyright (c) 2019, 2022-2023 Colin B. Macdonald
+% Copyright (c) 2019, 2022-2023, 2025 Colin B. Macdonald
 % SPDX-License-Identifier: BSD-3-Clause
 
 end
@@ -243,7 +243,7 @@ end
 %!test
 %! % correct number of error tests
 %! [n, t, summ] = doctest('test_error');
-%! assert (t == 4)
+%! assert (t == 7)
 
 %!test
 %! % class inside a package
