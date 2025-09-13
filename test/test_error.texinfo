@@ -1,12 +1,24 @@
-Copyright (c) 2019 Colin B. Macdonald
+Copyright (c) 2019, 2025 Colin B. Macdonald
 SPDX-License-Identifier: BSD-3-Clause
 
 @example
-2 + (1 + !))
+  @comment doctest: -TEXINFO_SKIP_BLOCKS_WO_OUTPUT
+  OLD = compare_versions (ver ("octave").Version, "10.0.0", "<");
+@end example
+
+@example
+2 + (1 + !))   % doctest: +SKIP_IF(OLD)
+  @error{} syntax error
+  @error{} >>> 2 + (1 + !))   % doctest: +SKIP_IF(OLD)
+  @error{}               ^
+@end example
+
+@example
+3 + (1 + !))   % doctest: +SKIP_UNLESS(OLD)
   @error{} parse error:
   @error{}
   @error{} syntax error
-  @error{} >>> 2 + (1 + !))
+  @error{} >>> 3 + (1 + !))   % doctest: +SKIP_UNLESS(OLD)
   @error{}               ^
 @end example
 
