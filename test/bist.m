@@ -286,14 +286,18 @@ end
 
 %!test
 %! % classdef handle subclass delete behaviour
-%! [n, t, summary] = doctest ('cdef_subhandle1');
-%! assert (n == t)
-%! assert (n == 4)
-%! assert (summary.num_targets_with_extraction_errors == 0)
+%! if (compare_versions (OCTAVE_VERSION(), '9.0.0', '>='))
+%!   [n, t, summary] = doctest ('cdef_subhandle1');
+%!   assert (n == t)
+%!   assert (n == 4)
+%!   assert (summary.num_targets_with_extraction_errors == 0)
+%! end
 
 %!test
 %! % classdef handle subclass delete behaviour
-%! [n, t, summary] = doctest ('cdef_subhandle2');
-%! assert (n == t)
-%! assert (n == 3)
-%! assert (summary.num_targets_with_extraction_errors == 0)
+%! if (compare_versions (OCTAVE_VERSION(), '9.0.0', '>='))
+%!   [n, t, summary] = doctest ('cdef_subhandle2');
+%!   assert (n == t)
+%!   assert (n == 3)
+%!   assert (summary.num_targets_with_extraction_errors == 0)
+%! end
