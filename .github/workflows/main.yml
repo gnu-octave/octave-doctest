@@ -30,7 +30,7 @@ jobs:
         run: |
           sudo uname -a
           sudo apt-get update
-          sudo apt-get install -y octave
+          sudo apt-get install --no-install-recommends -y octave
           octave --version
       - name: Install package, verify
         run: |
@@ -58,7 +58,7 @@ jobs:
           whoami
           uname -a
           sudo apt-get update
-          sudo apt-get install -y appstream
+          sudo apt-get install --no-install-recommends -y appstream
       - name: Version
         run: appstreamcli --version
       - name: Validate
