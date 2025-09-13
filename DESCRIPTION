@@ -9,6 +9,6 @@ Description: Find and run example code within documentation.
  files and executed to confirm their output is correct.  This can be
  part of a testing framework or simply to ensure that documentation
  stays up-to-date during software development.
-Depends: octave (>= 4.2.0)
+Depends: octave (>= 4.4.0)
 Url: https://gnu-octave.github.io/packages/doctest/
 License: BSD-3-Clause

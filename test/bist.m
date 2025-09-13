@@ -112,29 +112,25 @@ end
 %! %% Issue #220, workarounds for testing classdef are sensitive to
 %! % the order of tests above.  Here we clear first.  But we "preload"
 %! % some methods as a workaround.
-%! if (compare_versions (OCTAVE_VERSION(), '4.4.0', '>='))
-%!   clear classes
-%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
-%!     doc = help ('@test_classdef/amethod');
-%!     assert (length (doc) > 10)
-%!     % dot notation broken before Octave 6
-%!     doc = help ('test_classdef.disp');
-%!     assert (length (doc) > 10)
-%!   end
-%!   % doctest ('test_classdef')
-%!   [numpass, numtest, summary] = doctest ('test_classdef');
-%!   assert (numpass == numtest)
-%!   if (compare_versions (OCTAVE_VERSION(), '4.4.0', '>='))
-%!     assert (summary.num_targets_without_tests <= 2)
-%!   end
-%!   if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
-%!     assert (summary.num_targets_without_tests <= 1)
-%!   end
+%! clear classes
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   doc = help ('@test_classdef/amethod');
+%!   assert (length (doc) > 10)
+%!   % dot notation broken before Octave 6
+%!   doc = help ('test_classdef.disp');
+%!   assert (length (doc) > 10)
+%! end
+%! % doctest ('test_classdef')
+%! [numpass, numtest, summary] = doctest ('test_classdef');
+%! assert (numpass == numtest)
+%! assert (summary.num_targets_without_tests <= 2)
+%! if (compare_versions (OCTAVE_VERSION(), '6.0.0', '>='))
+%!   assert (summary.num_targets_without_tests <= 1)
+%! end
 %!   % glorious future!  Issue #261
 %!   % if (compare_versions (OCTAVE_VERSION(), 'X.Y.Z', '>='))
 %!   %   assert (summary.num_targets_without_tests == 0)
 %!   % end
-%! end
 
 
 %!test
