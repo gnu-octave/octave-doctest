@@ -3,6 +3,10 @@ doctest 0.8.0+
 
   * Development repo moved to https://github.com/gnu-octave/octave-doctest
 
+  * Fixes for Octave 9 and Octave 10.
+
+  * Workaround for delete method of subclasses of "handle".
+
 
 
 doctest 0.8.0 (2023-01-03)

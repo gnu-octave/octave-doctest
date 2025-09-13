@@ -283,3 +283,17 @@ end
 %!   assert (n == t)
 %!   assert (n == 1)
 %! end
+
+%!test
+%! % classdef handle subclass delete behaviour
+%! [n, t, summary] = doctest ('cdef_subhandle1');
+%! assert (n == t)
+%! assert (n == 4)
+%! assert (summary.num_targets_with_extraction_errors == 0)
+
+%!test
+%! % classdef handle subclass delete behaviour
+%! [n, t, summary] = doctest ('cdef_subhandle2');
+%! assert (n == t)
+%! assert (n == 3)
+%! assert (summary.num_targets_with_extraction_errors == 0)
