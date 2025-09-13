@@ -33,5 +33,7 @@ function test_error()
 % a = 44
 %
 %
-% Copyright (c) 2019, 2022 Colin B. Macdonald
+% Caution: the file "bist.m" cares about how many tests are in this test_error.m file!
+%
+% Copyright (c) 2019, 2022, 2025 Colin B. Macdonald
 % SPDX-License-Identifier: BSD-3-Clause
