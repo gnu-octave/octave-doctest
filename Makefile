@@ -101,10 +101,11 @@ $(HTML_DIR): install | $(BUILD_DIR)
 
 dist: $(OCTAVE_RELEASE_TARBALL)
 html: $(HTML_TARBALL)
-md5: $(OCTAVE_RELEASE_TARBALL) $(HTML_TARBALL)
+hash: $(OCTAVE_RELEASE_TARBALL) $(HTML_TARBALL)
 	@md5sum $^
+	@sha256sum $^
 
-release: md5
+release: hash
 	@echo "Upload @ https://sourceforge.net/p/octave/package-releases/new/"
 	@echo "*After review*, an Octave-Forge admin will tag this with:"
 	@echo "    git tag -a v$(VERSION) -m \"Version $(VERSION)\""
