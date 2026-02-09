@@ -165,7 +165,7 @@
 %% @example
 %% @group
 %% >> license       % doctest: +XFAIL_IF(DOCTEST_MATLAB)
-%% ans = GNU General Public License v3+
+%% ans = GNU General Public License...
 %% @end group
 %% @end example
 %%
