@@ -381,3 +381,8 @@ elseif nargout > 1
 end
 
 end
+
+
+%!test
+%! s = doctest ('doctest');
+%! assert (s)
